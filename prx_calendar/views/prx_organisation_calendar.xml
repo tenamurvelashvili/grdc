@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_prx_organisation_calendar_search" model="ir.ui.view">
+            <field name="name">prx.organisation.calendar.search</field>
+            <field name="model">prx.organisation.calendar</field>
+            <field name="arch" type="xml">
+                <search string="Organisation Calendar Search">
+                    <field name="year"/>
+                    <field name="schedule_type_id"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_year" string="წელი" context="{'group_by': 'year'}"/>
+                        <filter name="group_by_schedule" string="გრაფიკის ტიპი"
+                                context="{'group_by': 'schedule_type_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_prx_organisation_calendar_list" model="ir.ui.view">
+            <field name="name">prx.organisation.calendar.list</field>
+            <field name="model">prx.organisation.calendar</field>
+            <field name="arch" type="xml">
+                <list string="Organisation Calendars">
+                    <field name="year" widget="char"/>
+                    <field name="schedule_type_id"/>
+                </list>
+            </field>
+        </record>
+
+
+        <record id="view_prx_organisation_calendar_wizard" model="ir.ui.view">
+            <field name="name">prx.organisation.calendar.form</field>
+            <field name="model">prx.organisation.calendar</field>
+            <field name="arch" type="xml">
+                <form string="Organisation Calendar">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="year" widget="char"/>
+                                <field name="schedule_type_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <footer>
+                            <button name="generate_calendar_details"
+                                    string="Ok"
+                                    class="btn btn-primary btn-sm"
+                                    type="object"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="view_prx_organisation_calendar_form" model="ir.ui.view">
+            <field name="name">prx.organisation.calendar.form</field>
+            <field name="model">prx.organisation.calendar</field>
+            <field name="priority">15</field>
+            <field name="arch" type="xml">
+                <form string="Organisation Calendar">
+                    <sheet>
+                        <group>
+                            <field name="year" widget="char"/>
+                            <field name="schedule_type_id"/>
+                        </group>
+                        <button name="generate_calendar_details" string="Generate Calendar" class="btn btn-primary"
+                                type="object" invible="calendar_details_id"/>
+
+                        <notebook>
+                            <page string="Details" name="calendar_detail">
+                                <button name="action_view_worksheet_earning" string="გახსნა" class="btn btn-primary"
+                                        icon="fa-list"
+                                        type="object" invible="calendar_details_id"/>
+                                <field name="calendar_details_id">
+                                    <list>
+                                        <field name="date"/>
+                                        <field name="status"/>
+                                        <field name="holiday"/>
+                                        <field name="weekday"/>
+                                        <field name="weeknumber"/>
+                                        <field name="month"/>
+                                        <field name="year" widget="char"/>
+                                        <field name="work_calendar"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_prx_organisation_calendar_details_search" model="ir.ui.view">
+            <field name="name">prx.organisation.calendar.details.search</field>
+            <field name="model">prx.organisation.calendar.details</field>
+            <field name="arch" type="xml">
+                <search string="Calendar Details">
+                    <field name="status"/>
+                    <field name="work_calendar"/>
+                    <field name="year"/>
+                    <field name="month"/>
+                    <field name="weeknumber"/>
+                    <field name="weekday"/>
+                    <field name="date"/>
+                    <separator/>
+                    <filter string="უქმე დღე" name="filter_holidays" domain="[('holiday','=',True)]"/>
+                    <filter string="სამუშაო დღე" name="filter_working_days" domain="[('holiday','=',False)]"/>
+                    <separator/>
+                    <group string="დაჯგუფება">
+                        <filter string="სტატუსი" name="group_by_status" context="{'group_by':'status'}"/>
+                        <filter string="თვე" name="group_by_month" context="{'group_by':'month'}"/>
+                        <filter string="წელი" name="group_by_year" context="{'group_by':'year'}"/>
+                        <filter string="კალენდარი" name="group_by_calendar" context="{'group_by':'work_calendar'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_prx_organisation_calendar_details_list" model="ir.ui.view">
+            <field name="name">prx.organisation.calendar.details.list</field>
+            <field name="model">prx.organisation.calendar.details</field>
+            <field name="arch" type="xml">
+                <list string="Organisation Calendar Details">
+                    <field name="date"/>
+                    <field name="status"/>
+                    <field name="holiday"/>
+                    <field name="weekday"/>
+                    <field name="weeknumber"/>
+                    <field name="month"/>
+                    <field name="year"/>
+                    <field name="work_calendar"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_prx_organisation_calendar_details_pivot" model="ir.ui.view">
+            <field name="name">prx.organisation.calendar.details.pivot</field>
+            <field name="model">prx.organisation.calendar.details</field>
+            <field name="arch" type="xml">
+                <pivot string="Organisation Calendar Analysis">
+                    <field name="year" type="row"/>
+                    <field name="month_pivot" type="col"/>
+                    <field name="status" type="col"/>
+                    <field name="is_holiday_int" type="col"/>
+                </pivot>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

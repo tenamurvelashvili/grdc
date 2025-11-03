@@ -6,7 +6,7 @@
 
     'description': """Prx RS EMPLOYEE SERVICE""",
 
-    'author': "Proxima Solutions LTD",
+    'author': "Proxima Solutions",
     'website': "https://www.proxima.solutions",
 
     'category': 'Proxima',

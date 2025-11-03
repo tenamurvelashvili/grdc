@@ -5,3 +5,4 @@ docxtpl
 htmldocx
 beautifulsoup4
 PyMuPDF
+pandas

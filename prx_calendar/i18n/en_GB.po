@@ -1,0 +1,289 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* prx_calendar
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-04 06:28+0000\n"
+"PO-Revision-Date: 2025-08-04 06:28+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Language: en_GB\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__calendar_id
+msgid "Calendar"
+msgstr ""
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_details_search
+msgid "Calendar Details"
+msgstr ""
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_wizard
+msgid "Cancel"
+msgstr ""
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar__create_uid
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar__create_date
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_form
+msgid "Details"
+msgstr ""
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar__display_name
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_form
+msgid "Generate Calendar"
+msgstr ""
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_search
+msgid "Group By"
+msgstr ""
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar__id
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__id
+msgid "ID"
+msgstr ""
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__is_holiday_int
+msgid "Is Holiday Int"
+msgstr ""
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar__write_uid
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar__write_date
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_wizard
+msgid "Ok"
+msgstr ""
+
+#. module: prx_calendar
+#: model:ir.model,name:prx_calendar.model_prx_organisation_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_form
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_wizard
+msgid "Organisation Calendar"
+msgstr ""
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_details_pivot
+msgid "Organisation Calendar Analysis"
+msgstr ""
+
+#. module: prx_calendar
+#: model:ir.model,name:prx_calendar.model_prx_organisation_calendar_details
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_details_list
+msgid "Organisation Calendar Details"
+msgstr ""
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_search
+msgid "Organisation Calendar Search"
+msgstr ""
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_list
+msgid "Organisation Calendars"
+msgstr ""
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__08
+msgid "აგვისტო"
+msgstr "August"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__04
+msgid "აპრილი"
+msgstr "April"
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_form
+msgid "გახსნა"
+msgstr "Open"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar__schedule_type_id
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_search
+msgid "გრაფიკის ტიპი"
+msgstr "Schedule Type"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__status__closed
+msgid "დახურული"
+msgstr "Closed"
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_details_search
+msgid "დაჯგუფება"
+msgstr "Group By"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__12
+msgid "დეკემბერი"
+msgstr "December"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar__calendar_details_id
+msgid "დეტალები"
+msgstr "Details"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__date
+msgid "თარიღი"
+msgstr "Date"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__02
+msgid "თებერვალი"
+msgstr "February"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__month
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_details_search
+msgid "თვე"
+msgstr "Month"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__month_pivot
+msgid "თვე (პივოტისთვის)"
+msgstr "Month (Pivot)"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__01
+msgid "იანვარი"
+msgstr "January"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__07
+msgid "ივლისი"
+msgstr "July"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__06
+msgid "ივნისი"
+msgstr "June"
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_details_search
+msgid "კალენდარი"
+msgstr "Calendar"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__weekday
+msgid "კვირის დღე"
+msgstr "Weekday"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__weeknumber
+msgid "კვირის ნომერი"
+msgstr "Week Number"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar__company_id
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__company_id
+msgid "კომპანია"
+msgstr "Company"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__05
+msgid "მაისი"
+msgstr "May"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__03
+msgid "მარტი"
+msgstr "March"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__11
+msgid "ნოემბერი"
+msgstr "November"
+
+#. module: prx_calendar
+#: model:ir.actions.act_window,name:prx_calendar.prx_organisation_calendar_action
+msgid "ორგანიზაციის კალენდარი"
+msgstr "Organisation Calendar"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__10
+msgid "ოქტომბერი"
+msgstr "October"
+
+#. module: prx_calendar
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_details_search
+msgid "სამუშაო დღე"
+msgstr "Working Day"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__work_calendar
+msgid "სამუშაო კალენდარი"
+msgstr "Work Calendar"
+
+#. module: prx_calendar
+#: model:ir.actions.act_window,name:prx_calendar.prx_organisation_calendar_details
+msgid "სამუშაო კალენდარის დეტალები"
+msgstr "Work Calendar Details"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__month_pivot__09
+msgid "სექტემბერი"
+msgstr "September"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__status
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_details_search
+msgid "სტატუსი"
+msgstr "Status"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__holiday
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_details_search
+msgid "უქმე დღე"
+msgstr "Holiday"
+
+#. module: prx_calendar
+#: model:ir.model.fields.selection,name:prx_calendar.selection__prx_organisation_calendar_details__status__open
+msgid "ღია"
+msgstr "Open"
+
+#. module: prx_calendar
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar__year
+#: model:ir.model.fields,field_description:prx_calendar.field_prx_organisation_calendar_details__year
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_details_search
+#: model_terms:ir.ui.view,arch_db:prx_calendar.view_prx_organisation_calendar_search
+msgid "წელი"
+msgstr "Year"

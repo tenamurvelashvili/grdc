@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="prx_rule_organisation_calendar_multicompany" model="ir.rule">
+            <field name="name">Organisation Calendar: multi-company access</field>
+            <field name="model_id" ref="model_prx_organisation_calendar"/>
+            <field name="domain_force">[('company_id','in',company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="prx_rule_organisation_calendar_details_multicompany" model="ir.rule">
+            <field name="name">Organisation Calendar Details: multi-company access</field>
+            <field name="model_id" ref="model_prx_organisation_calendar_details"/>
+            <field name="domain_force">[('company_id','in',company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+    </data>
+</odoo>

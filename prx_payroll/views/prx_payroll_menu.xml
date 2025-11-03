@@ -70,8 +70,6 @@
 				          name="საპენსიო/ალიმენტი რეპორტი"/>
 				<menuitem id="prx_payroll_creditor_report_menu" action="action_prx_payroll_creditor_reports_wizard_act"
 				          sequence="30" name="კრედიტორის რეპორტი"/>
-				<menuitem id="menu_prx_payroll_transaction_report" name="ტრანზაქციების რეპორტი"
-				          action="action_prx_payroll_transaction_my_report" sequence="35"/>
 			</menuitem>
 
 

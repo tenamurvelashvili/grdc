@@ -6,7 +6,7 @@
 
     'description': """Proxima solution payroll""",
 
-    'author': """T.C and A.G""",
+    'author': "Proxima Solutions",
     'website': "https://www.proxima.solutions",
 
     'category': 'Proxima',
@@ -19,7 +19,7 @@
         'resource',
         'prx_calendar',
         'prx_income_tax',
-        'prx_rs_employee_service', 'account_reports'
+        'prx_rs_employee_service'
     ],
 
     'data': [
@@ -47,7 +47,6 @@
         'views/prx_payroll_hr_employee_inherit.xml',
         'views/prx_payroll_worksheet_line_and_earnings.xml',
         'views/prx_payroll_transaction.xml',
-        'views/prx_payroll_transaction_report_views.xml',
         'views/prx_payroll_excel_import.xml',
         'views/prx_payroll_employee_ext.xml',
         'views/prx_payroll_worksheet_manager.xml',

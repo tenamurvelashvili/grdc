@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <record id="prx_organisation_calendar_action" model="ir.actions.act_window">
+        <field name="name">ორგანიზაციის კალენდარი</field>
+        <field name="res_model">prx.organisation.calendar</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_prx_organisation_calendar_search"/>
+    </record>
+
+    <record id="prx_organisation_calendar_details" model="ir.actions.act_window">
+        <field name="name">სამუშაო კალენდარის დეტალები</field>
+        <field name="res_model">prx.organisation.calendar.details</field>
+        <field name="view_mode">list,pivot,form</field>
+        <field name="view_id" ref="view_prx_organisation_calendar_details_list"/>
+        <field name="search_view_id" ref="view_prx_organisation_calendar_details_search"/>
+    </record>
+
+
+    </data>
+</odoo>

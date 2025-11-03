@@ -6,7 +6,7 @@
 
     'description': """PRX HR additions functionalities""",
 
-    'author': "Proxima Solutions developed by T.Chkuaseli",
+    'author': "Proxima Solutions",
     'website': "https://proxima.solutions",
 
     'category': 'Proxima',
