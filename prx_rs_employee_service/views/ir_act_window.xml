@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_prx_payroll_tabel_reports_wizard_act" model="ir.actions.act_window">
+            <field name="name">RS რეგისტრირებული თანამშრომლები</field>
+            <field name="res_model">prx.rs.service.employee</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_prx_rs_service_employee_list"/>
+        </record>
+
+        <record id="action_prx_rs_employee_wizard" model="ir.actions.act_window">
+            <field name="name">RS თანამშრომლების იმპორტი</field>
+            <field name="res_model">prx.rs.employee.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_prx_rs_employee_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_prx_rs_employee_editable_wizard" model="ir.actions.act_window">
+            <field name="name">თანამშრომლის რედაქტირების ფორმა</field>
+            <field name="res_model">prx.rs.employee.editable.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_prx_rs_employee_editable_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_prx_rs_employee_request" model="ir.actions.act_window">
+            <field name="name">თანამშრომლის გადაგზავნა RS ზე</field>
+            <field name="res_model">prx.rs.employee.request</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

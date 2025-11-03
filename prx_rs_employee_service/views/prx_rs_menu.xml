@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_prx_rs_employee_root" name="RS Employees" parent="hr.menu_hr_root" sequence="97">
+            <menuitem id="menu_hr_rs_employee_list" name="RS თანამშრომლების სია" sequence="5" action="action_prx_payroll_tabel_reports_wizard_act"/>
+            <menuitem id="menu_prx_rs_employee_request" name="RS Employee Requests" sequence="10" action="action_prx_rs_employee_request"/>
+        </menuitem>
+
+    </data>
+</odoo>

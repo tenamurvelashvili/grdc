@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+      <record id="prx_payroll_employee_tax_search_import" model="ir.ui.view">
+      <field name="name">prx.payroll.employee.tax.import.search</field>
+      <field name="model">prx.payroll.employee.tax.import</field>
+      <field name="arch" type="xml">
+         <search>
+            <field name="employee_id"/>
+            <field name="identification_number"/>
+            <field name="tax"/>
+            <field name="start_date"/>
+            <field name="end_date"/>
+             <separator/>
+             <filter string="დაწყების თარიღი" name="start_date" date="start_date"/>
+             <filter string="დასრულების თარიღი" name="end_date" date="end_date"/>
+             <group expand="0" string="დაჯგუფება">
+                <filter name="group_by_employee" string="თანამშრომელი" context="{'group_by': 'employee_id'}"/>
+                <filter name="group_by_tax" string="გადასახადი" context="{'group_by': 'tax'}"/>
+                <filter name="is_valid" string="ვალიდური" context="{'group_by': 'is_valid'}"/>
+            </group>
+             </search>
+          </field>
+        </record>
+
+      <record id="view_prx_payroll_position_earning_search_import" model="ir.ui.view">
+      <field name="name">prx.payroll.position.earning.search.import</field>
+      <field name="model">prx.payroll.position.earning.import</field>
+      <field name="arch" type="xml">
+         <search string="Search Position Earnings">
+            <field name="employee_id"/>
+            <field name="position_id"/>
+            <field name="identification_number"/>
+            <field name="earning_id"/>
+            <field name="start_date"/>
+            <field name="end_date"/>
+
+             <separator/>
+             <filter string="დაწყების თარიღი" name="start_date" date="start_date"/>
+             <filter string="დასრულების თარიღი" name="end_date" date="end_date"/>
+             <group expand="0" string="დაჯგუფება">
+                <filter name="group_by_valid" string="ვალიდური" context="{'group_by': 'is_valid'}"/>
+                <filter name="group_by_employee" string="თანამშრომელი" context="{'group_by': 'employee_id'}"/>
+                <filter name="group_by_earning" string="ანაზღაურება" context="{'group_by': 'earning_id'}"/>
+                <filter name="group_by_position" string="პოზიცია" context="{'group_by': 'position_id'}"/>
+            </group>
+             </search>
+          </field>
+      </record>
+
+   <record id="prx_payroll_employee_deduction_search_import" model="ir.ui.view">
+      <field name="name">prx.payroll.employee.deduction.search.import</field>
+      <field name="model">prx.payroll.employee.deduction.import</field>
+      <field name="arch" type="xml">
+         <search>
+            <field name="employee_id"/>
+            <field name="identification_number"/>
+            <field name="deduction_id"/>
+            <field name="deduction_calc_type"/>
+            <field name="vendor"/>
+            <field name="start_date"/>
+            <field name="end_date"/>
+             <separator/>
+             <filter string="დაწყების თარიღი" name="start_date" date="start_date"/>
+             <filter string="დასრულების თარიღი" name="end_date" date="end_date"/>
+             <group expand="0" string="დაჯგუფება">
+                <filter name="group_by_valid" string="ვალიდური" context="{'group_by': 'is_valid'}"/>
+                <filter name="group_by_employee" string="თანამშრომელი" context="{'group_by': 'employee_id'}"/>
+                <filter name="group_by_deduction" string="დაქვითვა" context="{'group_by': 'deduction_id'}"/>
+                <filter name="group_by_deduction_selection" string="დაქვითვის ტიპი" context="{'group_by': 'deduction_calc_type'}"/>
+                <filter name="group_by_vendor" string="ვენდორი" context="{'group_by': 'vendor'}"/>
+            </group>
+             </search>
+          </field>
+        </record>
+
+      <record id="view_prx_payroll_deduction_import_wizard" model="ir.ui.view">
+        <field name="name">prx.payroll.import.wizard.form</field>
+        <field name="model">prx.payroll.import.wizard</field>
+        <field name="arch" type="xml">
+          <form string="Import Excel">
+            <group>
+              <field name="filename" invisible="1"/>
+              <field name="data_file" widget="binary" aria-label="Select File" nolabel="1" filename="filename"/>
+            </group>
+            <footer>
+              <button string="Import" type="object" name="action_import" class="btn-primary"/>
+              <button string="Cancel" class="btn-secondary" special="cancel"/>
+            </footer>
+          </form>
+        </field>
+      </record>
+
+    <record id="prx_payroll_employee_tax_import_form" model="ir.ui.view">
+    <field name="name">prx.payroll.employee.tax.import.form</field>
+    <field name="model">prx.payroll.employee.tax.import</field>
+    <field name="arch" type="xml">
+      <form>
+          <group>
+              <group string="შეიმპორტებული">
+                <field name="identification_number" readonly="is_valid"/>
+                <field name="tax_name" readonly="is_valid"/>
+                <field name="used_tax_amount"/>
+                <field name="start_date" readonly="is_valid"/>
+                <field name="end_date" readonly="is_valid"/>
+              </group>
+              <group string="დამუშავებული ველები">
+                  <field name="employee_id" readonly="is_valid"/>
+                  <field name="tax" readonly="is_valid"/>
+                  <field name="is_exception"/>
+              </group>
+              <group string="შემოწმების შედეგი">
+                <field name="error_text" readonly="1"/>
+                <field name="is_valid" readonly="1"/>
+              </group>
+          </group>
+      </form>
+    </field>
+    </record>
+
+
+    <record id="prx_payroll_employee_tax_import_list" model="ir.ui.view">
+    <field name="name">prx.payroll.employee.tax.import.list</field>
+    <field name="model">prx.payroll.employee.tax.import</field>
+    <field name="arch" type="xml">
+      <list>
+          <header>
+              <button name="import_excel" string="ექსელის იმპორტი" type="object" display="always" class="btn btn-primary" context="{'employee_tax':True}"/>
+              <button name="validate_record" string="ვალიდაცია" type="object" class="btn btn-primary"/>
+              <button name="move_record" string="გადატანა" type="object" class="btn btn-primary"/>
+          </header>
+        <field name="is_exception" width="80"/>
+        <field name="identification_number" width="80"/>
+        <field name="employee_id" width="80"/>
+        <field name="tax" width="80" />
+        <field name="start_date" width="80"/>
+        <field name="end_date" width="80"/>
+        <field name="used_tax_amount" width="80"/>
+        <field name="error_text" />
+        <field name="is_valid" width="80"/>
+      </list>
+    </field>
+    </record>
+
+    <record id="view_employee_deduction_import_tree" model="ir.ui.view">
+    <field name="name">employee.deduction.import.tree</field>
+    <field name="model">prx.payroll.employee.deduction.import</field>
+    <field name="arch" type="xml">
+      <list string="თანამშრომლის დაქვითვების იმპორტი">
+        <header>
+          <button name="import_excel" string="ექსელის იმპორტი" type="object" display="always" class="btn btn-primary" context="{'employee_deduction':True}"/>
+          <button name="validate_record" string="ვალიდაცია" type="object" class="btn btn-primary"/>
+          <button name="move_record" string="გადატანა" type="object" class="btn btn-primary"/>
+        </header>
+        <field name="is_exception" width="80"/>
+        <field name="employee_id" width="80"/>
+        <field name="identification_number" width="80"/>
+        <field name="deduction_id" width="80"/>
+        <field name="deduction_calc_type" width="80"/>
+        <field name="amount" width="80"/>
+        <field name="percentage" width="80"/>
+        <field name="limit_amount" width="80" invisible="1"/>
+        <field name="start_date" width="80"/>
+        <field name="end_date" width="80"/>
+        <field name="vendor" width="80"/>
+        <field name="error_text"/>
+        <field name="is_valid" width="80"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_employee_deduction_import_form" model="ir.ui.view">
+    <field name="name">employee.deduction.import.form</field>
+    <field name="model">prx.payroll.employee.deduction.import</field>
+    <field name="arch" type="xml">
+      <form string="თანამშრომლის დაქვითვების იმპორტი">
+        <sheet>
+          <group>
+              <group string="შეიმპორტებული">
+                <field name="identification_number" readonly="is_valid"/>
+                <field name="deduction_name" readonly="is_valid"/>
+                  <field name="vendor_tax"/>
+                <field name="deduction_calc_type" readonly="1"/>
+                <field name="amount" readonly="deduction_calc_type == 'percentage' and is_valid == True"/>
+                <field name="percentage" readonly="deduction_calc_type == 'fix_amount' and is_valid == True"/>
+                <field name="limit_amount" readonly="deduction_calc_type == 'fix_amount' and is_valid == True" invisible="1"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+              </group>
+              <group string="დამუშავებული ველები">
+                  <field name="employee_id" readonly="is_valid"/>
+                  <field name="deduction_id" readonly="is_valid"/>
+                  <field name="vendor" />
+                  <field name="is_exception"/>
+              </group>
+
+              <group string="შემოწმების შედეგი">
+                 <field name="is_valid" readonly="1"/>
+                <field name="error_text" readonly="1"/>
+              </group>
+              </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+    <record id="view_prx_payroll_position_earning_import_list" model="ir.ui.view">
+    <field name="name">prx.payroll.position.earning.import.tree</field>
+    <field name="model">prx.payroll.position.earning.import</field>
+    <field name="arch" type="xml">
+      <list string="თანამშრომლის პოზიციების ანაზღაურების იმპორტი">
+        <header>
+              <button name="import_excel" string="ექსელის იმპორტი" type="object" display="always" class="btn btn-primary" context="{'position_earning':True}"/>
+              <button name="validate_record" string="ვალიდაცია" type="object" class="btn btn-primary"/>
+              <button name="move_record" string="გადატანა" type="object" class="btn btn-primary"/>
+        </header>
+        <field name="is_exception" width="80"/>
+        <field name="employee_id"/>
+        <field name="identification_number"/>
+        <field name="earning_name"/>
+        <field name="start_date"/>
+        <field name="end_date"/>
+        <field name="amount"/>
+        <field name="currency_id"/>
+        <field name="position_id"/>
+        <field name="error_text" />
+        <field name="is_valid"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_prx_payroll_position_earning_import_form" model="ir.ui.view">
+    <field name="name">prx.payroll.position.earning.import.form</field>
+    <field name="model">prx.payroll.position.earning.import</field>
+    <field name="arch" type="xml">
+      <form string="თანამშრომლის პოზიციების ანაზღაურების იმპორტი">
+        <sheet>
+          <group>
+              <group string="შეიმპორტებული">
+                <field name="identification_number" readonly="is_valid"/>
+                <field name="earning_name" readonly="is_valid"/>
+                  <field name="currency_name" />
+                  <field name="start_date" readonly="is_valid"/>
+                <field name="end_date" readonly="is_valid"/>
+              </group>
+              <group string="დამუშავებული ვაელები">
+                <field name="employee_id" readonly="is_valid"/>
+                <field name="earning_id" readonly="is_valid"/>
+                <field name="currency_id" />
+                <field name="contract_id" readonly="is_valid" domain="[('state','=','open'),('employee_id','=',employee_id)]" invisible="is_exception"/>
+                <field name="contract_id" readonly="is_valid" domain="[('state','=','close'),('employee_id','=',employee_id)]" invisible="not is_exception"/>
+                <field name="position_id" readonly="1"/>
+                  <field name="is_exception"/>
+              </group>
+               <group string="შემოწმების შედეგი">
+                <field name="is_valid" readonly="1"/>
+                <field name="error_text" readonly="1"/>
+              </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="prx_user_configuration_rs_settings_form">
+            <field name="name">User RS Access</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='account_security']" position="after">
+                    <page string="RS authorise" name="rs_user_access">
+                        <field name="prx_res_employee">
+                            <list editable="bottom" create="true" edit="true">
+                                <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                                <field name="auth_id" required="1"/>
+                                <field name="auth_passw" required="1"/>
+                                <field name="token_end" readonly="1"/>
+                                <field name="api_auth_type" readonly="1"/>
+                                <field name="api_device_code" readonly="1"/>
+                                <field name="active_status"/>
+                            </list>
+                        </field>
+
+                    </page>
+
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

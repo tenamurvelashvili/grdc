@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="view_prx_payroll_earning_list" model="ir.ui.view">
+            <field name="name">prx.payroll.earning.list</field>
+            <field name="model">prx.payroll.earning</field>
+            <field name="arch" type="xml">
+                <list string="ანაზღაურების კოდები">
+                    <field name="earning" optional="show" width="80"/>
+                    <field name="earning_type" optional="show" width="80"/>
+                    <field name="earning_group" optional="show" width="80"/>
+                    <field name="earning_unit" optional="show" width="80"/>
+                    <field name="record_type" optional="show" width="80"/>
+                    <field name="no_material" optional="show" width="80"/>
+                    <field name="production_base" optional="show" width="80"/>
+                    <field name="tax_report" optional="show" width="80"/>
+                    <field name="salary_type" optional="show" width="80"/>
+                    <field name="code" optional="show" width="80"/>
+                    <field name="report_name" optional="show" width="80"/>
+                </list>
+            </field>
+        </record>
+
+
+        <record id="view_prx_payroll_earning_code_form" model="ir.ui.view">
+            <field name="name">prx.payroll.earning.form</field>
+            <field name="model">prx.payroll.earning</field>
+            <field name="arch" type="xml">
+                <form string="ანაზღაურების კოდი">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="earning"/>
+                                <field name="earning_type"/>
+                                <field name="earning_group"/>
+                                <field name="earning_unit"/>
+                                <field name="record_type"/>
+                                <field name="code"/>
+                                <field name="report_name"/>
+                            </group>
+                            <group>
+                                <field name="tax_report"/>
+                                <field name="no_material"/>
+                                <field name="production_base"/>
+                                <field name="another_income"/>
+                                <field name="salary_type" widget="radio" options="{'horizontal': true}"/>
+                                <field name="bonus"/>
+                                <field name="insurance"/>
+                                <field name="link_insurance_ded" invsble="not insurance" required="insurance"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

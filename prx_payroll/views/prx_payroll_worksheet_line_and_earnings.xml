@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    <record id="view_prx_payroll_worksheet_lines_list" model="ir.ui.view">
+        <field name="name">prx.payroll.worksheet.line.list</field>
+        <field name="model">prx.payroll.worksheet.line</field>
+        <field name="arch" type="xml">
+        <list string="დეტალები">
+            <field name="earning_domain_ids" column_invisible="True"/>
+            <field name="date" optional="show" width="80"/>
+            <field name="earning_id" domain="[('id','in',earning_domain_ids)]" optional="show" width="80"/>
+            <field name="quantity" optional="show" width="80"/>
+            <field name="amount" optional="show" width="80"/>
+            <field name="earning_amount" optional="show" width="80"/>
+            <field name="rate" optional="show" width="80"/>
+            <field name="over_time_earning_rate" optional="show" width="80"/>
+            <field name="over_time_qty" optional="show" width="80"/>
+            <field name="over_time_amount" optional="show" width="80"/>
+            <field name="absence_trans_id" optional="show" width="80"/>
+            <field name="employee_id" optional="show" width="80"/>
+            <field name="worksheet_id" optional="show" width="80"/>
+            <field name="source" optional="show" width="80"/>
+        </list>
+        </field>
+    </record>
+
+    <record id="view_prx_payroll_worksheet_lines_pivot" model="ir.ui.view">
+      <field name="name">prx.payroll.worksheet.line.pivot</field>
+      <field name="model">prx.payroll.worksheet.line</field>
+      <field name="arch" type="xml">
+        <pivot string="ანალიზი">
+          <field name="date" type="row"/>
+          <field name="earning_id" type="row"/>
+          <field name="quantity" type="measure"/>
+          <field name="amount" type="measure"/>
+          <field name="earning_amount" type="measure"/>
+          <field name="over_time_qty" type="measure"/>
+          <field name="over_time_amount" type="measure"/>
+        </pivot>
+      </field>
+    </record>
+
+    <record id="search_prx_payroll_worksheet_line_search" model="ir.ui.view">
+        <field name="name">prx.payroll.worksheet.line.search</field>
+        <field name="model">prx.payroll.worksheet.line</field>
+        <field name="arch" type="xml">
+            <search string="დეტალები">
+                <field name="date" string="თარიღი"/>
+                <field string="ანაზღაურება" name="earning_id" filter_domain="[('earning_id.earning_id.earning','ilike',self)]"/>
+                <field string="თანამშრომელი" name="employee_id" filter_domain="[('employee_id.name','ilike',self)]"/>
+                <field string="ტაბელი" name="worksheet_id" filter_domain="[('worksheet_id.sequence','ilike',self)]"/>
+                <group string="დაჯგუფება">
+                    <filter string="თარიღი" name="group_date" context="{'group_by':'date'}"/>
+                    <filter string="ანაზღაურება" name="group_earning" context="{'group_by':'earning_id'}"/>
+                    <filter string="ტაბელი" name="group_worksheet_id" context="{'group_by':'worksheet_id'}"/>
+                    <filter string="თანამშრომელი" name="group_employee_id" context="{'group_by':'employee_id'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+
+    <record id="view_prx_payroll_worksheet_lines_form" model="ir.ui.view">
+    <field name="name">prx.payroll.worksheet.line.form</field>
+    <field name="model">prx.payroll.worksheet.line</field>
+    <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                     <group>
+                        <field name="earning_domain_ids" invisible="True"/>
+                        <field name="date"/>
+                        <field name="earning_id" domain="[('id','in',earning_domain_ids)]" />
+                        <field name="quantity" />
+                        <field name="amount"/>
+                        <field name="earning_amount" />
+                        <field name="rate" />
+                     </group>
+                     <group>
+                        <field name="over_time_earning_rate"/>
+                        <field name="over_time_qty" />
+                        <field name="over_time_amount" />
+                        <field name="absence_trans_id" />
+                     </group>
+                </group>
+            </sheet>
+        </form>
+    </field>
+    </record>
+
+
+    <record id="view_prx_payroll_worksheet_earning_search" model="ir.ui.view">
+        <field name="name">prx.payroll.worksheet.detail.search</field>
+        <field name="model">prx.payroll.worksheet.detail</field>
+        <field name="arch" type="xml">
+            <search string="ანაზღაურება">
+                <field name="position"/>
+                <field name="earning_id"/>
+                <field name="period_id"/>
+                <field name="worksheet_id"/>
+                <field name="employee_id"/>
+                 <field name="date"/>
+
+                <separator/>
+                <group expand="1">
+                    <filter string="პოზიცია" name="group_position"
+                            context="{'group_by':'position'}"/>
+                    <filter string="ანაზღაურება" name="group_earning"
+                            context="{'group_by':'earning_id'}"/>
+                    <filter string="თარიღი" name="group_date"
+                            context="{'group_by':'date'}"/>
+                    <filter string="თანამშრომელი" name="group_employee_id"
+                            context="{'group_by':'employee_id'}"/>
+                    <filter string="ტაბელი" name="group_worksheet_id"
+                            context="{'group_by':'worksheet_id'}"/>
+                    <filter string="პერიოდი" name="group_period_id"
+                            context="{'group_by':'period_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_prx_payroll_worksheet_earning_list" model="ir.ui.view">
+        <field name="name">prx.payroll.worksheet.detail.list</field>
+        <field name="model">prx.payroll.worksheet.detail</field>
+        <field name="arch" type="xml">
+            <list create="0" delete="0">
+                <field name="position"/>
+                <field name="earning_id"/>
+                <field name="earning_amount"/>
+                <field name="rate"/>
+                <field name="amount"/>
+                <field name="quantity"/>
+                <field name="employee_id"/>
+                <field name="period_id"/>
+                <field name="worksheet_id"/>
+                <field name="date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_prx_payroll_worksheet_detail_pivot" model="ir.ui.view">
+      <field name="name">prx.payroll.worksheet.detail.pivot</field>
+      <field name="model">prx.payroll.worksheet.detail</field>
+      <field name="arch" type="xml">
+        <pivot string="ანაზღაურების ანალიზი">
+          <field name="position" type="row"/>
+          <field name="earning_id" type="row"/>
+          <field name="date" type="col"/>
+          <field name="earning_amount" type="measure"/>
+          <field name="rate" type="measure"/>
+          <field name="amount" type="measure"/>
+          <field name="quantity" type="measure"/>
+        </pivot>
+      </field>
+    </record>
+
+    </data>
+</odoo>

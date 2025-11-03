@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="prx_payroll_hr_hr_employee_view_form" model="ir.ui.view">
+            <field name="name">prx.payroll.hr.employee.view.form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="priority" eval="300"/>
+            <field name="arch" type="xml">
+                <data>
+                    <div name="button_box" position="inside">
+                        <button name="action_open_worksheets"
+                                class="oe_stat_button"
+                                icon="fa-book"
+                                type="object"
+                        >
+                            <span class="o_stat_text" title="Tabels">
+                                ტაბელები
+                            </span>
+
+                        </button>
+                    </div>
+                    <div name="button_box" position="inside">
+                        <button name="action_open_position_earning"
+                                class="oe_stat_button"
+                                icon="fa-book"
+                                type="object"
+                        >
+                            <span class="o_stat_text" title="Tabels">
+                                პოზიციის ანაზღაურება
+                            </span>
+
+                        </button>
+                    </div>
+
+                    <xpath expr="//field[@name='name']" position="attributes">
+                        <attribute name="force_save">1</attribute>
+                        <attribute name="readonly">1</attribute>
+                    </xpath>
+
+                    <xpath expr="//field[@name='work_email']" position="before">
+                        <field name="first_name" required="True"/>
+                        <field name="last_name" required="True"/>
+                    </xpath>
+                          <xpath expr="//page[@name='public']" position="inside">
+                          <group string="Earning">
+                              <field name="bonus_category"/>
+                          </group >
+                        <group string="Tax Report">
+                            <field name="county_code" invisible="1"/>
+                            <field name="tax_country" required="1"/>
+                            <field name="tax_category" required="1"/>
+
+                        </group>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+    </data>
+</odoo>

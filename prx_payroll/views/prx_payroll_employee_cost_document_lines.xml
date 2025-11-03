@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+
+        <record id="prx_payroll_employee_cost_document_line_list_view" model="ir.ui.view">
+            <field name="name">prx.payroll.employee.cost.document.line.list</field>
+            <field name="model">prx_payroll.employee.cost.document.line</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="employee_cost_document_id" string="დოკ. დასახელება"/>
+                    <field name="ref_employee_id" string="თანამშრომელი"/>
+                    <field name="ref_cost_center_id" string="დანახარჯთა ცენტრი"/>
+                    <field name="cost_unit_id" string="დანახარჯთა ერთეული"/>
+                    <field name="rate" string="კოეფიციენტი"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="prx_payroll_employee_cost_document_line_search_view" model="ir.ui.view">
+            <field name="name">prx.payroll.employee.cost.document.line.search</field>
+            <field name="model">prx_payroll.employee.cost.document.line</field>
+            <field name="arch" type="xml">
+                <search string="Courses">
+                    <field name="employee_cost_document_id" string="დოკ. დასახელება"/>
+                    <field name="ref_employee_id" string="თანამშრომელი"/>
+                    <field name="ref_cost_center_id" string="დანახარჯთა ცენტრი"/>
+                    <field name="cost_unit_id" string="დანახარჯთა ერთეული"/>
+                    <field name="rate" string="კოეფიციენტი"/>
+                    <group expand="1" string="Group By">
+                        <filter string="თანამშრომელი" name="ref_employee_id" domain="[]"
+                                context="{'group_by':'ref_employee_id'}"/>
+                        <filter string="დანახარჯთა ცენტრი" name="ref_cost_center_id" domain="[]"
+                                context="{'group_by':'ref_cost_center_id'}"/>
+                        <filter string="დანახარჯთა ერთეული" name="cost_unit_id" domain="[]"
+                                context="{'group_by':'cost_unit_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="prx_payroll_employee_cost_document_line_act_window" model="ir.actions.act_window">
+            <field name="name">Employee Cost Document lines</field>
+            <field name="res_model">prx_payroll.employee.cost.document.line</field>
+            <field name="view_mode">list,form,search</field>
+            <field name="view_id" ref="prx_payroll_employee_cost_document_line_list_view"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    There is no examples click here to add new Employee Cost Document.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_prx_rs_employee_users,access_prx_rs_employee_users,model_prx_rs_employee_users,base.group_user,1,1,1,1
+access_prx_rs_service_employee,access_prx_rs_service_employee,model_prx_rs_service_employee,base.group_user,1,1,1,1
+access_prx_rs_employee_wizard,access_prx_rs_employee_wizard,model_prx_rs_employee_wizard,base.group_user,1,1,1,1
+access_prx_rs_employee_editable_wizard,access_prx_rs_employee_editable_wizard,model_prx_rs_employee_editable_wizard,base.group_user,1,1,1,1
+access_prx_rs_employee_request,access_prx_rs_employee_request,model_prx_rs_employee_request,base.group_user,1,1,1,1
+

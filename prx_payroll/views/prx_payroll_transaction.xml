@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_prx_payroll_transaction_search" model="ir.ui.view">
+            <field name="name">prx.payroll.transaction.search</field>
+            <field name="model">prx.payroll.transaction</field>
+            <field name="arch" type="xml">
+                <search string="ტრანზაქციები">
+                    <field name="worksheet_id"/>
+                    <field name="period_id"/>
+                    <field name="employee_id"/>
+                    <field name="creditor"/>
+                    <field name="transaction_type"/>
+
+                    <filter string="დაარქივებული"
+                            name="filter_archived"
+                            domain="[('active', '=', False)]"/>
+
+                    <filter string="ანაზღაურება"
+                            name="filter_earning"
+                            domain="[('transaction_type','=','earning')]"/>
+                    <filter string="დაქვითვა"
+                            name="filter_deduction"
+                            domain="[('transaction_type','=','deduction')]"/>
+                    <filter string="გადასახადი"
+                            name="filter_tax"
+                            domain="[('transaction_type','=','tax')]"/>
+                    <filter string="გადარიცხვა"
+                            name="filter_debit"
+                            domain="[('transaction_type','=','transfer')]"/>
+                    <separator/>
+                    <filter string="დაწყების თარიღი" name="start_date" date="start_date"/>
+                    <filter string="დასრულების თარიღი" name="end_date" date="end_date"/>
+
+                    <group string="Group By">
+                        <filter name="grop_by_tabel" string="ტაბელი" context="{'group_by':'worksheet_id'}"/>
+                        <filter name="grop_by_period" string="პერიოდი" context="{'group_by':'period_id'}"/>
+                        <filter name="grop_by_employee" string="თანამშრომელი" context="{'group_by':'employee_id'}"/>
+                        <filter name="grop_by_creditor" string="კრედიტორი" context="{'group_by':'creditor'}"/>
+                        <filter name="grop_by_transaction" string="ტრანზაქციის ტიპი"
+                                context="{'group_by':'transaction_type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_prx_payroll_transaction_pivot" model="ir.ui.view">
+            <field name="name">prx.payroll.transaction.pivot</field>
+            <field name="model">prx.payroll.transaction</field>
+            <field name="arch" type="xml">
+                <pivot string="Payroll Transactions" sample="1">
+                    <field name="organization_unit_id" type="row"/>
+                    <field name="combined_employee_info" type="row"/>
+                    <field name="period_id" type="col"/>
+                    <field name="transaction_type_rank" type="col" invisible="1"/>
+                    <field name="transaction_type_label" type="col" string="Transaction Type"/>
+                    <field name="report_name" type="col"/>
+                    <field name="amount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="view_prx_payroll_transaction_list" model="ir.ui.view">
+            <field name="name">prx.payroll.transaction.list</field>
+            <field name="model">prx.payroll.transaction</field>
+            <field name="arch" type="xml">
+                <list string="Payroll Transactions">
+                    <header>
+                        <button name="action_open_transfer_wizard" type="object" string="ბანკში გადარიცხვა" display="always" class="btn btn-primary" />
+                        <button name="action_close_transactions" type="object" string="გადარიცხვა" display="always" class="btn btn-primary"/>
+                    </header>
+                    <field name="sequence" optional="show" width="80"/>
+                    <field name="worksheet_id" optional="show" width="80"/>
+                    <field name="period_id" optional="show" width="80"/>
+                    <field name="employee_id" optional="show" width="80"/>
+                    <field name="code" optional="show" width="80"/>
+                    <field name="amount" optional="show" width="80"/>
+                    <field name="transferred" optional="show" width="80"/>
+                    <field name="transaction_type" optional="show" width="80"/>
+                    <field name="position_id" optional="show" width="80"/>
+                    <field name="organization_unit_id" optional="show" width="80"/>
+                    <field name="earning_id" optional="show" width="80"/>
+                    <field name="tax_id" optional="show" width="80"/>
+                    <field name="deduction_id" optional="show" width="80"/>
+                    <field name="personal_number" optional="show" width="80"/>
+                    <field name="tax_proportion" optional="show" width="80"/>
+                    <field name="earning_proportion" optional="show" width="80"/>
+                    <field name="pension_proportion" optional="show" width="80"/>
+                    <field name="include_tax_base" optional="show" width="80"/>
+                    <field name="start_date" optional="show" width="80"/>
+                    <field name="end_date" optional="show" width="80"/>
+                    <field name="earning_unit" optional="show" width="80"/>
+                    <field name="qty" optional="show" width="80"/>
+                    <field name="rate" optional="show" width="80"/>
+                    <field name="position_earning_id" optional="show" width="80"/>
+                    <field name="exchange_rate" optional="show" width="80"/>
+                    <field name="combined_employee_info" optional="show" width="80"/>
+                    <field name="creditor" optional="show" width="80"/>
+                    <field name="report_name" optional="show" width="80"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_prx_payroll_transaction_form" model="ir.ui.view">
+            <field name="name">prx.payroll.transaction.form</field>
+            <field name="model">prx.payroll.transaction</field>
+            <field name="arch" type="xml">
+                <form string="ტრანზაქციები">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="sequence"/>
+                                <field name="worksheet_id"/>
+                                <field name="period_id"/>
+                                <field name="employee_id"/>
+                                <field name="personal_number"/>
+                                <field name="code"/>
+                                <field name="amount"/>
+                                <field name="transferred"/>
+                                <field name="transaction_type"/>
+                                <field name="position_id"/>
+                                <field name="organization_unit_id"/>
+                                <field name="earning_id"/>
+                                <field name="tax_id"/>
+                                <field name="deduction_id"/>
+                                <field name="include_tax_base"/>
+                                <field name="start_date"/>
+                                <field name="end_date"/>
+                            </group>
+                            <group>
+                                <field name="tax_proportion"/>
+                                <field name="earning_proportion" />
+                                <field name="pension_proportion"/>
+                                <field name="earning_unit"/>
+                                <field name="qty"/>
+                                <field name="rate"/>
+                                <field name="position_earning_id"/>
+                                <field name="employee_tax_id"/>
+                                <field name="employee_deduction_id"/>
+                                <field name="exchange_rate"/>
+                                <field name="combined_employee_info"/>
+                                <field name="creditor"/>
+                                <field name="report_name"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

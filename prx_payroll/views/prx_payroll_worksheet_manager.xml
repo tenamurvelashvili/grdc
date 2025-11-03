@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_prx_payroll_worksheet_manager_tree" model="ir.ui.view">
+            <field name="name">prx.payroll.worksheet.manager.tree</field>
+            <field name="model">prx.payroll.worksheet.manager</field>
+            <field name="arch" type="xml">
+                <list string="ტაბელის აღმრიცხველი">
+                    <field name="worksheet_manager_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_prx_payroll_worksheet_manager_form" model="ir.ui.view">
+            <field name="name">prx.payroll.worksheet.manager.form</field>
+            <field name="model">prx.payroll.worksheet.manager</field>
+            <field name="arch" type="xml">
+                <form string="Worksheet Manager">
+                    <sheet>
+
+                        <group>
+                            <field name="worksheet_manager_id"/>
+                        </group>
+                        <notebook>
+                            <page string="თანამშრომელი">
+                                <button name="action_open_manager_lines" type="object" string="თანამშრომლის დამატება" icon="fa-plus"/>
+                                <field name="line_ids">
+                                    <list editable="bottom">
+                                        <field name="employee_id"/>
+                                        <field name="position_id" readonly="1"/>
+                                        <field name="department" readonly="1"/>
+                                        <field name="active_contract" readonly="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_prx_payroll_worksheet_manager_line_list" model="ir.ui.view">
+            <field name="name">prx.payroll.worksheet.manager.line.list</field>
+            <field name="model">prx.payroll.worksheet.manager.line</field>
+            <field name="arch" type="xml">
+                <list>
+                    <header>
+                    </header>
+                    <field name="employee_id"/>
+                    <field name="position_id"/>
+                    <field name="department"/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

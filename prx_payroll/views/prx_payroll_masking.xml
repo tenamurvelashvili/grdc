@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_prx_payroll_masking_list" model="ir.ui.view">
+            <field name="name">prx.payroll.masking.list</field>
+            <field name="model">prx_payroll.masking</field>
+            <field name="arch" type="xml">
+                <list string="მონაცემების შენიღბვის ინფორმაცია"  create="False" delete="False" edit="False">
+                    <field name="name" width="80"/>
+                    <field name="create_date" width="80"/>
+                    <field name="create_uid" width="80"/>
+                    <field name="write_date" width="80"/>
+                    <field name="write_uid" width="80"/>
+                </list>
+            </field>
+        </record>
+        <record id="prx_payroll_masking_act_window" model="ir.actions.act_window">
+            <field name="name">მონაცემების შენიღბვის ინფორმაცია</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">prx_payroll.masking</field>
+            <field name="view_mode">list,search</field>
+        </record>
+
+
+        <record id="action_call_mask_employee_info" model="ir.actions.server">
+            <field name="name">Call Mask Employee Info</field>
+            <field name="model_id" ref="prx_payroll.model_prx_payroll_masking"/>
+            <field name="state">code</field>
+            <field name="code">
+                model.action_mask_employee_info()
+            </field>
+        </record>
+
+        <record id="action_mask_payroll_info" model="ir.actions.server">
+            <field name="name">Call Mask Employee payroll Info</field>
+            <field name="model_id" ref="prx_payroll.model_prx_payroll_masking"/>
+            <field name="state">code</field>
+            <field name="code">
+                model.action_mask_payroll_info()
+            </field>
+        </record>
+
+    </data>
+</odoo>

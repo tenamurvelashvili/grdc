@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="time_off_code_rest_day" model="prx.time.off.code">
+        <field name="code">დ</field>
+        <field name="name">დასვენება / უქმე დღეები</field>
+    </record>
+    <record id="time_off_code_paid" model="prx.time.off.code">
+        <field name="code">ა / შ</field>
+        <field name="name">ანაზღაურებადი შვებულება</field>
+    </record>
+    <record id="time_off_code_unpaid" model="prx.time.off.code">
+        <field name="code">უ / შ</field>
+        <field name="name">ანაზღაურების გარეშე შვებულება</field>
+    </record>
+    <record id="time_off_code_paid_maternity" model="prx.time.off.code">
+        <field name="code">დ / შ - ა</field>
+        <field name="name">დეკრეტული შვებულება - ანაზღაურებადი</field>
+    </record>
+    <record id="time_off_code_unpaid_maternity" model="prx.time.off.code">
+        <field name="code">დ / შ - უ</field>
+        <field name="name">დეკრეტული შვებულება - ანაზღაურების გარეშე</field>
+    </record>
+    <record id="time_off_code_sick" model="prx.time.off.code">
+        <field name="code">ს / ფ</field>
+        <field name="name">საავადმყოფო ფურცელი</field>
+    </record>
+    <record id="time_off_code_absence" model="prx.time.off.code">
+        <field name="code">გ</field>
+        <field name="name">გაცდენა</field>
+    </record>
+</odoo>

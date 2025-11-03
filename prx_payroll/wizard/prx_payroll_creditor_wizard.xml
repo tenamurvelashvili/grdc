@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_prx_payroll_creditor_wizard_form" model="ir.ui.view">
+            <field name="name">prx.payroll.creditor.reports.wizard.form</field>
+            <field name="model">prx.payroll.creditor.reports</field>
+            <field name="arch" type="xml">
+                <form string="კრედიტორის რეპორტი">
+                    <sheet>
+                        <group>
+                            <field name="period_id"/>
+                            <field name="transactions_creditors" invisible="1"/>
+                            <field name="creditor" domain="[('id','in',transactions_creditors)]"/>
+                            <field name="file_name" invisible="1"/>
+
+                            <field name="file_download" filename="file_name" widget="download"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Generate" type="object" name="generate_creditor_report"
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

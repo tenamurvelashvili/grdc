@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="prx_payroll_dashboard_warning_employee_without_contract" model="prx.payroll.dashboard.warning">
+            <field name="name">Employees Without Running Contracts</field>
+            <field name="country_id" eval="False"/>
+            <field name="evaluation_code">
+# Retrieve employees:
+# - with no open contract, and date_end in the past
+# - with no contract, and not green draft contract
+employees_without_contracts = self.env['hr.employee']
+all_employees = self.env['hr.employee'].search([
+    ('employee_type', '=', 'employee'),
+    ('company_id', 'in', self.env.companies.ids),
+])
+today = date.today()
+for employee in all_employees:
+    contract = employee.contract_id.sudo()
+    if contract and contract.date_end and contract.date_end &lt; today:
+        employees_without_contracts += employee
+    elif not contract:
+        existing_draft_contract = self.env['hr.contract'].search([
+            ('employee_id', '=', employee.id),
+            ('company_id', '=', employee.company_id.id),
+            ('state', '=', 'draft'),
+            ('kanban_state', '=', 'done'),
+        ])
+        if not existing_draft_contract:
+            employees_without_contracts += employee
+if employees_without_contracts:
+    warning_count = len(employees_without_contracts)
+    warning_records = employees_without_contracts
+            </field>
+        </record>
+
+        <record id="hr_payroll_dashboard_warning_employee_with_different_company_on_contract" model="prx.payroll.dashboard.warning">
+            <field name="name">Employee whose contracts and company are differents</field>
+            <field name="country_id" eval="False"/>
+            <field name="evaluation_code">
+employee_with_different_company_on_contract = self.env['hr.employee']
+all_employees = self.env['hr.employee'].search([
+    ('employee_type', '=', 'employee'),
+    ('company_id', 'in', self.env.companies.ids),
+])
+contracts = self.sudo().env['hr.contract'].search([
+    ('state', 'in', ['draft', 'open']),
+    ('employee_id', 'in', all_employees.ids),
+])
+for contract in contracts:
+    if contract.employee_id.company_id != contract.company_id:
+        employee_with_different_company_on_contract |= contract.employee_id
+if employee_with_different_company_on_contract:
+    warning_count = len(employee_with_different_company_on_contract)
+    warning_records = employee_with_different_company_on_contract
+            </field>
+        </record>
+
+        <record id="hr_payroll_dashboard_warning_new_contracts" model="prx.payroll.dashboard.warning">
+            <field name="name">New Contracts</field>
+            <field name="country_id" eval="False"/>
+            <field name="evaluation_code">
+new_contracts = self.env['hr.contract'].search([
+    ('state', '=', 'draft'),
+    ('employee_id', '!=', False),
+    ('kanban_state', '=', 'normal')])
+if new_contracts:
+    warning_count = len(new_contracts)
+    warning_records = new_contracts
+            </field>
+        </record>
+
+        <record id="hr_payroll_dashboard_warning_employee_without_identification" model="prx.payroll.dashboard.warning">
+            <field name="name">Employees Without Identification Number</field>
+            <field name="country_id" eval="False"/>
+            <field name="evaluation_code">
+employees_wo_id = self.env['hr.employee'].search([
+    ('identification_id', '=', False),
+])
+if employees_wo_id:
+    warning_count = len(employees_wo_id)
+    warning_records = employees_wo_id
+            </field>
+        </record>
+
+        <record id="hr_payroll_dashboard_warning_employee_without_bank_account" model="prx.payroll.dashboard.warning">
+            <field name="name">Employees Without Bank account Number</field>
+            <field name="country_id" eval="False"/>
+            <field name="evaluation_code">
+employees_wo_bnk_acc = self.env['hr.employee'].search([
+    ('bank_account_id', '=', False),
+    ('contract_id', '!=', False),
+])
+if employees_wo_bnk_acc:
+    warning_count = len(employees_wo_bnk_acc)
+    warning_records = employees_wo_bnk_acc
+            </field>
+        </record>
+
+<!--ანა გოგუას ლოგიკები-->
+<record id="prx_dashboard_warning_employee_running_no_position_earning" model="prx.payroll.dashboard.warning">
+    <field name="name">Employees With Running Contract But No Active Position Earning</field>
+    <field name="country_id" eval="False"/>
+    <field name="evaluation_code">
+today = date.today()
+open_contracts = self.env['hr.contract'].search([('state', '=', 'open')])
+employees = open_contracts.mapped('employee_id')
+target = self.env['hr.employee']
+
+for emp in employees:
+    active_position_earning = self.env['prx.payroll.position.earning'].search_count([
+        ('employee_id', '=', emp.id),
+        ('active', '=', True),
+        ('start_date', '&lt;=', today),
+        '|',
+            ('end_date', '&gt;=', today),
+            ('end_date', '=', False),
+    ])
+    if not active_position_earning:
+        target |= emp
+
+if target:
+    warning_count = len(target)
+    warning_records = target
+    </field>
+</record>
+
+
+<record id="prx_dashboard_warning_position_earning_without_deductions_active" model="prx.payroll.dashboard.warning">
+    <field name="name">Employees With Active Position Earning But No Active Deductions</field>
+    <field name="country_id" eval="False"/>
+    <field name="evaluation_code">
+today = date.today()
+employees = self.env['hr.employee'].search([])
+target = self.env['hr.employee']
+
+for emp in employees:
+    # აქტიური პოზიციის ანაზღაურება
+    earnings = self.env['prx.payroll.position.earning'].search([
+        ('employee_id', '=', emp.id),
+        ('active', '=', True),
+        ('start_date', '&lt;=', today),
+        '|',
+            ('end_date', '>=', today),
+            ('end_date', '=', False),
+    ])
+
+    if not earnings:
+        continue # თუ პოზიციის ანაზღაურება არ აქვს, არ მაინტერესებს
+
+    # აქტიური გადასახადი
+    deductions = self.env['prx.payroll.employee.deduction'].search_count([
+        ('employee_id', '=', emp.id),
+        ('active', '=', True),
+        ('start_date', '&lt;=', today),
+        '|',
+            ('end_date', '>=', today),
+            ('end_date', '=', False),
+    ])
+
+    if deductions == 0:
+        target |= emp
+
+if target:
+    warning_count = len(target)
+    warning_records = target
+    </field>
+</record>
+
+    </data>
+</odoo>

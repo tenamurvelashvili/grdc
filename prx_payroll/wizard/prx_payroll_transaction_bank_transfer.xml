@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_prx_payroll_transaction_transfer_form" model="ir.ui.view">
+        <field name="name">prx.payroll.transaction.transfer.form</field>
+        <field name="model">prx.payroll.transaction.transfer</field>
+        <field name="arch" type="xml">
+            <form string="ტრანზაქციების გადატანა" create="false" edit="true">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="company_id" invisible="1"/>
+                            <field name="period_id" domain="[('company_id','=',company_id)]"/>
+                            <field name="transaction_type" required="1" />
+                            <field name="salary_type" widget="radio" required="1" options="{'horizontal': true}"/>
+                            <field name="bank" widget="radio" required="1" options="{'horizontal': true}"/>
+                            <field name="attach_type" widget="radio" required="1" options="{'horizontal': true}"/>
+                            <field name="file_name" required="attach_type == 'by_file'" invisible="attach_type != 'by_file'"/>
+                        </group>
+                        <group>
+                            <field name="creditor_ids" invisible="transaction_type != 'deduction'" widget="many2many_tags" placeholder="აირჩიე კრედიტორები..."/>
+                            <field name="employee_id" widget="many2many_tags"
+                                   domain="[('company_id','=',company_id)]"
+                                   placeholder="აირჩიე თანამშრომლები..."
+                                   invisible="transaction_type == 'deduction'"
+                            />
+                        </group>
+                    </group>
+
+
+                </sheet>
+
+                <footer>
+                    <button name="generate_transfer_document"
+                            type="object"
+                            string="გადატანა"
+                            class="btn-primary"/>
+
+                    <button string="გაუქმება" class="btn-link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_prx_payroll_transaction_transfer" model="ir.actions.act_window">
+        <field name="name">ტრანზაქციების გადატანა</field>
+        <field name="res_model">prx.payroll.transaction.transfer</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_prx_payroll_transaction_transfer_form"/>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

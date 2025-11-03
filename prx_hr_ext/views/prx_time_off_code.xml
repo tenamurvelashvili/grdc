@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="prx_time_off_code_list" model="ir.ui.view">
+            <field name="name">prx.time.off.code.list</field>
+            <field name="model">prx.time.off.code</field>
+            <field name="arch" type="xml">
+                <list string="შვებულების კოდები" editable="bottom">
+                    <field name="code"/>
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

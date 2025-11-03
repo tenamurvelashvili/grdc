@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <record model="ir.ui.view" id="prx_payroll_periods_list">
+      <field name="name">PRX.Periods</field>
+      <field name="model">prx.payroll.period</field>
+      <field name="arch" type="xml">
+        <list editable="bottom" default_order="start_date">
+            <header>
+                    <button name="generate_period" type="object"  class="btn btn-primary btn-sm" string="პერიოდის გენერაცია" display="always"/>
+            </header>
+          <field name="period" width="80"/>
+          <field name="start_date" width="80"/>
+          <field name="end_date" width="80"/>
+          <field name="payment_date" width="80"/>
+        </list>
+      </field>
+    </record>
+
+  </data>
+</odoo>

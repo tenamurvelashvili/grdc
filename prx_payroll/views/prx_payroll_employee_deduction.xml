@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="prx_payroll_employee_deduction_search" model="ir.ui.view">
+            <field name="name">prx.payroll.employee.deduction.search</field>
+            <field name="model">prx.payroll.employee.deduction</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="employee_id"/>
+                    <field name="identification_number"/>
+                    <field name="deduction_id"/>
+                    <field name="deduction_calc_type"/>
+                    <field name="vendor"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <filter string="აქტიური" name="active"
+                            domain="['|', ('end_date', '=', False), ('end_date', '&gt;=',  (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="archived" string="დაარქივებული" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter string="დაწყების თარიღი" name="start_date" date="start_date"/>
+                    <filter string="დასრულების თარიღი" name="end_date" date="end_date"/>
+                    <group expand="0" string="დაჯგუფება">
+                        <filter name="group_by_employee" string="თანამშრომელი" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_by_deduction" string="დაქვითვა" context="{'group_by': 'deduction_id'}"/>
+                        <filter name="group_by_deduction_selection" string="დაქვითვის ტიპი"
+                                context="{'group_by': 'deduction_calc_type'}"/>
+                        <filter name="group_by_vendor" string="ვენდორი" context="{'group_by': 'vendor'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="prx_payroll_employee_deduction_list" model="ir.ui.view">
+            <field name="name">prx.payroll.employee.deduction.list</field>
+            <field name="model">prx.payroll.employee.deduction</field>
+            <field name="arch" type="xml">
+                <list string="თანამშრომლის დაქვითვა" editable="top">
+                    <header>
+                        <button name="%(action_prx_bulk_update_wizard)d"
+                                string="ჯგუფური რედაქტირება"
+                                type="action"
+                                class="oe_highlight"/>
+                    </header>
+                    <field name="exception" optional="show" width="80"/>
+                    <field name="employee_id" domain="[('id','in',open_contract_ids)]" optional="show" width="80"/>
+                    <field name="identification_number" optional="show" width="80"/>
+                    <field name="deduction_id" optional="show" width="80"/>
+                    <field name="deduction_calc_type" optional="show" width="80"/>
+                    <field name="amount" readonly="deduction_calc_type == 'percentage'" optional="show" width="80"/>
+                    <field name="percentage" readonly="deduction_calc_type == 'fix_amount'" optional="show" width="80"/>
+                    <field name="limit_amount" readonly="deduction_calc_type == 'fix_amount'" optional="show" invisible="1"
+                           width="80"/>
+                    <field name="start_date" optional="show" width="80"/>
+                    <field name="end_date" readonly="is_one_time_period == True" optional="show" width="80"/>
+                    <field name="vendor" required="is_need_creditor" optional="show" width="80"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="prx_payroll_employee_deduction_form" model="ir.ui.view">
+            <field name="name">prx.payroll.employee.deduction.form</field>
+            <field name="model">prx.payroll.employee.deduction</field>
+            <field name="arch" type="xml">
+                <form string="თანამშრომლის დაქვითვა">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id" domain="[('id','in',open_contract_ids)]"/>
+                                <field name="deduction_id"/>
+                                <field name="deduction_calc_type" invisible="True"/>
+                                <field name="amount" readonly="deduction_calc_type == 'percentage'"/>
+                                <field name="percentage" readonly="deduction_calc_type == 'fix_amount'"/>
+                            </group>
+                            <group>
+                                <field name="limit_amount" readonly="deduction_calc_type == 'fix_amount'" invisible="1"/>
+                                <field name="start_date"/>
+                                <field name="end_date" readonly="is_one_time_period == True"/>
+                                <field name="vendor" required="is_need_creditor"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

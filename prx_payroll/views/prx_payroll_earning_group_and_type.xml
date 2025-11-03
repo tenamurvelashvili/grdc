@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <record id="view_prx_payroll_earning_group_list" model="ir.ui.view">
+        <field name="name">prx.payroll.earning.group.list</field>
+        <field name="model">prx.payroll.earning.group</field>
+        <field name="arch" type="xml">
+            <list string="ჯგუფები" editable="bottom">
+                <field name="group" width="80"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_prx_payroll_earning_type_list" model="ir.ui.view">
+    <field name="name">prx.payroll.earning.type.list</field>
+    <field name="model">prx.payroll.earning.type</field>
+    <field name="arch" type="xml">
+        <list string="ტიპები" editable="bottom">
+            <field name="type" width="80"/>
+        </list>
+    </field>
+    </record>
+
+    </data>
+</odoo>

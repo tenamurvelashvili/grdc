@@ -1,0 +1,486 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* prx_rs_employee_service
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-05 11:42+0000\n"
+"PO-Revision-Date: 2025-08-05 11:42+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Language: ka_GE\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__activate_date
+msgid "Activate Date"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__active_status
+msgid "Active"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__auth_id
+msgid "Auth Name"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__auth_passw
+msgid "Auth Password"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__api_auth_type
+msgid "Auth Type"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__birthday
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__birth_date
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__birth_date
+msgid "Birth Date"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.view_prx_rs_employee_editable_wizard_form
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.view_prx_rs_employee_wizard_form
+msgid "Cancel"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__cancel_date
+msgid "Cancel Date"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__tax_country
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__citizen_country_id
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__citizen_country_id
+msgid "Citizen Country"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__citizenship
+msgid "Citizenship"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__company_id
+msgid "Company"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__is_corrected_icon
+msgid "Corrected Icon"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__create_date
+msgid "Create Date"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__create_uid
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__create_uid
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__create_uid
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_wizard__create_uid
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__create_date
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__create_date
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__create_date
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_wizard__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model,name:prx_rs_employee_service.model_prx_rs_employee_request
+msgid "Custom Person from External JSON"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__api_device_code
+msgid "Device Code"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__display_name
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__display_name
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__display_name
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_wizard__display_name
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model,name:prx_rs_employee_service.model_hr_employee
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__employee_id
+msgid "Employee"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model,name:prx_rs_employee_service.model_hr_contract
+msgid "Employee Contract"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__employee_id
+msgid "Employees"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__exit_contract
+msgid "Exit Contract"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__name
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__fullname
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__fullname
+msgid "Full Name"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__gender
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__gender
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__gender
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__gender_txt
+msgid "Gender"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_hr_employee__have_running_contract
+msgid "Have Running Contract"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__id
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__id
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__id
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_wizard__id
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__external_ref
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__id
+msgid "ID"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__is_corrected
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__is_corrected_txt
+msgid "Is Corrected"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__is_foreigner
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__is_foreigner
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__is_foreigner
+msgid "Is Foreigner"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__last_change_date
+msgid "Last Change Date"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__last_change_by
+msgid "Last Changed By"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__write_uid
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__write_uid
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__write_uid
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_wizard__write_uid
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__write_date
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__write_date
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__write_date
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_wizard__write_date
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_users__api_auth_type__oauth
+msgid "OAuth"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__org_fullname
+msgid "Organization Full Name"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__org_tin
+msgid "Organization TIN"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model,name:prx_rs_employee_service.model_prx_rs_employee_editable_wizard
+#: model:ir.model,name:prx_rs_employee_service.model_prx_rs_employee_wizard
+msgid "PRX RS Employee Wizard"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model,name:prx_rs_employee_service.model_prx_rs_service_employee
+msgid "PRX RS Registered Employees"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__private_phone
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__phone
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__phone
+msgid "Phone"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_res_users__prx_res_employee
+msgid "Prx Res Employee"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_hr_employee__rs_employee_id
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__rs_employee_id
+msgid "RS Employee ID"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.view_prx_rs_employee_wizard_form
+msgid "RS Employee Import"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.view_prx_rs_employee_request_form
+msgid "RS Employee Request"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.ui.menu,name:prx_rs_employee_service.menu_prx_rs_employee_request
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.view_prx_rs_employee_request_tree
+msgid "RS Employee Requests"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.ui.menu,name:prx_rs_employee_service.menu_prx_rs_employee_root
+msgid "RS Employees"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__rs_employee_id
+msgid "RS ID"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.prx_rs_info_employee_view_form
+msgid "RS Information"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model,name:prx_rs_employee_service.model_prx_rs_employee_integration
+msgid "RS Integration"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model,name:prx_rs_employee_service.model_prx_rs_employee_users
+msgid "RS User authorisation"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.prx_user_configuration_rs_settings_form
+msgid "RS authorise"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.prx_rs_info_employee_view_form
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.view_prx_rs_employee_request_tree
+msgid "RS გადაგზავნა"
+msgstr "RS გადაგზავნა"
+
+#. module: prx_rs_employee_service
+#: model:ir.actions.act_window,name:prx_rs_employee_service.action_prx_rs_employee_wizard
+msgid "RS თანამშრომლების იმპორტი"
+msgstr "RS თანამშრომლების იმპორტი"
+
+#. module: prx_rs_employee_service
+#: model:ir.ui.menu,name:prx_rs_employee_service.menu_hr_rs_employee_list
+msgid "RS თანამშრომლების სია"
+msgstr "RS თანამშრომლების სია"
+
+#. module: prx_rs_employee_service
+#: model:ir.actions.act_window,name:prx_rs_employee_service.action_prx_payroll_tabel_reports_wizard_act
+msgid "RS რეგისტრირებული თანამშრომლები"
+msgstr "RS რეგისტრირებული თანამშრომლები"
+
+#. module: prx_rs_employee_service
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.view_prx_rs_service_employee_list
+msgid "RS-დან ჩამოტვირთვა"
+msgstr "RS-დან ჩამოტვირთვა"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_hr_employee__rs_employee_status
+msgid "Rs Employee Status"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__status
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__status
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__status
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__status_txt
+msgid "Status"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__suspend_date
+msgid "Suspend Date"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__identification_id
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__tin
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__tin
+msgid "TIN"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__token
+msgid "Token"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__token_end
+msgid "Token End Date"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model,name:prx_rs_employee_service.model_res_users
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_users__user_id
+msgid "User"
+msgstr "მომხმარებელი"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_hr_contract__work_type
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_hr_employee__work_type
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_editable_wizard__work_type
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_request__work_type
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__work_type
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_service_employee__work_type_txt
+msgid "Work Type"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_users__api_auth_type__0
+msgid "basic"
+msgstr ""
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__hr_employee__rs_employee_status__1
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_editable_wizard__status__1
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_request__status__1
+msgid "აქტიური"
+msgstr "აქტიური"
+
+#. module: prx_rs_employee_service
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.view_prx_rs_employee_request_tree
+msgid "გენერირება"
+msgstr "გენერირება"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_wizard__tin
+msgid "თანამშრიმლის საიდენტიფიკაციო ნომერი"
+msgstr "თანამშრიმლის საიდენტიფიკაციო ნომერი"
+
+#. module: prx_rs_employee_service
+#: model:ir.actions.act_window,name:prx_rs_employee_service.action_prx_rs_employee_request
+msgid "თანამშრომლის გადაგზავნა RS ზე"
+msgstr "თანამშრომლის გადაგზავნა RS ზე"
+
+#. module: prx_rs_employee_service
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.view_prx_rs_employee_editable_wizard_form
+msgid "თანამშრომლის ინფორმაცია"
+msgstr "თანამშრომლის ინფორმაცია"
+
+#. module: prx_rs_employee_service
+#: model:ir.actions.act_window,name:prx_rs_employee_service.action_prx_rs_employee_editable_wizard
+msgid "თანამშრომლის რედაქტირების ფორმა"
+msgstr "თანამშრომლის რედაქტირების ფორმა"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_wizard__import_type__tin
+msgid "თანამშრომლის საიდენტიფიკაციო"
+msgstr "თანამშრომლის საიდენტიფიკაციო"
+
+#. module: prx_rs_employee_service
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.view_prx_rs_employee_wizard_form
+msgid "იმპორტი"
+msgstr "იმპორტი"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields,field_description:prx_rs_employee_service.field_prx_rs_employee_wizard__import_type
+msgid "იმპორტის ტიპი"
+msgstr "იმპორტის ტიპი"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_editable_wizard__gender__1
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_request__gender__1
+msgid "მამაკაცი"
+msgstr "მამაკაცი"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__hr_contract__work_type__1
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__hr_employee__work_type__1
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_editable_wizard__work_type__1
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_request__work_type__1
+msgid "ნახევარი განაკვეთი"
+msgstr "ნახევარი განაკვეთი"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__hr_contract__work_type__2
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__hr_employee__work_type__2
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_editable_wizard__work_type__2
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_request__work_type__2
+msgid "სრული განაკვეთი"
+msgstr "სრული განაკვეთი"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_wizard__import_type__full
+msgid "სრული ინფორმაცია"
+msgstr "სრული ინფორმაცია"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_editable_wizard__gender__2
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_request__gender__2
+msgid "ქალი"
+msgstr "ქალი"
+
+#. module: prx_rs_employee_service
+#: model_terms:ir.ui.view,arch_db:prx_rs_employee_service.view_prx_rs_employee_editable_wizard_form
+msgid "შენახვა RS-ზე"
+msgstr "შენახვა RS-ზე"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__hr_employee__rs_employee_status__-1
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_editable_wizard__status__-1
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_request__status__-1
+msgid "შეჩერებული"
+msgstr "შეჩერებული"
+
+#. module: prx_rs_employee_service
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__hr_employee__rs_employee_status__0
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_editable_wizard__status__0
+#: model:ir.model.fields.selection,name:prx_rs_employee_service.selection__prx_rs_employee_request__status__0
+msgid "შეწყვეტილი"
+msgstr "შეწყვეტილი"

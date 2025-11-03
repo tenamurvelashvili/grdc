@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    <record id="view_prx_payroll_worksheet_calculation_list" model="ir.ui.view">
+        <field name="name">prx.payroll.worksheet.calculation.list</field>
+        <field name="model">prx.payroll.worksheet.calculation</field>
+        <field name="arch" type="xml">
+            <list string="Payroll Worksheet Calculations">
+                <field name="period" width="80"/>
+                <field name="worksheet" width="80"/>
+                <field name="calc_type" widget="many2many_tags" width="80"/>
+                <field name="salary_type" width="80"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_prx_payroll_worksheet_calculation_form" model="ir.ui.view">
+        <field name="name">prx.payroll.worksheet.calculation.form</field>
+        <field name="model">prx.payroll.worksheet.calculation</field>
+        <field name="arch" type="xml">
+            <form string="Payroll Worksheet Calculation">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="period" readonly="worksheet"/>
+                            <field name="worksheet_domain" invisible="1"/>
+                            <field name="salary_type" widget="radio" options="{'horizontal': true}"/>
+                            <field name="worksheet" domain="[('id','in',worksheet_domain)]"/>
+                            <field name="calc_type" widget="many2many_checkboxes"/>
+                            <button name="execute_calculation" type="object" string="კალკულაცია" class="btn btn-primary"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    </data>
+</odoo>

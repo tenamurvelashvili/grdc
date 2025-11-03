@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="prx_payroll_employee_tax_search" model="ir.ui.view">
+            <field name="name">prx.payroll.employee.tax.search</field>
+            <field name="model">prx.payroll.employee.tax</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="employee_id"/>
+                    <field name="identification_number"/>
+                    <field name="tax"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <filter string="Active" name="active"
+                            domain="['|', ('end_date', '=', False), ('end_date', '&gt;=',  (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="archived" string="დაარქივებული" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter string="დაწყების თარიღი" name="start_date" date="start_date"/>
+                    <filter string="დასრულების თარიღი" name="end_date" date="end_date"/>
+                    <group expand="0" string="დაჯგუფება">
+                        <filter name="group_by_employee" string="თანამშრომელი" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_by_tax" string="გადასახადი" context="{'group_by': 'tax'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="prx_payroll_employee_tax_list" model="ir.ui.view">
+            <field name="name">prx.payroll.employee.tax.list</field>
+            <field name="model">prx.payroll.employee.tax</field>
+            <field name="arch" type="xml">
+                <list string="თანამშრომლის გადასახადი" editable="top">
+                    <header>
+                        <button name="%(action_prx_bulk_update_wizard)d"
+                                string="ჯგუფური რედაქტირება"
+                                type="action"
+                                class="oe_highlight"/>
+                    </header>
+                    <field name="exception" optional="show" width="80"/>
+                    <field name="employee_id" domain="[('id','in',open_contract_ids)]" optional="show" width="80"/>
+                    <field name="identification_number" optional="show" width="80"/>
+                    <field name="tax" options="{'no_quick_create': False,'no_create_edit': False}" optional="show" width="80"/>
+                    <field name="start_date" optional="show" width="80"/>
+                    <field name="end_date" optional="show" width="80"/>
+                    <field name="used_tax_amount" optional="show" width="80"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="prx_payroll_employee_tax_form" model="ir.ui.view">
+            <field name="name">prx.payroll.employee.tax.form</field>
+            <field name="model">prx.payroll.employee.tax</field>
+            <field name="arch" type="xml">
+                <form string="Worker Tax">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id" domain="[('id','in',open_contract_ids)]"/>
+                                <field name="tax" options="{'no_quick_create': False,'no_create_edit': False}"/>
+                                <field name="start_date"/>
+                            </group>
+                            <group>
+                                <field name="end_date"/>
+                                <field name="used_tax_amount"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

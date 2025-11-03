@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_prx_payroll_period_year_wizard_form" model="ir.ui.view">
+            <field name="name">prx.payroll.period.year.wizard.form</field>
+            <field name="model">prx.payroll.period.year</field>
+            <field name="arch" type="xml">
+                <form string="პერიოდის გენერაცია">
+                    <group>
+                        <field name="year" widget="char"/>
+                    </group>
+                    <footer>
+                        <button string="Generate" type="object" name="generate_period_with_year" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_prx_payroll_period_year_wizard" model="ir.actions.act_window">
+            <field name="name">პერიოდის გენერაცია</field>
+            <field name="res_model">prx.payroll.period.year</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

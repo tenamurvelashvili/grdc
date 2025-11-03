@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="prx_payroll_periods_action" model="ir.actions.act_window">
+            <field name="name">პერიოდი</field>
+            <field name="res_model">prx.payroll.period</field>
+            <field name="view_mode">list</field>
+        </record>
+
+        <record id="prx_action_payroll_recourse_calendar" model="ir.actions.server">
+            <field name="name">შექმენი ორგანიზაციის კალენდარი</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="resource.model_resource_calendar"/>
+            <field name="binding_model_id" ref="resource.model_resource_calendar"/>
+            <field name="binding_view_types">list</field>
+            <field name="code">
+                if records:
+                action = records.create_organisation_calendar()
+            </field>
+        </record>
+
+        <record id="prx_payroll_earning_group_action" model="ir.actions.act_window">
+            <field name="name">ანაზღაურების ჯგუფი</field>
+            <field name="res_model">prx.payroll.earning.group</field>
+            <field name="view_mode">list</field>
+        </record>
+
+        <record id="prx_payroll_earning_type_action" model="ir.actions.act_window">
+            <field name="name">ანაზღაურების ტიპი</field>
+            <field name="res_model">prx.payroll.earning.type</field>
+            <field name="view_mode">list</field>
+        </record>
+
+        <record id="prx_payroll_earning_action" model="ir.actions.act_window">
+            <field name="name">ანაზღაურები კოდები</field>
+            <field name="res_model">prx.payroll.earning</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="prx_payroll_tax_action" model="ir.actions.act_window">
+            <field name="name">გადასახადები</field>
+            <field name="res_model">prx.payroll.tax</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="prx_payroll_deduction_action" model="ir.actions.act_window">
+            <field name="name">დაქვითვები</field>
+            <field name="res_model">prx.payroll.deduction</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="prx_payroll_employee_deduction_action" model="ir.actions.act_window">
+            <field name="name">თანამშრომლის დაქვითვა</field>
+            <field name="res_model">prx.payroll.employee.deduction</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="prx_payroll.prx_payroll_employee_deduction_search"/>
+            <field name="context">{'search_default_active': 1}</field>
+        </record>
+
+        <record id="prx_payroll_employee_tax_action" model="ir.actions.act_window">
+            <field name="name">თანამშრომლის გადასახადი</field>
+            <field name="res_model">prx.payroll.employee.tax</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="prx_payroll.prx_payroll_employee_tax_search"/>
+            <field name="context">{'search_default_active': 1}</field>
+        </record>
+
+        <record id="prx_payroll_position_earning_action" model="ir.actions.act_window">
+            <field name="name">თანამშრომლის პოზიციის ანაზღაურება</field>
+            <field name="res_model">prx.payroll.position.earning</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="prx_payroll.view_prx_payroll_position_earning_search"/>
+            <field name="context">{'search_default_active': 1}</field>
+        </record>
+
+        <record id="action_prx_sequence_generation" model="ir.actions.act_window">
+            <field name="name">მიმდევრობის გენერირება</field>
+            <field name="res_model">prx.sequence.generation</field>
+            <field name="view_mode">list,form</field>
+            <field name="target">current</field>
+        </record>
+
+        <record id="prx_payroll_worksheet_action" model="ir.actions.act_window">
+            <field name="name">ტაბელები</field>
+            <field name="res_model">prx.payroll.worksheet</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[]</field>
+            <field name="search_view_id" ref="prx_payroll.view_prx_payroll_worksheet_search"/>
+            <field name="context">{'search_default_open_status': 1}</field>
+        </record>
+
+        <record id="action_prx_worksheet_calculation" model="ir.actions.act_window">
+            <field name="name">კალკულაცია</field>
+            <field name="res_model">prx.payroll.worksheet.calculation</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_prx_worksheet_line_act_window" model="ir.actions.act_window">
+            <field name="name">დეტალები</field>
+            <field name="res_model">prx.payroll.worksheet.line</field>
+            <field name="view_mode">list,pivot,form</field>
+            <field name="search_view_id" ref="prx_payroll.search_prx_payroll_worksheet_line_search"/>
+        </record>
+
+        <record id="action_prx_payroll_worksheet_detail" model="ir.actions.act_window">
+            <field name="name">ანაზღაურება</field>
+            <field name="res_model">prx.payroll.worksheet.detail</field>
+            <field name="view_mode">list,pivot</field>
+            <field name="context">{'create': False,'edit': False,'delete': False}</field>
+            <field name="search_view_id" ref="prx_payroll.view_prx_payroll_worksheet_earning_search"/>
+        </record>
+
+        <record id="action_prx_payroll_import" model="ir.actions.act_window">
+            <field name="name">Import Excel</field>
+            <field name="res_model">prx.payroll.import.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="prx_payroll_employee_tax_import_action" model="ir.actions.act_window">
+            <field name="name">თანამშრომლის გადასახადების იმპორტი</field>
+            <field name="res_model">prx.payroll.employee.tax.import</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="prx_payroll.prx_payroll_employee_tax_search_import"/>
+            <field name="context">{'create': False}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ჩანაწერები ვერ მოიძებნა
+                </p>
+            </field>
+        </record>
+
+        <record id="action_employee_deduction_import" model="ir.actions.act_window">
+            <field name="name">თანამშრომლის დაქვითების იმპორტი</field>
+            <field name="res_model">prx.payroll.employee.deduction.import</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="prx_payroll.prx_payroll_employee_deduction_search_import"/>
+            <field name="context">{'create': False}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ჩანაწერები ვერ მოიძებნა
+                </p>
+            </field>
+        </record>
+
+        <record id="action_employee_position_import" model="ir.actions.act_window">
+            <field name="name">თანამშრომლის ანაზღაურების იმპორტი</field>
+            <field name="res_model">prx.payroll.position.earning.import</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="prx_payroll.view_prx_payroll_position_earning_search_import"/>
+            <field name="context">{'create': False}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ჩანაწერები ვერ მოიძებნა
+                </p>
+            </field>
+        </record>
+
+        <record id="prx_payroll_transaction_action" model="ir.actions.act_window">
+            <field name="name">ტრანზაქციები</field>
+            <field name="res_model">prx.payroll.transaction</field>
+            <field name="view_mode">list,pivot,form</field>
+            <field name="search_view_id" ref="prx_payroll.view_prx_payroll_transaction_search"/>
+            <field name="context">{'create': False,'edit': False,'search_default_grop_by_period':
+                1,'search_default_grop_by_employee': 1}
+            </field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ჩანაწერები ვერ მოიძებნა
+                </p>
+            </field>
+        </record>
+
+        <record id="action_prx_payroll_worksheet_manager" model="ir.actions.act_window">
+            <field name="name">ტაბელის აღმრიცხველი</field>
+            <field name="res_model">prx.payroll.worksheet.manager</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ჩანაწერები ვერ მოიძებნა
+                </p>
+            </field>
+        </record>
+
+        <record id="action_prx_payroll_report_wizard" model="ir.actions.act_window">
+            <field name="name">სახელფასო უწყისის რეპორტი</field>
+            <field name="res_model">prx.payroll.report</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_prx_payroll_report_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+        <record id="action_prx_payroll_declaration_wizard" model="ir.actions.act_window">
+            <field name="name">საშემოსავლოს დეკლარაციის რეპორტი</field>
+            <field name="res_model">prx.payroll.declaration.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_prx_payroll_declaration_wizard_form"/>
+        </record>
+
+
+        <record id="action_prx_payroll_bank_reports_wizard_act" model="ir.actions.act_window">
+            <field name="name">ბანკების რეპორტი</field>
+            <field name="res_model">prx.payroll.bank.reports</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_prx_payroll_bank_wizard_form"/>
+        </record>
+
+        <record id="action_prx_payroll_transaction_reports_wizard_act" model="ir.actions.act_window">
+            <field name="name">ტრანზაქციების რეპორტი</field>
+            <field name="res_model">prx.payroll.transaction.reports</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_prx_payroll_transaction_wizard_form"/>
+        </record>
+
+        <record id="action_prx_payroll_tabel_reports_wizard_act" model="ir.actions.act_window">
+            <field name="name">ტაბელის რეპორტი</field>
+            <field name="res_model">prx.payroll.tabel.reports</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_prx_payroll_tabel_wizard_form"/>
+        </record>
+
+
+        <record id="action_prx_payroll_pension_alimony_reports_wizard_act" model="ir.actions.act_window">
+            <field name="name">საპენსიო/ალიმენტის რეპორტი</field>
+            <field name="res_model">prx.payroll.pension.alimony.reports</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_prx_payroll_pension_alimony_wizard_form"/>
+        </record>
+
+        <record id="action_prx_payroll_creditor_reports_wizard_act" model="ir.actions.act_window">
+            <field name="name">კრედიტორის რეპორტი</field>
+            <field name="res_model">prx.payroll.creditor.reports</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_prx_payroll_creditor_wizard_form"/>
+        </record>
+
+        <record id="view_prx_payroll_transaction_cost_act_window" model="ir.actions.act_window">
+            <field name="name">ხელფასის ტრანზაქციები ხარჯებად</field>
+            <field name="res_model">prx.payroll.transaction.cost.report</field>
+            <field name="view_mode">list</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+
+                </p>
+            </field>
+        </record>
+
+        <record id="action_prx_payroll_amount_calculator_wizard" model="ir.actions.act_window">
+            <field name="name">გროსის კალკულატორი</field>
+            <field name="res_model">prx.payroll.amount.calculator.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="action_payroll_dashboard" model="ir.actions.client">
+            <field name="name">Payroll Dashboard</field>
+            <field name="tag">PayrollDashboard</field>
+            <field name="target">main</field>
+        </record>
+
+        <record id="action_prx_payroll_dashboard_warning" model="ir.actions.act_window">
+            <field name="name">Payroll Dashboard Warnings</field>
+            <field name="res_model">prx.payroll.dashboard.warning</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="prx_payroll_dashboard_warning_view_search"/>
+        </record>
+
+        <record id="action_prx_payroll_bonus_category" model="ir.actions.act_window">
+            <field name="name">ბონუსის კატეგორია</field>
+            <field name="res_model">prx.payroll.bonus.category</field>
+            <field name="view_mode">list</field>
+        </record>
+
+
+    </data>
+</odoo>

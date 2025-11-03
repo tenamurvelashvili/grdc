@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_prx_payroll_transaction_cost_search" model="ir.ui.view">
+            <field name="name">prx.payroll.transaction.cost.search</field>
+            <field name="model">prx.payroll.transaction.cost.report</field>
+            <field name="arch" type="xml">
+                <search string="ტრანზაქციები">
+                    <field name="worksheet_id"/>
+                    <field name="period_id"/>
+                    <field name="employee_id"/>
+                    <field name="transaction_type"/>
+                    <field name="cost_center_id"/>
+                    <field name="cost_unit_id"/>
+                    <filter string="დაარქივებული"
+                            name="filter_archived"
+                            domain="[('active', '=', False)]"/>
+
+                    <filter string="ანაზღაურება"
+                            name="filter_earning"
+                            domain="[('transaction_type','=','earning')]"/>
+                    <filter string="დაქვითვა"
+                            name="filter_deduction"
+                            domain="[('transaction_type','=','deduction')]"/>
+                    <filter string="გადასახადი"
+                            name="filter_tax"
+                            domain="[('transaction_type','=','tax')]"/>
+                    <filter string="გადარიცხვა"
+                            name="filter_debit"
+                            domain="[('transaction_type','=','transfer')]"/>
+                    <separator/>
+                    <filter string="დაწყების თარიღი" name="start_date" date="start_date"/>
+                    <filter string="დასრულების თარიღი" name="end_date" date="end_date"/>
+
+                    <group string="Group By">
+                        <filter name="grop_by_tabel" string="ტაბელი" context="{'group_by':'worksheet_id'}"/>
+                        <filter name="grop_by_cost_center" string="დანახარჯთა ცენტრი"
+                                context="{'group_by':'cost_center_id'}"/>
+                        <filter name="grop_by_cost_center" string="დანახარჯთა ერთეული"
+                                context="{'group_by':'cost_unit_id'}"/>
+                        <filter name="grop_by_period" string="პერიოდი" context="{'group_by':'period_id'}"/>
+                        <filter name="grop_by_employee" string="თანამშრომელი" context="{'group_by':'employee_id'}"/>
+                        <filter name="grop_by_transaction" string="ტრანზაქციის ტიპი"
+                                context="{'group_by':'transaction_type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_prx_payroll_transaction_cost_pivot" model="ir.ui.view">
+            <field name="name">prx.payroll.transaction.cost.pivot</field>
+            <field name="model">prx.payroll.transaction.cost.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Payroll Transactions" sample="1">
+                    <field name="organization_unit_id" type="row"/>
+                    <field name="position_id" type="row"/>
+                    <field name="personal_number" type="row"/>
+                    <field name="transaction_type" type="row"/>
+                    <field name="cost_center_id" type="row"/>
+                    <field name="code" type="row"/>
+                    <field name="period_id" type="col"/>
+                    <field name="transaction_type" type="col"/>
+                    <field name="cost_center_id" type="col"/>
+                    <field name="amount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="view_prx_payroll_transaction_cost_list" model="ir.ui.view">
+            <field name="name">prx.payroll.transaction.cost.list</field>
+            <field name="model">prx.payroll.transaction.cost.report</field>
+            <field name="arch" type="xml">
+                <list string="Payroll Transactions">
+                    <field name="sequence" optional="show" width="80"/>
+                    <field name="worksheet_id" optional="show" width="80"/>
+                    <field name="period_id" optional="show" width="80"/>
+                    <field name="employee_id" optional="show" width="80"/>
+                    <field name="code" optional="show" width="80"/>
+                    <field name="amount" optional="show" width="80"/>
+                    <field name="cost_center_id" width="80"/>
+                    <field name="cost_unit_id" width="80"/>
+                    <field name="cost_amount" width="80"/>
+                    <field name="cost_rate" width="80"/>
+                    <field name="transaction_type" optional="show" width="80"/>
+                    <field name="position_id" optional="show" width="80"/>
+                    <field name="organization_unit_id" optional="show" width="80"/>
+                    <field name="earning_id" optional="hide" width="80"/>
+                    <field name="tax_id" optional="hide" width="80"/>
+                    <field name="deduction_id" optional="hide" width="80"/>
+                    <field name="personal_number" optional="show" width="80"/>
+                    <field name="tax_proportion" optional="hide" width="80"/>
+                    <field name="include_tax_base" optional="hide" width="80"/>
+                    <field name="start_date" optional="show" width="80"/>
+                    <field name="end_date" optional="show" width="80"/>
+                    <field name="earning_unit" optional="hide" width="80"/>
+                    <field name="qty" optional="hide" width="80"/>
+                    <field name="rate" optional="hide" width="80"/>
+                    <field name="position_earning_id" optional="hide" width="80"/>
+                    <field name="exchange_rate" optional="hide" width="80"/>
+                    <field name="creditor" optional="show" width="80"/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>

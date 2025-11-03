@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+        <record model="ir.module.category" id="module_category_prx_payroll">
+            <field name="name">Proxima Payroll Security Category</field>
+            <field name="description">Proxima Payroll Security Category</field>
+            <field name="sequence" eval="300"/>
+        </record>
+
+        <record model="res.groups" id="prx_payroll_administrator">
+            <field name="name">PRX Payroll Administrator</field>
+            <field name="category_id" ref="prx_payroll.module_category_prx_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record model="res.groups" id="prx_payroll_worksheet_manager">
+            <field name="name">PRX Worksheet Manager</field>
+            <field name="category_id" ref="prx_payroll.module_category_prx_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+	</data>
+</odoo>

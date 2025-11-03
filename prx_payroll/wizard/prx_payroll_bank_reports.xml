@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_prx_payroll_bank_wizard_form" model="ir.ui.view">
+            <field name="name">prx.payroll.bank.report.wizard.form</field>
+            <field name="model">prx.payroll.bank.reports</field>
+            <field name="arch" type="xml">
+                <form string="Payroll Declaration Report">
+                    <sheet>
+                        <group>
+                            <field name="period_id"/>
+                            <field name="bank"/>
+                            <field name="process_type" widget="radio" options="{'horizontal': true}"/>
+                            <field name="transaction_type" widget="radio" options="{'horizontal': true}"/>
+                            <field name="file_name" invisible="1"/>
+                            <field name="file_download" filename="file_name" widget="download"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Generate" type="object" name="action_generate_bank_reports"
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

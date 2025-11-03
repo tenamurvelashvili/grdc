@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="prx_payroll_res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.prx_payroll</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="15"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Configuration" string='PRX Payroll' name="prx_payroll">
+                    <block title="Sequence" name="prx_payroll">
+
+                        <setting string="მიმდევრობის გენერირება" help="" id="prx_payroll_app_setting">
+                            <button name="prx_payroll.action_prx_sequence_generation" icon="oi-arrow-right"
+                                    type="action"
+                                    string="მიმდევრობის კონფიგურაცია" class="btn btn-primary btn-sm"/>
+                        </setting>
+
+                    </block>
+                    <block title="General" name="prx_payroll_general">
+                        <setting id="prx_pension_insurance_conf" colspan="4" help="საპენსიოს დაზღვევა">
+                            <field name="prx_pension_insurance"/>
+                        </setting>
+                        <setting id="prx_payroll_acc" colspan="4" help="სახელფასო ანგარიში">
+                            <field name="prx_payroll_acc" domain="[('partner_id','=',company_id)]"/>
+                        </setting>
+                        <setting id="prx_close_tabel" colspan="4">
+                            <field name="close_tabel"/>
+                        </setting>
+                        <block title="ბონუსი">
+                            <setting id="prx_bonus_salary" colspan="4" help="ბონუსი">
+                                <field name="bonus_salary"/>
+                            </setting>
+                            <setting id="prx_bonus_terminated_employee" colspan="4">
+                                <field name="prx_bonus_terminated_employee"/>
+                            </setting>
+                            <setting id="prx_base_calculation" colspan="4">
+                                <field name="prx_base_calculation"/>
+                            </setting>
+                        </block>
+                    </block>
+
+                    <block title="ტაბელის სტრიქონების შექმნის კონფიგურაცია" name="prx_payroll">
+
+                        <setting id="prx_manual_conf" colspan="4"
+                                 help="თუ ტაბელის დეტალების source არის Manual არ წაიშლება">
+                            <field name="prx_manual"/>
+                        </setting>
+                        <setting id="prx_system_conf" colspan="4" string="System"
+                                 help="თუ ტაბელის დეტალების source არის System არ წაიშლება">
+                            <field name="prx_system"/>
+                        </setting>
+                        <setting id="prx_earning_conf" colspan="4"
+                                 help="თუ ანაზღაურების კოდი არის გამომუშავებით არ წაიშლება">
+                            <field name="prx_earning"/>
+                        </setting>
+                    </block>
+                    <block title="Masking" name="prx_payroll">
+
+                        <setting string="მონაცემების შენიღბვა" help="" id="prx_payroll_app_setting">
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <div class="mt16" style="display: flex; flex-direction: column; gap:10px;">
+                                        <button name="%(action_call_mask_employee_info)d" icon="oi-key" type="action"
+                                                string="თანამშრომლის პირადი ინფორმაციის შენიღბვა"
+                                                class="btn btn-danger btn-sm"/>
+                                        <span>გაითვალისწინეთ , ამ მოქმედების შესრულების შემდეგ მონაცემების აღდგენა
+                                            შეუძლებელია! არ გამოიყენოთ რეალურ გარემოზე
+                                        </span>
+                                        <button name="%(action_mask_payroll_info)d" icon="oi-key" type="action"
+                                                string="თანამშრომლის სახელფასო ინფორმაციის შენიღბვა"
+                                                class="btn btn-danger btn-sm"/>
+                                        <span>გაითვალისწინეთ , ამ მოქმედების შესრულების შემდეგ მონაცემების აღდგენა
+                                            შეუძლებელია! არ გამოიყენოთ რეალურ გარემოზე
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </setting>
+
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="prx_payroll_res_config_settings_action" model="ir.actions.act_window">
+        <field name="name">Configuration</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'prx_payroll'}</field>
+    </record>
+
+</odoo>

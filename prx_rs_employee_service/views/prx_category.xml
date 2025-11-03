@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <record id="view_prx_payroll_tax_report_category_list" model="ir.ui.view">
+        <field name="name">prx.tax.report.category.list</field>
+        <field name="model">prx.tax.report.category</field>
+        <field name="arch" type="xml">
+            <list string="შემოსავლის მიმღებ პირთა კატეგორიები" editable="bottom">
+                <field name="code" width="80"/>
+                <field name="description" width="80"/>
+            </list>
+        </field>
+    </record>
+
+    </data>
+</odoo>

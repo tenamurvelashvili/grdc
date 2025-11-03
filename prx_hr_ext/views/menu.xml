@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="prx_hr_tabel_reports" name="ტაბელების რეპორტი" action="action_prx_hr_tabel_reports_wizard_act"
+                  parent="hr.hr_menu_hr_reports" sequence="25"/>
+
+        <menuitem
+                id="prx_time_off_code_act_menu_id"
+                action="prx_time_off_code_act_window"
+                name="შვებულების კოდები"
+                parent="hr_holidays.menu_hr_holidays_configuration"
+                groups="hr_holidays.group_hr_holidays_manager"
+                sequence="10"/>
+
+    </data>
+</odoo>

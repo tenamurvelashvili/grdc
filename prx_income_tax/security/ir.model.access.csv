@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_prx_tax_report_country,access_prx_tax_report_country,model_prx_tax_report_country,base.group_user,1,1,1,1
+access_prx_tax_report_category,access_prx_tax_report_category,model_prx_tax_report_category,base.group_user,1,1,1,1
+access_prx_tax_report_earning_type,access_prx_tax_report_earning_type,model_prx_tax_report_earning_type,base.group_user,1,1,1,1
+

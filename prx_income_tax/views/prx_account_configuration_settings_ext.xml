@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+      <field name="name">prx.res.config.settings.inherit.account</field>
+      <field name="model">res.config.settings</field>
+      <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+      <field name="priority" eval="45"/>
+      <field name="arch" type="xml">
+
+        <xpath expr="//block[@name='fiscal_localization_setting_container']" position="before">
+          <block title="Income Taxes" name="income_taxes_setting_container" invisible="not is_root_company">
+            <setting string="Income Taxes" company_dependent="1"
+                     help="Manage country, category &amp; earning-type tax report parameters">
+              <div class="content-group">
+                <div class="mt16">
+                  <div class="mt16" style="display:flex; gap:10px;">
+                    <button name="%(prx_payroll_tax_report_country_action)d" type="action"
+                            string="ქვეყნები" class="btn btn-primary"/>
+                    <button name="%(prx_payroll_tax_category_action)d" type="action"
+                            string="კატეგორიები" class="btn btn-primary"/>
+                    <button name="%(prx_payroll_tax_report_earning_type_action)d" type="action"
+                            string="განაცემის სახე" class="btn btn-primary"/>
+                  </div>
+                </div>
+              </div>
+            </setting>
+          </block>
+        </xpath>
+
+      </field>
+    </record>
+
+  </data>
+</odoo>

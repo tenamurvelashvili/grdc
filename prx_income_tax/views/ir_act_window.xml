@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="prx_payroll_tax_report_country_action" model="ir.actions.act_window">
+            <field name="name">ქვეყნები</field>
+            <field name="res_model">prx.tax.report.country</field>
+            <field name="view_mode">list</field>
+            <field name="search_view_id" ref="view_prx_tax_report_country_search"/>
+        </record>
+
+        <record id="prx_payroll_tax_category_action" model="ir.actions.act_window">
+            <field name="name">კარეგორია</field>
+            <field name="res_model">prx.tax.report.category</field>
+            <field name="view_mode">list</field>
+        </record>
+
+        <record id="prx_payroll_tax_report_earning_type_action" model="ir.actions.act_window">
+            <field name="name">განაცემის სახე</field>
+            <field name="res_model">prx.tax.report.earning.type</field>
+            <field name="view_mode">list</field>
+        </record>
+    </data>
+</odoo>

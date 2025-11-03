@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_prx_payroll_deduction_list" model="ir.ui.view">
+            <field name="name">prx.payroll.deduction.list</field>
+            <field name="model">prx.payroll.deduction</field>
+            <field name="arch" type="xml">
+                <list string="დაქვითვები">
+                    <field name="deduction" optional="show" width="80"/>
+                    <field name="description" optional="show" width="80"/>
+                    <field name="deduction_calc_type" optional="show" width="80"/>
+                    <field name="deduction_base" optional="show" width="80"/>
+                    <field name="reduces_income_tax_base" optional="show" width="80"/>
+                    <field name="alimony" optional="show" width="80"/>
+                    <field name="avanse" optional="show" width="80"/>
+                    <field name="is_limited" optional="show" width="80"/>
+                    <field name="need_creditor" optional="show" width="80"/>
+                    <field name="creditor" optional="show" width="80"/>
+                    <field name="ignor_living_wage" optional="show" width="80"/>
+                    <field name="deduction_order" optional="show" width="80"/>
+                    <field name="code" optional="show" width="80"/>
+                    <field name="report_name" optional="show" width="80"/>
+                    <field name="salary_type" optional="show" width="80"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_prx_payroll_deduction_form" model="ir.ui.view">
+            <field name="name">prx.payroll.deduction.form</field>
+            <field name="model">prx.payroll.deduction</field>
+            <field name="arch" type="xml">
+                <form string="დაქვითვა">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="deduction"/>
+                                <field name="description"/>
+                                <field name="deduction_calc_type"/>
+                                <field name="pension"/>
+                                <field name="deduction_base"
+                                       readonly="pension == True"/>
+                                <field name="reduces_income_tax_base"
+                                       readonly="pension == True"/>
+                                <field name="alimony"/>
+                                <field name="avanse"/>
+                                <field name="report_name"/>
+                                <field name="payment_description"/>
+                            </group>
+                            <group>
+                                <field name="is_limited" invisible="1"/>
+                                <field name="need_creditor"/>
+                                <field name="creditor"/>
+                                <field name="ignor_living_wage" invisible="1"/>
+                                <field name="deduction_order"/>
+                                <field name="code"/>
+                                <field name="salary_type" widget="radio"  options="{'horizontal': true}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

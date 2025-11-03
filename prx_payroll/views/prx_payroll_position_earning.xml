@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="view_prx_payroll_position_earning_search" model="ir.ui.view">
+			<field name="name">prx.payroll.position.earning.search</field>
+			<field name="model">prx.payroll.position.earning</field>
+			<field name="arch" type="xml">
+				<search string="Search Position Earnings">
+					<field name="employee_id"/>
+					<field name="position_id"/>
+					<field name="identification_number"/>
+					<field name="earning_id"/>
+					<field name="start_date"/>
+					<field name="end_date"/>
+					<filter string="აქტიური" name="active"
+					        domain="['|', ('end_date', '=', False), ('end_date', '&gt;=',  (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+					<filter name="archived" string="დაარქივებული" domain="[('active', '=', False)]"/>
+					<separator/>
+					<filter string="დაწყების თარიღი" name="start_date" date="start_date"/>
+					<filter string="დასრულების თარიღი" name="end_date" date="end_date"/>
+					<group expand="0" string="დაჯგუფება">
+						<filter name="group_by_employee" string="თანამშრომელი" context="{'group_by': 'employee_id'}"/>
+						<filter name="group_by_earning" string="ანაზღაურება" context="{'group_by': 'earning_id'}"/>
+						<filter name="group_by_position" string="პოზიცია" context="{'group_by': 'position_id'}"/>
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="prx_payroll_position_earning_list" model="ir.ui.view">
+			<field name="name">prx.payroll.position.earning.list</field>
+			<field name="model">prx.payroll.position.earning</field>
+			<field name="arch" type="xml">
+				<list string="თანამშრომლის პოზიციის ანაზღაურებები" editable="top">
+					<header>
+						<button name="%(action_prx_payroll_position_earning_wizard)d"
+						        string="გამომუშავება"
+						        type="action"
+						        display="always"
+						        class="oe_highlight"/>
+						<button name="%(action_prx_bulk_update_wizard)d"
+						        string="რედაქტირება"
+						        type="action"
+						        class="oe_highlight"/>
+						<button name="%(action_prx_payroll_earning_bonus_wizard)d"
+						        string=" ბონუსი"
+						        type="action"
+						        display="always"
+						        class="oe_highlight"/>
+					</header>
+					<field name="exception" optional="show" width="80"/>
+					<field name="employee_id" domain="[('id','in',open_contract_ids)]" optional="show" width="80"/>
+					<field name="contract_id" domain="[('id','in',contract_ids_domain)]" optional="show" width="80"
+					       options="{'no_quick_create': True,'no_create_edit': True,'classes': {'state': 'open'}}"/>
+					<field name="position_id" optional="show" width="80"/>
+					<field name="identification_number" optional="show" width="80"/>
+					<field name="earning_id" optional="show" width="80"/>
+					<field name="start_date" optional="show" width="80"/>
+					<field name="end_date" optional="show" width="80"/>
+					<field name="amount" optional="show" width="80"/>
+					<field name="insurance_pension_deduction_id" optional="show" width="80"/>
+					<button name="action_open_calculator" string="კალკულატორი" type="object" class="btn-primary"
+					        width="80"/>
+					<field name="currency_id" optional="show" width="80"/>
+				</list>
+			</field>
+		</record>
+
+		<record id="prx_payroll_position_earning_form" model="ir.ui.view">
+			<field name="name">prx.payroll.position.earning.form</field>
+			<field name="model">prx.payroll.position.earning</field>
+			<field name="arch" type="xml">
+				<form string="თანამშრომლის პოზიციის ანაზღაურება">
+					<sheet>
+						<group>
+							<field name="employee_id"/>
+							<field name="contract_id" domain="[('employee_id','=',employee_id),('state','=','open')]"/>
+							<field name="earning_id"/>
+							<field name="start_date"/>
+							<field name="end_date" required="is_one_time_period == True"/>
+							<field name="amount"/>
+							<field name="currency_id"/>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+	</data>
+</odoo>
+

@@ -1,0 +1,241 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* prx_hr_ext
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-05 11:32+0000\n"
+"PO-Revision-Date: 2025-08-05 11:32+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Language: ka_GE\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+
+#. module: prx_hr_ext
+#: model_terms:ir.ui.view,arch_db:prx_hr_ext.view_prx_hr_tabel_wizard_form
+msgid "2025"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__4
+msgid "April"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__8
+msgid "August"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model_terms:ir.ui.view,arch_db:prx_hr_ext.view_prx_hr_tabel_wizard_form
+msgid "Cancel"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__create_uid
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_time_off_code__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__create_date
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_time_off_code__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__12
+msgid "December"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__display_name
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_time_off_code__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__2
+msgid "February"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__file_download
+msgid "File"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__file_name
+msgid "Filename"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model_terms:ir.ui.view,arch_db:prx_hr_ext.view_prx_hr_tabel_wizard_form
+msgid "Generate"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model_terms:ir.ui.view,arch_db:prx_hr_ext.view_prx_hr_tabel_wizard_form
+msgid "HR Tabel Report"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_hr_leave_type__prx_time_off_code_id
+msgid "Holidays Type"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__id
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_time_off_code__id
+msgid "ID"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__1
+msgid "January"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__7
+msgid "July"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__6
+msgid "June"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__write_uid
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_time_off_code__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__write_date
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_time_off_code__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__3
+msgid "March"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__5
+msgid "May"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__11
+msgid "November"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__10
+msgid "October"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model,name:prx_hr_ext.model_prx_hr_tabel_report
+msgid "Period tabel reports wizard"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model.fields.selection,name:prx_hr_ext.selection__prx_hr_tabel_report__month__9
+msgid "September"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model,name:prx_hr_ext.model_hr_leave_type
+msgid "Time Off Type"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model:ir.model,name:prx_hr_ext.model_resource_calendar_attendance
+msgid "Work Detail"
+msgstr ""
+
+#. module: prx_hr_ext
+#: model_terms:ir.actions.act_window,help:prx_hr_ext.prx_time_off_code_act_window
+msgid "აირჩიეთ პირობითი აღნიშვნები ან შექმენით ახალი."
+msgstr "Select conditional tags or create new ones."
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_time_off_code__name
+msgid "აღწერა"
+msgstr "Description"
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__department_ids
+msgid "დეპარტამენტი"
+msgstr "Department"
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__month
+msgid "თვე"
+msgstr "Month"
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_time_off_code__code
+msgid "კოდი"
+msgstr "Code"
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__responsible_person
+msgid "პასუხისმგებელი პირი"
+msgstr "Responsible Person"
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__period_end
+msgid "პერიოდის დასრულება"
+msgstr "Period End"
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__period_start
+msgid "პერიოდის დაწყება"
+msgstr "Period Start"
+
+#. module: prx_hr_ext
+#: model:ir.model,name:prx_hr_ext.model_prx_time_off_code
+msgid "პირობითი აღნიშვნები"
+msgstr "Conditional Tags"
+
+#. module: prx_hr_ext
+#: model:ir.ui.menu,name:prx_hr_ext.prx_hr_tabel_reports
+msgid "ტაბელების რეპორტი"
+msgstr "Timesheet Reports"
+
+#. module: prx_hr_ext
+#: model:ir.actions.act_window,name:prx_hr_ext.action_prx_hr_tabel_reports_wizard_act
+msgid "ტაბელის რეპორტი"
+msgstr "Timesheet Report"
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__leader
+msgid "ქვედანაყოფის ხელმძღვანელი"
+msgstr "Subdepartment Leader"
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__date
+msgid "შედგენის თარიღი"
+msgstr "Report Date"
+
+#. module: prx_hr_ext
+#: model:ir.actions.act_window,name:prx_hr_ext.prx_time_off_code_act_window
+#: model:ir.ui.menu,name:prx_hr_ext.prx_time_off_code_act_menu_id
+#: model_terms:ir.ui.view,arch_db:prx_hr_ext.prx_time_off_code_list
+msgid "შვებულების კოდები"
+msgstr "Time Off Codes"
+
+#. module: prx_hr_ext
+#: model:ir.model.fields,field_description:prx_hr_ext.field_prx_hr_tabel_report__year
+msgid "წელი"
+msgstr "Year"

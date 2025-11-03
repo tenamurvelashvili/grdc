@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="prx_payroll_cost_unit_form_view" model="ir.ui.view">
+            <field name="name">prx_payroll.prx_cost_unit.form</field>
+            <field name="model">prx_payroll.cost_unit</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="sequence" widget="integer"/>
+                                <field name="cost_center"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="prx_payroll_cost_unit_list_view" model="ir.ui.view">
+            <field name="name">prx_payroll.prx_cost_unit.list</field>
+            <field name="model">prx_payroll.cost_unit</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="cost_center"/>
+                    <field name="sequence"/>
+                    <field name="fullname"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="prx_payroll_cost_unit_search_view" model="ir.ui.view">
+            <field name="name">prx_payroll.prx_cost_unit.search</field>
+            <field name="model">prx_payroll.cost_unit</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="sequence"/>
+                    <field name="cost_center"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="prx_payroll_cost_unit_act_window" model="ir.actions.act_window">
+            <field name="name">დანახარჯთა ცენტრი</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">prx_payroll.cost_unit</field>
+            <field name="view_mode">list,form,search</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    There is no examples click here to add new Cost unit.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

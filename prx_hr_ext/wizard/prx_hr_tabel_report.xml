@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_prx_hr_tabel_wizard_form" model="ir.ui.view">
+            <field name="name">prx.hr.tabel.report.wizard.form</field>
+            <field name="model">prx.hr.tabel.report</field>
+            <field name="arch" type="xml">
+                <form string="HR Tabel Report">
+                    <sheet>
+                        <group>
+                            <field name="department_ids" widget="many2many_tags"/>
+                            <field name="year" widget="char" placeholder="2025"/>
+                            <field name="month"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="leader"/>
+                            <field name="responsible_person"/>
+                            <field name="file_name" invisible="1"/>
+                            <field name="file_download" filename="file_name" widget="download"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Generate" type="object" name="action_generate_tabel_report"
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_prx_payroll_report_wizard_form" model="ir.ui.view">
+            <field name="name">prx.payroll.report.form</field>
+            <field name="model">prx.payroll.report</field>
+            <field name="arch" type="xml">
+                <form string="Generate Payroll Report">
+                    <group>
+                        <field name="type"/>
+                        <field name="reports" invisible="type=='pdf'"/>
+                        <field name="language"/>
+                        <field name="worksheet" required="reports=='payslip_xslx'"/>
+                        <field name="file_name" invisible="type=='pdf'"/>
+                        <field name="file_download"
+                               filename="file_name"
+                               widget="binary"
+                               invisible="type=='pdf'"/>
+                    </group>
+                    <footer>
+                        <button name="generate" type="object" string="Generate" class="btn-primary"/>
+                        <button string="Cancel" special="cancel" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_prx_payroll_report_wizard" model="ir.actions.act_window">
+            <field name="name">Generate Payroll Report</field>
+            <field name="res_model">prx.payroll.report</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_prx_payroll_report_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

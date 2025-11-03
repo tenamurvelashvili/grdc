@@ -1,0 +1,1 @@
+from . import prx_hr_tabel_report

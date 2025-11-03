@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_prx_payroll_bonus_category_tree" model="ir.ui.view">
+            <field name="name">prx.payroll.bonus.category.list</field>
+            <field name="model">prx.payroll.bonus.category</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="description"/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

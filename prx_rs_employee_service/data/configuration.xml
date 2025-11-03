@@ -1,0 +1,15 @@
+<odoo noupdate="True">
+    <data>
+
+        <record model="ir.config_parameter" id="prx_rs_employee_service.rs_employee_rect_token_expired_time">
+            <field name="key">prx_rs_employee_service.rs_employee_api_token_expired_time</field>
+            <field name="value">2300</field>
+        </record>
+
+        <record model="ir.config_parameter" id="prx_rs_employee_service.rs_employee_base_url">
+            <field name="key">prx_rs_employee_service.rs_employee_api_base_url</field>
+            <field name="value">https://eapi.rs.ge</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_prx_payroll_tax_list" model="ir.ui.view">
+            <field name="name">prx.payroll.tax.list</field>
+            <field name="model">prx.payroll.tax</field>
+            <field name="arch" type="xml">
+                <list string="გადასახადები">
+                    <field name="tax" optional="show" width="80"/>
+                    <field name="description" optional="show" width="80"/>
+                    <field name="rate_gross" optional="show" width="80"/>
+                    <field name="rate_net" optional="show" width="80"/>
+                    <field name="rate_base" optional="show" width="80"/>
+                    <field name="code" optional="show" width="80"/>
+                    <field name="report_name" optional="show" width="80"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_prx_payroll_tax_form" model="ir.ui.view">
+            <field name="name">prx.payroll.tax.form</field>
+            <field name="model">prx.payroll.tax</field>
+            <field name="arch" type="xml">
+                <form string="გადასახადი">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="tax"/>
+                                <field name="description"/>
+                                <field name="rate_gross"/>
+                                <field name="report_name"/>
+                            </group>
+                            <group>
+                                <field name="rate_net"/>
+                                <field name="rate_base"/>
+                                <field name="code"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_prx_payroll_pension_alimony_wizard_form" model="ir.ui.view">
+            <field name="name">prx.payroll.pension.alimony.reports.wizard.form</field>
+            <field name="model">prx.payroll.pension.alimony.reports</field>
+            <field name="arch" type="xml">
+                <form string="Payroll Tabel Report">
+                    <sheet>
+                        <group>
+                            <field name="period_id"/>
+                            <field name="type"/>
+                            <field name="file_name" invisible="1"/>
+                            <field name="file_download" filename="file_name" widget="download"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Generate" type="object" name="action_generate_report"
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

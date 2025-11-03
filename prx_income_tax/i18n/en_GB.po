@@ -1,0 +1,163 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* prx_income_tax
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-19 01:38+0000\n"
+"PO-Revision-Date: 2025-02-19 01:38+0000\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"Language: en_GB\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#. module: prx_income_tax
+#: model_terms:ir.ui.view,arch_db:prx_income_tax.view_prx_tax_report_country_search
+msgid "Code"
+msgstr ""
+
+#. module: prx_income_tax
+#: model:ir.model.constraint,message:prx_income_tax.constraint_prx_tax_report_category_code_unique
+#: model:ir.model.constraint,message:prx_income_tax.constraint_prx_tax_report_country_code_unique
+#: model:ir.model.constraint,message:prx_income_tax.constraint_prx_tax_report_earning_type_code_unique
+msgid "Code must be unique!"
+msgstr ""
+
+#. module: prx_income_tax
+#: model_terms:ir.ui.view,arch_db:prx_income_tax.view_prx_tax_report_country_search
+msgid "Country"
+msgstr ""
+
+#. module: prx_income_tax
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_category__create_uid
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_country__create_uid
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_earning_type__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: prx_income_tax
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_category__create_date
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_country__create_date
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_earning_type__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: prx_income_tax
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_category__display_name
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_country__display_name
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_earning_type__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: prx_income_tax
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_category__id
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_country__id
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_earning_type__id
+msgid "ID"
+msgstr ""
+
+#. module: prx_income_tax
+#: model_terms:ir.ui.view,arch_db:prx_income_tax.res_config_settings_view_form
+msgid "Income Taxes"
+msgstr ""
+
+#. module: prx_income_tax
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_category__write_uid
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_country__write_uid
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_earning_type__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: prx_income_tax
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_category__write_date
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_country__write_date
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_earning_type__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: prx_income_tax
+#: model_terms:ir.ui.view,arch_db:prx_income_tax.res_config_settings_view_form
+msgid "Manage country, category & earning-type tax report parameters"
+msgstr ""
+
+#. module: prx_income_tax
+#: model:ir.model,name:prx_income_tax.model_prx_tax_report_category
+msgid "Tax report category"
+msgstr ""
+
+#. module: prx_income_tax
+#: model:ir.model,name:prx_income_tax.model_prx_tax_report_earning_type
+msgid "Tax report earning type"
+msgstr ""
+
+#. module: prx_income_tax
+#: model:ir.model,name:prx_income_tax.model_prx_tax_report_country
+msgid "tax report country"
+msgstr ""
+
+#. module: prx_income_tax
+#: model:ir.actions.act_window,name:prx_income_tax.prx_payroll_tax_report_earning_type_action
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_earning_type__description
+#: model_terms:ir.ui.view,arch_db:prx_income_tax.res_config_settings_view_form
+msgid "განაცემის სახე"
+msgstr "Salary Type"
+
+#. module: prx_income_tax
+#: model_terms:ir.ui.view,arch_db:prx_income_tax.view_prx_payroll_tax_report_earning_type_list
+msgid "განაცემის სახეები"
+msgstr "Salary Type"
+
+#. module: prx_income_tax
+#: model:ir.actions.act_window,name:prx_income_tax.prx_payroll_tax_category_action
+msgid "კარეგორია"
+msgstr "Category"
+
+#. module: prx_income_tax
+#: model_terms:ir.ui.view,arch_db:prx_income_tax.res_config_settings_view_form
+msgid "კატეგორიები"
+msgstr "Categories"
+
+#. module: prx_income_tax
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_category__code
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_country__code
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_earning_type__code
+msgid "კოდი"
+msgstr "Code"
+
+#. module: prx_income_tax
+#: model:ir.actions.act_window,name:prx_income_tax.prx_payroll_tax_report_country_action
+#: model_terms:ir.ui.view,arch_db:prx_income_tax.res_config_settings_view_form
+msgid "ქვეყნები"
+msgstr "Countries"
+
+#. module: prx_income_tax
+#: model_terms:ir.ui.view,arch_db:prx_income_tax.view_prx_payroll_tax_report_country_list
+msgid "ქვეყნის ანგარიშგება"
+msgstr "Country Reports"
+
+#. module: prx_income_tax
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_country__country
+msgid "ქვეყნის დასახელება"
+msgstr "Country Name"
+
+#. module: prx_income_tax
+#: model_terms:ir.ui.view,arch_db:prx_income_tax.view_prx_tax_report_country_search
+msgid "ქვეყნის ძიება"
+msgstr "Search Country"
+
+#. module: prx_income_tax
+#: model:ir.model.fields,field_description:prx_income_tax.field_prx_tax_report_category__description
+msgid "შემოსავლის მიმღებ პირთა კატეგორია"
+msgstr "Income Recipient Category"
+
+#. module: prx_income_tax
+#: model_terms:ir.ui.view,arch_db:prx_income_tax.view_prx_payroll_tax_report_category_list
+msgid "შემოსავლის მიმღებ პირთა კატეგორიები"
+msgstr "Income Recipient Categories"
+

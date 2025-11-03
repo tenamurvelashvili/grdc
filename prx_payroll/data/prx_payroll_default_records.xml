@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="calc_type_worksheet" model="prx.calculation.type">
+            <field name="name">ტაბელის შექმნა</field>
+            <field name="code">worksheet</field>
+        </record>
+
+        <record id="calc_type_worksheet_line" model="prx.calculation.type">
+            <field name="name">ტაბელის სტრიქონების შექმნა</field>
+            <field name="code">worksheet_line</field>
+        </record>
+
+        <record id="calc_type_transaction" model="prx.calculation.type">
+            <field name="name">ხელფასის გატარებების გენერაცია</field>
+            <field name="code">transaction</field>
+        </record>
+
+    </data>
+</odoo>

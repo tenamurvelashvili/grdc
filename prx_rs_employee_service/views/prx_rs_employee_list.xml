@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_prx_rs_service_employee_list" model="ir.ui.view">
+        <field name="name">prx.rs.service.employee.list.view</field>
+        <field name="model">prx.rs.service.employee</field>
+        <field name="arch" type="xml">
+            <list create="False">
+                <header>
+                    <button name="open_employee_wizards" string="RS-დან ჩამოტვირთვა" type="object"
+                            class="btn btn-primary btn-sm" display="always"/>
+                </header>
+                <field name="external_ref" width="80" optional="show" widget="char"/>
+                <field name="tin" width="80" optional="show"/>
+                <field name="org_tin" width="80" optional="show"/>
+                <field name="org_fullname" width="80" optional="show"/>
+                <field name="citizenship" width="80" optional="show"/>
+                <field name="fullname" width="80" optional="show"/>
+                <field name="phone" width="80" optional="show"/>
+                <field name="gender" width="80" optional="show"/>
+                <field name="gender_txt" width="80" optional="show"/>
+                <field name="birth_date" width="80" optional="show"/>
+                <field name="create_date" width="80" optional="show"/>
+                <field name="activate_date" width="80" optional="show"/>
+                <field name="cancel_date" width="80" optional="show"/>
+                <field name="work_type" width="80" optional="show"/>
+                <field name="work_type_txt" width="80" optional="show"/>
+                <field name="status" width="80" optional="show"/>
+                <field name="status_txt" width="80" optional="show"/>
+                <field name="is_foreigner" width="80" optional="show"/>
+                <field name="is_corrected" width="80" optional="show"/>
+                <field name="is_corrected_icon" width="80" optional="show"/>
+                <field name="is_corrected_txt" width="80" optional="show"/>
+                <field name="citizen_country_id" width="80" optional="show"/>
+                <field name="last_change_date" width="80" optional="show"/>
+                <field name="suspend_date" width="80" optional="show"/>
+                <field name="last_change_by" width="80" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_prx_rs_employee_request_tree" model="ir.ui.view">
+        <field name="name">prx.rs.employee.request.tree</field>
+        <field name="model">prx.rs.employee.request</field>
+        <field name="arch" type="xml">
+            <list string="RS Employee Requests">
+                <header>
+                    <button name="generate_employees" string="გენერირება" type="object"
+                            class="btn btn-primary btn-sm" display="always"/>
+                    <button name="request_employee_rs" string="RS გადაგზავნა" type="object" class="btn btn-primary btn-sm"/>
+                </header>
+                <field name="rs_employee_id" optional="show" width="80" widget="char"/>
+                <field name="fullname" width="80" optional="show"/>
+                <field name="tin" width="80" optional="show"/>
+                <field name="gender" width="80" optional="show"/>
+                <field name="status" width="80" optional="show"/>
+                <field name="phone" width="80" optional="show"/>
+                <field name="is_foreigner" width="80" optional="show"/>
+                <field name="citizen_country_id" width="80" optional="show"/>
+                <field name="birth_date" width="80" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_prx_rs_employee_request_form" model="ir.ui.view">
+        <field name="name">prx.rs.employee.request.form</field>
+        <field name="model">prx.rs.employee.request</field>
+        <field name="arch" type="xml">
+            <form string="RS Employee Request">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="rs_employee_id"/>
+                            <field name="fullname"/>
+                            <field name="tin"/>
+                            <field name="gender"/>
+                            <field name="status"/>
+                            <field name="phone"/>
+                            <field name="is_foreigner"/>
+                            <field name="work_type"/>
+                            <field name="birth_date"/>
+                            <field name="citizen_country_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

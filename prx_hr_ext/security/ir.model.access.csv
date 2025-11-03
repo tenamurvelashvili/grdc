@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_prx_hr_tabel_report,access_prx_hr_tabel_report,model_prx_hr_tabel_report,base.group_user,1,1,1,1
+access_prx_time_off_code,access_prx_time_off_code,model_prx_time_off_code,base.group_user,1,1,1,1
+

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="prx_payroll_cost_center_form_view" model="ir.ui.view">
+            <field name="name">prx_payroll.prx_cost_center.form</field>
+            <field name="model">prx_payroll.cost_center</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="sequence" widget="integer"/>
+                                <field name="fullname" readonly="True"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="prx_payroll_cost_center_list_view" model="ir.ui.view">
+            <field name="name">prx_payroll.prx_cost_center.list</field>
+            <field name="model">prx_payroll.cost_center</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="sequence"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="prx_payroll_cost_center_search_view" model="ir.ui.view">
+            <field name="name">prx_payroll.prx_cost_center.search</field>
+            <field name="model">prx_payroll.cost_center</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="sequence"/>
+                    <field name="fullname"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="prx_payroll_cost_center_act_window" model="ir.actions.act_window">
+            <field name="name">დანახარჯთა ცენტრი</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">prx_payroll.cost_center</field>
+            <field name="view_mode">list,form,search</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    There is no examples click here to add new Cost Center.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

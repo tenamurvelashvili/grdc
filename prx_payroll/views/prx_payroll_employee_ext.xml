@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_employee_form_inherit_prx" model="ir.ui.view">
+            <field name="name">prx.hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='department_id']" position="attributes">
+                    <field name="have_running_contract" invsible="1"/>
+                    <attribute name="readonly">have_running_contract</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='job_id']" position="attributes">
+                    <attribute name="readonly">have_running_contract</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='resource_calendar_id']" position="attributes">
+                    <attribute name="readonly">have_running_contract</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="required">False</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="view_hr_employee_tree_prx" model="ir.ui.view">
+            <field name="name">hr.employee.tree.prx</field>
+            <field name="model">hr.employee</field>
+            <field name="priority">100000</field>
+            <field name="arch" type="xml">
+                <list string="Employees">
+                    <header>
+                        <button name="action_add_employee_line"
+                                type="object"
+                                string="თანამშრომლის დამატება"
+                                class="btn-primary"/>
+                    </header>
+                    <field name="name"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                </list>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="prx_payroll_employee_cost_document_form_view" model="ir.ui.view">
+            <field name="name">prx.payroll.employee.cost.document.form</field>
+            <field name="model">prx_payroll.employee.cost.document</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="True" string="დოკ. დასახელება"/>
+                                <field name="employee_id" string="თანამშრომელი"/>
+                                <field name="cost_center" string="დანახარჯთა ცენტრი"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="ჩაშლა">
+<!--                                <button name="action_add_employees_with_plan"-->
+<!--                                        type="object" string="Add Employees with Plan" class="oe_button" icon="fa-plus" />-->
+<!--                                <button name="action_add_employees"-->
+<!--                                        type="object" string="Add Employees" class="oe_button" icon="fa-plus"/>-->
+<!--                                <button name="action_open_course_participant_line"-->
+<!--                                        type="object" string="Lines View" class="oe_button" icon="fa-list"/>-->
+<!--                                <div class="oe_separator" style="margin: 10px 0; border-bottom: 1px solid #ddd;"></div>-->
+                                <field name="lines">
+                                    <list editable="bottom">
+                                        <field name="cost_unit_id"/>
+                                        <field name="rate"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="prx_payroll_employee_cost_document_list_view" model="ir.ui.view">
+            <field name="name">prx.payroll.employee.cost.document.list</field>
+            <field name="model">prx_payroll.employee.cost.document</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name" string="დოკ. დასახელება"/>
+                    <field name="employee_id" string="თანამშრომელი"/>
+                    <field name="cost_center" string="დანახარჯთა ცენტრი"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="prx_payroll_employee_cost_document_search_view" model="ir.ui.view">
+            <field name="name">prx.payroll.employee.cost.document.search</field>
+            <field name="model">prx_payroll.employee.cost.document</field>
+            <field name="arch" type="xml">
+                <search string="Courses">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="cost_center"/>
+                    <group expand="1" string="Group By">
+                        <filter string="თანამშრომელი" name="employee_id" domain="[]"
+                                context="{'group_by':'employee_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="prx_payroll_employee_cost_document_act_window" model="ir.actions.act_window">
+            <field name="name">Employee Cost Document</field>
+            <field name="res_model">prx_payroll.employee.cost.document</field>
+            <field name="view_mode">list,form,search</field>
+            <field name="view_id" ref="prx_payroll_employee_cost_document_list_view"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    There is no examples click here to add new Employee Cost Document.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

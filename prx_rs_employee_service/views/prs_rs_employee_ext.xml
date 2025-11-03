@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="prx_rs_info_employee_view_form" model="ir.ui.view">
+            <field name="name">prx.rs.employee.service.view.form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="priority" eval="300"/>
+            <field name="arch" type="xml">
+                <header>
+                    <button name="open_employee_wizards"
+                            class="oe_stat_button"
+                            icon="fa-book"
+                            type="object"
+                            string="RS გადაგზავნა"
+                    />
+                </header>
+
+                <xpath expr="//page[@name='public']" position="inside">
+                    <group string="RS Information">
+                        <field name="rs_employee_id" widget="char"/>
+                        <field name="rs_employee_status"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='tz']" position="before">
+                    <field name="have_running_contract" invisible="1"/>
+                    <field name="work_type" readonly="have_running_contract"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_hr_contract_form_inherit_add_contract_type" model="ir.ui.view">
+            <field name="name">hr.contract.form.inherit.add.contract_type</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='contract_type_id']" position="after">
+                    <field name="work_type" required="1"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <record id="view_prx_payroll_tax_report_country_list" model="ir.ui.view">
+        <field name="name">prx.tax.report.country.list</field>
+        <field name="model">prx.tax.report.country</field>
+        <field name="arch" type="xml">
+            <list string="ქვეყნის ანგარიშგება" editable="bottom">
+                <field name="code"/>
+                <field name="country"/>
+            </list>
+        </field>
+    </record>
+
+
+    </data>
+</odoo>
