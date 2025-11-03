@@ -1,0 +1,7 @@
+pydantic==2.8.2
+schwifty
+xmltodict
+docxtpl
+htmldocx
+beautifulsoup4
+PyMuPDF
