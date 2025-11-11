@@ -1,7 +1,6 @@
 from odoo import models, fields, api
-from odoo.exceptions import UserError
 from .configuration.prx_enum_selection import TransactionType
-
+from odoo.exceptions import UserError
 
 class PrxPayrollTransaction(models.Model):
     """
@@ -21,7 +20,7 @@ class PrxPayrollTransaction(models.Model):
     employee_id = fields.Many2one('hr.employee', string="თანამშრომელი")
     period_id = fields.Many2one('prx.payroll.period', string="პერიოდი")
     code = fields.Char(size=255, string="კოდი")
-    amount = fields.Float(string="თანხა", digits=(19, 2))
+    amount = fields.Float(string="თანხა")
     transaction_type = fields.Selection(TransactionType.selection(),
                                         string="ტრანზაქციის ტიპი",
                                         required=True)
@@ -51,15 +50,15 @@ class PrxPayrollTransaction(models.Model):
                                           string="თანამშრიმის ანაზღაურება")
     exchange_rate = fields.Float(digits=(6, 4), string="")
     creditor = fields.Many2one('res.partner', string="კრედიტორი")
-    combined_employee_info = fields.Char(string='დასახელება', compute='_compute_combined_employee_info', store=True)
+    combined_employee_info = fields.Char(string='დასახელება',compute='_compute_combined_employee_info',store=True)
     report_name = fields.Char(string='რეპორტის დასახელება')
 
     transaction_type_rank = fields.Integer(string="Type Rank", compute='_compute_type_rank', store=True)
     transaction_type_label = fields.Char(string="Transaction Type", compute='_compute_type_label', store=True)
 
-    pension_proportion = fields.Float(digits=(19, 2), string="საპენსიოს წილი")
+    pension_proportion = fields.Float(digits=(19, 2),string="საპენსიოს წილი")
     tax_proportion = fields.Float(digits=(19, 2), string="გადასახადის წილი")
-    earning_proportion = fields.Float(digits=(19, 10), string="ანაზღაურების წილი")
+    earning_proportion = fields.Float(digits=(19, 10),string="ანაზღაურების წილი")
     transferred = fields.Boolean(string="გადარიცხულია")
 
     def unlink(self):
@@ -67,6 +66,7 @@ class PrxPayrollTransaction(models.Model):
             if rec.transferred:
                 raise UserError("გადარიცხული ტრანზაქციის წაშლა შეუძლებელია!")
         return super(PrxPayrollTransaction, self).unlink()
+
 
     def action_open_transfer_wizard(self):
         action = self.env.ref('prx_payroll.action_prx_payroll_transaction_transfer').read()[0]
@@ -83,6 +83,7 @@ class PrxPayrollTransaction(models.Model):
         labels = dict(self._fields['transaction_type'].selection)
         for rec in self:
             rec.transaction_type_label = labels.get(rec.transaction_type, rec.transaction_type)
+
 
     @api.depends('employee_id')
     def _compute_combined_employee_info(self):

@@ -1,127 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-	<data>
-		<menuitem id="prx_payroll_root_menu" name="Payroll" sequence="5"
-		          web_icon="prx_payroll,static/src/description/icon.png"
-		          groups="prx_payroll.prx_payroll_administrator,prx_payroll.prx_payroll_worksheet_manager">
-			<menuitem id="prx_payroll_dashboard" name="Dashboard" sequence="1"
-			          action="prx_payroll.action_payroll_dashboard"/>
-			<menuitem id="prx_payroll_earnings_root_menu" name="ანაზღაურება" sequence="15"
-			          groups="prx_payroll.prx_payroll_administrator,prx_payroll.prx_payroll_worksheet_manager">
-				<menuitem id="prx_payroll_earnings_tabel_root_menu" name="ტაბელები" sequence="20">
-					<menuitem id="prx_payroll_worksheet_menu" name="ტაბელები" sequence="5"
-					          action="prx_payroll_worksheet_action"/>
-					<menuitem id="prx_payroll_worksheet_line_menu" name="დეტალები" sequence="10"
-					          action="action_prx_worksheet_line_act_window"
-					          groups="prx_payroll.prx_payroll_administrator"/>
-					<menuitem id="prx_payroll_worksheet_line_detail_earning_menu" name="ანაზღაურება" sequence="10"
-					          action="action_prx_payroll_worksheet_detail"
-					          groups="prx_payroll.prx_payroll_administrator"/>
+    <data>
+    <menuitem id="prx_payroll_root_menu" name="Payroll" sequence="5" web_icon="prx_payroll,static/src/description/icon.png" groups="prx_payroll.prx_payroll_administrator,prx_payroll.prx_payroll_worksheet_manager">
+        <menuitem id="prx_payroll_dashboard" name="Dashboard" sequence="1" action="prx_payroll.action_payroll_dashboard" />
+        <menuitem id="prx_payroll_earnings_root_menu" name="ანაზღაურება" sequence="15" groups="prx_payroll.prx_payroll_administrator,prx_payroll.prx_payroll_worksheet_manager">
+            <menuitem id="prx_payroll_earnings_tabel_root_menu" name="ტაბელები" sequence="20">
+                <menuitem id="prx_payroll_worksheet_menu" name="ტაბელები" sequence="5" action="prx_payroll_worksheet_action"/>
+                <menuitem id="prx_payroll_worksheet_line_menu" name="დეტალები" sequence="10" action="action_prx_worksheet_line_act_window" groups="prx_payroll.prx_payroll_administrator"/>
+                <menuitem id="prx_payroll_worksheet_line_detail_earning_menu" name="ანაზღაურება" sequence="10" action="action_prx_payroll_worksheet_detail" groups="prx_payroll.prx_payroll_administrator"/>
 
-				</menuitem>
-				<menuitem id="prx_payroll_calculation_menu" name="ხელფასის კალკულაცია" sequence="40"
-				          action="action_prx_worksheet_calculation" groups="prx_payroll.prx_payroll_administrator"/>
-				<menuitem id="prx_payroll_transaction_menu" name="ხელფასის ტრანზაქციები" sequence="45"
-				          action="prx_payroll_transaction_action" groups="prx_payroll.prx_payroll_administrator"/>
-				<menuitem id="prx_payroll_transaction_cost_menu" name="ხელფასის ტრანზაქციები ხარჯებად" sequence="50"
-				          action="view_prx_payroll_transaction_cost_act_window"
-				          groups="prx_payroll.prx_payroll_administrator"/>
-			</menuitem>
+            </menuitem>
+            <menuitem id="prx_payroll_calculation_menu" name="ხელფასის კალკულაცია" sequence="40" action="action_prx_worksheet_calculation" groups="prx_payroll.prx_payroll_administrator"/>
+            <menuitem id="prx_payroll_transaction_menu" name="ხელფასის ტრანზაქციები" sequence="45" action="prx_payroll_transaction_action" groups="prx_payroll.prx_payroll_administrator"/>
+            <menuitem id="prx_payroll_transaction_cost_menu" name="ხელფასის ტრანზაქციები ხარჯებად" sequence="50" action="view_prx_payroll_transaction_cost_act_window" groups="prx_payroll.prx_payroll_administrator"/>
+        </menuitem>
 
-			<menuitem id="prx_payroll_root_employee_components" name="ანაზღაურების კომპონენტები" sequence="19"
-			          groups="prx_payroll.prx_payroll_administrator">
-				<menuitem id="prx_payroll_position_earning_menu" name="თანამშრომლის პოზიციის ანაზღაურება" sequence="50"
-				          action="prx_payroll_position_earning_action"/>
-				<menuitem id="prx_payroll_employee_tax_menu" name="თანამშრომლის გადასახადი" sequence="60"
-				          action="prx_payroll_employee_tax_action"/>
-				<menuitem id="prx_payroll_employee_deduction_menu" name="თანამშრომლის დაქვითვა" sequence="70"
-				          action="prx_payroll_employee_deduction_action"/>
-				<menuitem id="prx_payroll_employee_cost_document_menu" name="თანმშრომლის ხარჯის განაწილების დოკუმენტი"
-				          sequence="80" action="prx_payroll_employee_cost_document_act_window"/>
-				<menuitem id="prx_payroll_employee_cost_document_line_menu" name="თანმშრომლის ხარჯის განაწილება"
-				          sequence="90" action="prx_payroll_employee_cost_document_line_act_window"/>
-			</menuitem>
+        <menuitem id="prx_payroll_root_employee_components" name="ანაზღაურების კომპონენტები" sequence="19" groups="prx_payroll.prx_payroll_administrator">
+            <menuitem id="prx_payroll_position_earning_menu" name="თანამშრომლის პოზიციის ანაზღაურება" sequence="50" action="prx_payroll_position_earning_action"/>
+            <menuitem id="prx_payroll_employee_tax_menu" name="თანამშრომლის გადასახადი" sequence="60" action="prx_payroll_employee_tax_action"/>
+            <menuitem id="prx_payroll_employee_deduction_menu" name="თანამშრომლის დაქვითვა" sequence="70" action="prx_payroll_employee_deduction_action"/>
+            <menuitem id="prx_payroll_employee_cost_document_menu" name="თანმშრომლის ხარჯის განაწილების დოკუმენტი" sequence="80" action="prx_payroll_employee_cost_document_act_window"/>
+            <menuitem id="prx_payroll_employee_cost_document_line_menu" name="თანმშრომლის ხარჯის განაწილება" sequence="90" action="prx_payroll_employee_cost_document_line_act_window"/>
+        </menuitem>
 
-			<menuitem id="prx_payroll_import_root_menu" name="იმპორტი" sequence="20"
-			          groups="prx_payroll.prx_payroll_administrator">
-				<menuitem id="prx_payroll_employee_import_menu" name="თანამშრომლის გადასახადების იმპორტი" sequence="5"
-				          action="prx_payroll_employee_tax_import_action"/>
-				<menuitem id="prx_menu_employee_deduction_import" name="თანამშრომლის დაქვითვების იმპორტი"
-				          action="action_employee_deduction_import" sequence="10"/>
-				<menuitem id="prx_menu_position_earning_import" name="თანამშრომლის პოზიციის ანაზღაურების იმპორტი"
-				          action="action_employee_position_import" sequence="10"/>
-			</menuitem>
+        <menuitem id="prx_payroll_import_root_menu" name="იმპორტი" sequence="20" groups="prx_payroll.prx_payroll_administrator">
+                <menuitem id="prx_payroll_employee_import_menu" name="თანამშრომლის გადასახადების იმპორტი" sequence="5" action="prx_payroll_employee_tax_import_action"/>
+                <menuitem id="prx_menu_employee_deduction_import" name="თანამშრომლის დაქვითვების იმპორტი" action="action_employee_deduction_import" sequence="10"/>
+                <menuitem id="prx_menu_position_earning_import" name="თანამშრომლის პოზიციის ანაზღაურების იმპორტი" action="action_employee_position_import" sequence="10"/>
+        </menuitem>
 
-			<menuitem id="prx_payroll_menu_report_root" name="რეპორტები" sequence="25"
-			          groups="prx_payroll.prx_payroll_administrator">
-				<menuitem id="prx_payroll_menu_report" name="სახელფასო უწყისი" sequence="5"
-				          action="action_prx_payroll_report_wizard"/>
-				<menuitem id="prx_payroll_declaration_report_menu" action="action_prx_payroll_declaration_wizard"
-				          sequence="10" name="საშემოსავლოს დეკლარაციები"/>
-				<menuitem id="prx_payroll_bank_report_menu" action="action_prx_payroll_bank_reports_wizard_act"
-				          sequence="15" name="ბანკის ფაილი"/>
-				<menuitem id="prx_payroll_transaction_report_menu"
-				          action="action_prx_payroll_transaction_reports_wizard_act" sequence="20"
-				          name="ტრანზაქციების რეპორტი"/>
-				<menuitem id="prx_payroll_tabel_report_menu" action="action_prx_payroll_tabel_reports_wizard_act"
-				          sequence="20" name="ტაბელის რეპორტი"/>
-				<menuitem id="prx_payroll_pension_alimony_report_menu"
-				          action="action_prx_payroll_pension_alimony_reports_wizard_act" sequence="25"
-				          name="საპენსიო/ალიმენტი რეპორტი"/>
-				<menuitem id="prx_payroll_creditor_report_menu" action="action_prx_payroll_creditor_reports_wizard_act"
-				          sequence="30" name="კრედიტორის რეპორტი"/>
-			</menuitem>
+        <menuitem id="prx_payroll_menu_report_root" name="რეპორტები" sequence="25" groups="prx_payroll.prx_payroll_administrator">
+            <menuitem id="prx_payroll_menu_report" name="სახელფასო უწყისი" sequence="5" action="action_prx_payroll_report_wizard"/>
+              <menuitem id="prx_payroll_declaration_report_menu" action="action_prx_payroll_declaration_wizard" sequence="10" name="საშემოსავლოს დეკლარაციები"/>
+              <menuitem id="prx_payroll_bank_report_menu" action="action_prx_payroll_bank_reports_wizard_act" sequence="15" name="ბანკის ფაილი"/>
+              <menuitem id="prx_payroll_transaction_report_menu" action="action_prx_payroll_transaction_reports_wizard_act" sequence="20" name="ტრანზაქციების რეპორტი"/>
+              <menuitem id="prx_payroll_tabel_report_menu" action="action_prx_payroll_tabel_reports_wizard_act" sequence="20" name="ტაბელის რეპორტი"/>
+              <menuitem id="prx_payroll_pension_alimony_report_menu" action="action_prx_payroll_pension_alimony_reports_wizard_act" sequence="25" name="საპენსიო/ალიმენტი რეპორტი"/>
+              <menuitem id="prx_payroll_creditor_report_menu" action="action_prx_payroll_creditor_reports_wizard_act" sequence="30" name="კრედიტორის რეპორტი"/>
+        </menuitem>
 
 
-			<menuitem id="prx_payroll_configuration_root_menu" name="Configuration" sequence="100"
-			          groups="prx_payroll.prx_payroll_administrator">
-				<menuitem id="prx_payroll_settings_menu" name="Settings" sequence="1"
-				          action="prx_payroll.prx_payroll_res_config_settings_action"/>
+        <menuitem id="prx_payroll_configuration_root_menu" name="Configuration" sequence="100" groups="prx_payroll.prx_payroll_administrator">
+            <menuitem id="prx_payroll_settings_menu" name="Settings" sequence="1" action="prx_payroll.prx_payroll_res_config_settings_action"/>
 
-				<menuitem id="prx_payroll_worksheet_manager_menu" name="მეტაბელე" sequence="4"
-				          action="action_prx_payroll_worksheet_manager"/>
-				<menuitem id="prx_payroll_period_menu" name="პერიოდი" sequence="5" action="prx_payroll_periods_action"/>
-				<menuitem id="prx_payroll_cost_center_menu" name="დანახარჯთა ცენტრი" sequence="6"
-				          action="prx_payroll.prx_payroll_cost_center_act_window"/>
-				<menuitem id="prx_payroll_cost_unit_menu" name="დანახარჯთა ერთეული" sequence="7"
-				          action="prx_payroll.prx_payroll_cost_unit_act_window"/>
+            <menuitem id="prx_payroll_worksheet_manager_menu" name="მეტაბელე" sequence="4" action="action_prx_payroll_worksheet_manager"/>
+            <menuitem id="prx_payroll_period_menu" name="პერიოდი" sequence="5" action="prx_payroll_periods_action"/>
+            <menuitem id="prx_payroll_cost_center_menu" name="დანახარჯთა ცენტრი" sequence="6" action="prx_payroll.prx_payroll_cost_center_act_window"/>
+            <menuitem id="prx_payroll_cost_unit_menu" name="დანახარჯთა ერთეული" sequence="7" action="prx_payroll.prx_payroll_cost_unit_act_window"/>
 
-				<menuitem id="prx_payroll_organisation_calendar_separator_menu" name="ორგანიზაციის კალენდარი"
-				          sequence="10">
-					<menuitem id="prx_payroll_organisation_calendar_root_menu" name="ორგანიზაციის კალენდარი"
-					          sequence="5" action="prx_calendar.prx_organisation_calendar_action"/>
-					<menuitem id="prx_payroll_organisation_calendar_menu" name="ორგანიზაციის კალენდარის დეტალები"
-					          sequence="10" action="prx_calendar.prx_organisation_calendar_details"/>
-				</menuitem>
-				<menuitem id="prx_payroll_salary_root_menu" name="ანაზღაურება" sequence="15">
-					<menuitem id="prx_payroll_earning_group_menu" name="ანაზღაურების ჯგუფები" sequence="5"
-					          action="prx_payroll_earning_group_action"/>
-					<menuitem id="prx_payroll_earning_type_menu" name="ანაზღაურების ტიპები" sequence="10"
-					          action="prx_payroll_earning_type_action"/>
-					<menuitem id="prx_payroll_earning_menu" name="ანაზღაურების კოდები" sequence="20"
-					          action="prx_payroll_earning_action"/>
-					<menuitem id="prx_payroll_tax_menu" name="გადასახადები" sequence="30"
-					          action="prx_payroll_tax_action"/>
-					<menuitem id="prx_payroll_deduction_menu" name="დაქვითვები" sequence="40"
-					          action="prx_payroll_deduction_action"/>
-					<menuitem id="prx_payroll_masking_menu" name="მონაცემების შენიღბვის ინფორმაცია" sequence="50"
-					          action="prx_payroll_masking_act_window"/>
-					<menuitem id="prx_payroll_bonus_category" name="ბონუსის კატეგორია"
-					          action="action_prx_payroll_bonus_category"/>
-					<menuitem id="prx_payroll_tax_report_root_menu" name="საშემოსავლოს დეკლარაცია" sequence="200">
-						<menuitem id="prx_payroll_report_country_menu" name="ქვეყნები" sequence="5"
-						          action="prx_income_tax.prx_payroll_tax_report_country_action"/>
-						<menuitem id="prx_payroll_category_menu" name="კატეგორია" sequence="10"
-						          action="prx_income_tax.prx_payroll_tax_category_action"/>
-						<menuitem id="prx_payroll_salary_conf_menu" name="განაცემის სახე" sequence="15"
-						          action="prx_income_tax.prx_payroll_tax_report_earning_type_action"/>
-					</menuitem>
-				</menuitem>
-				<menuitem id="prx_payroll_dashboard_root_menu" name="Dashboard" sequence="220">
-					<menuitem id="prx_payroll_warning_menu" name="Warnings" sequence="5"
-					          action="prx_payroll.action_prx_payroll_dashboard_warning"/>
-				</menuitem>
-			</menuitem>
-		</menuitem>
-	</data>
+            <menuitem id="prx_payroll_organisation_calendar_separator_menu" name="ორგანიზაციის კალენდარი" sequence="10" >
+                <menuitem id="prx_payroll_organisation_calendar_root_menu" name="ორგანიზაციის კალენდარი" sequence="5" action="prx_calendar.prx_organisation_calendar_action"/>
+                <menuitem id="prx_payroll_organisation_calendar_menu" name="ორგანიზაციის კალენდარის დეტალები" sequence="10" action="prx_calendar.prx_organisation_calendar_details"/>
+            </menuitem>
+            <menuitem id="prx_payroll_salary_root_menu" name="ანაზღაურება" sequence="15">
+                <menuitem id="prx_payroll_earning_group_menu" name="ანაზღაურების ჯგუფები" sequence="5" action="prx_payroll_earning_group_action"/>
+                <menuitem id="prx_payroll_earning_type_menu" name="ანაზღაურების ტიპები" sequence="10" action="prx_payroll_earning_type_action"/>
+                <menuitem id="prx_payroll_earning_menu" name="ანაზღაურების კოდები" sequence="20" action="prx_payroll_earning_action"/>
+                <menuitem id="prx_payroll_tax_menu" name="გადასახადები" sequence="30" action="prx_payroll_tax_action"/>
+                <menuitem id="prx_payroll_deduction_menu" name="დაქვითვები" sequence="40" action="prx_payroll_deduction_action"/>
+                <menuitem id="prx_payroll_masking_menu" name="მონაცემების შენიღბვის ინფორმაცია" sequence="50" action="prx_payroll_masking_act_window"/>
+                  <menuitem id="prx_payroll_bonus_category" name="ბონუსის კატეგორია" action="action_prx_payroll_bonus_category"/>
+                <menuitem id="prx_payroll_tax_report_root_menu" name="საშემოსავლოს დეკლარაცია" sequence="200">
+                    <menuitem id="prx_payroll_report_country_menu" name="ქვეყნები" sequence="5" action="prx_income_tax.prx_payroll_tax_report_country_action"/>
+                    <menuitem id="prx_payroll_category_menu" name="კატეგორია" sequence="10" action="prx_income_tax.prx_payroll_tax_category_action"/>
+                    <menuitem id="prx_payroll_salary_conf_menu" name="განაცემის სახე" sequence="15" action="prx_income_tax.prx_payroll_tax_report_earning_type_action"/>
+                </menuitem>
+            </menuitem>
+            <menuitem id="prx_payroll_dashboard_root_menu" name="Dashboard" sequence="220">
+                <menuitem id="prx_payroll_warning_menu" name="Warnings" sequence="5" action="prx_payroll.action_prx_payroll_dashboard_warning"/>
+            </menuitem>
+        </menuitem>
+    </menuitem>
+    </data>
 </odoo>

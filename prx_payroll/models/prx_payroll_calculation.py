@@ -1,9 +1,8 @@
-import logging
+from odoo import models, fields, api
+from odoo.exceptions import UserError, ValidationError
 from collections import defaultdict
 from datetime import date
-
-from odoo import models, fields, api
-from odoo.exceptions import UserError
+import logging
 from .configuration.prx_enum_selection import SalaryType
 
 _logger = logging.getLogger(__name__)
@@ -118,11 +117,9 @@ class PRXPayrollWorksheetCalculation(models.Model):
                     self.env['prx.payroll.worksheet'].search([('salary_type', '=', self.salary_type),
                                                               ('period_id', '=', self.period.id),
                                                               ('status', '=', 'open'),
-                                                              ('worker_id', 'in',
-                                                               need_employees.ids)]).document_close()  # ვხურავ ტაბელებს რომლებიც არ არის
-                worksheet = self.env['prx.payroll.worksheet'].search(
-                    [('status', '=', 'closed'), ('salary_type', '=', self.salary_type),
-                     ('period_id', '=', self.period.id)])
+                                                              ('worker_id','in',need_employees.ids)]).document_close() # ვხურავ ტაბელებს რომლებიც არ არის
+                worksheet = self.env['prx.payroll.worksheet'].search([('status', '=', 'closed'), ('salary_type', '=', self.salary_type),
+                                              ('period_id', '=', self.period.id)])
                 self.create_transaction(worksheet=worksheet)
             if self.worksheet:
                 if self.worksheet.status != 'closed':
@@ -132,8 +129,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                         self.worksheet.document_close()
                 self.create_transaction(worksheet=self.worksheet)
 
-    def _prepare_transaction_vals(self, employee_id, amount, transaction_type, start_date, end_date, code=False,
-                                  **kwargs):
+    def _prepare_transaction_vals(self, employee_id, amount, transaction_type, start_date, end_date,code=False, **kwargs):
         return {
             'worksheet_id': kwargs.get('worksheet_id', None),
             'employee_id': employee_id,
@@ -173,7 +169,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
         return amounts_by_employee
 
     def create_transaction(self, worksheet):
-        target_emp_ids = list({ws.worker_id.id for ws in worksheet.filtered(lambda d: d.transferred == False)})
+        target_emp_ids = list({ws.worker_id.id for ws in worksheet.filtered(lambda d:d.transferred == False)})
 
         def employee_worksheet(employee_id):
             domain_search = [
@@ -189,12 +185,12 @@ class PRXPayrollWorksheetCalculation(models.Model):
 
         period_start = self.period.start_date
         period_end = self.period.end_date
-        tr = self.env['prx.payroll.transaction'].search([('transferred', '=', False)])
+        tr = self.env['prx.payroll.transaction'].search([('transferred','=',False)])
         total_by_emp = defaultdict(float)
-        tr.search([('worksheet_id', 'in', worksheet.ids), ('transferred', '=', False)]).unlink()
+        tr.search([('worksheet_id', 'in', worksheet.ids),('transferred','=',False)]).unlink()
 
         vals_list = []
-        for ws in worksheet.filtered(lambda d: d.transferred == False):
+        for ws in worksheet.filtered(lambda d: d.transferred==False):
             for det in ws.worksheet_detail_ids:
                 emp_id = ws.worker_id.id
                 total_by_emp[emp_id] += det.amount
@@ -347,19 +343,15 @@ class PRXPayrollWorksheetCalculation(models.Model):
             tax_amount = 0.0
             if current_year >= tax.start_date:
                 year_tax_amount = sum(tr.search([('start_date', '>=', tax.start_date), ('end_date', '<=', period_end),
-                                                 ('include_tax_base', '=', True), ('employee_id', '=', emp)]).mapped(
-                    'amount'))
+                                                 ('include_tax_base', '=', True), ('employee_id', '=', emp)]).mapped('amount'))
             else:
                 year_tax_amount = sum(tr.search([('start_date', '>=', current_year), ('end_date', '<=', period_end),
-                                                 ('include_tax_base', '=', True), ('employee_id', '=', emp)]).mapped(
-                    'amount'))
+                                                 ('include_tax_base', '=', True), ('employee_id', '=', emp)]).mapped('amount'))
 
             #  TODO გადასახადების დაანგარიშებისას V1 იყო (year_tax_amount * tax.tax.rate_gross)  და (current_month_amount * tax.tax.rate_gross) შემდეგ ეს ლოგიკა ამოვიღეთ
             #  TODO ('worksheet_id','=',employee_worksheet(emp)) ეს დავამატე ბოლოს
-            current_month_amount = sum(tr.search([('start_date', '>=', period_start), ('end_date', '<=', period_end),
-                                                  ('worksheet_id', '=', employee_worksheet(emp)),
-                                                  ('include_tax_base', '=', True), ('employee_id', '=', emp)]).mapped(
-                'amount'))
+            current_month_amount = sum(tr.search([('start_date', '>=', period_start), ('end_date', '<=', period_end),('worksheet_id','=',employee_worksheet(emp)),
+                                                  ('include_tax_base', '=', True), ('employee_id', '=', emp)]).mapped('amount'))
             remining_limit = tax.tax.rate_base
             if tax.start_date >= current_year:
                 remining_limit = tax.tax.rate_base - tax.used_tax_amount
@@ -399,12 +391,10 @@ class PRXPayrollWorksheetCalculation(models.Model):
                                                                  )
 
         def get_earning_codes():
-            earning_code = [rec.link_insurance_ded.id for rec in
-                            self.env['prx.payroll.earning'].search([('link_insurance_ded', '!=', False)])]
+            earning_code = [rec.link_insurance_ded.id for rec in self.env['prx.payroll.earning'].search([('link_insurance_ded','!=',False)])]
             return earning_code
 
-        not_reduces_income_tax_base = not_reduces_income_tax_base.filtered(
-            lambda d: d.deduction_id.id not in get_earning_codes())
+        not_reduces_income_tax_base = not_reduces_income_tax_base.filtered(lambda d: d.deduction_id.id not in get_earning_codes())
 
         for ded in not_reduces_income_tax_base:
             emp = ded.employee_id.id
@@ -479,7 +469,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
         """Create pension deductions for EARNINGGs with insurance = True and pension_proportion > 0."""
         """დაზღვევის საპენსიოს ტრანზაქცია"""
 
-        tr = self.env['prx.payroll.transaction'].search([('transferred', '=', False)])
+        tr = self.env['prx.payroll.transaction'].search([('transferred','=',False)])
         period_start = self.period.start_date
         period_end = self.period.end_date
 
@@ -488,15 +478,11 @@ class PRXPayrollWorksheetCalculation(models.Model):
             ('transaction_type', '=', 'earning'),
             ('transferred', '=', False),
             ('pension_proportion', '<', 0.0),
-            ('earning_id', '=',
-             self.env['prx.payroll.earning'].search([('insurance', '=', True), ('link_insurance_ded', '!=', False)],
-                                                    limit=1).id),
+            ('earning_id', '=', self.env['prx.payroll.earning'].search([('insurance','=',True),('link_insurance_ded','!=',False)],limit=1).id),
             ('period_id', '>=', self.period.id),
         ])
-        # for earning in earnings.filtered(lambda d: not d.transferred):
-        for earning in earnings:
-            pension_amount = -abs(
-                earning.amount * earning.position_earning_id.insurance_pension_deduction_id.percentage)
+        for earning in earnings.filtered(lambda d:not d.transferred):
+            pension_amount = -abs(earning.amount * earning.position_earning_id.insurance_pension_deduction_id.percentage)
             if pension_amount:
                 pension_vals = self._prepare_transaction_vals(
                     worksheet_id=earning.worksheet_id.id,
@@ -527,7 +513,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
             ('transferred', '=', False)
         ])
 
-        for earning in earnings.filtered(lambda d: not d.transferred):
+        for earning in earnings.filtered(lambda d:not d.transferred):
             base = earning.earning_proportion or 1.0
 
             # tax ჩანაწერები

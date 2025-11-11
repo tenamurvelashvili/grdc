@@ -7,25 +7,25 @@
             <field name="arch" type="xml">
                 <form string="პოზიციის ანაზღაურების დამატება">
                     <group>
-                        <field name="period_id"/>
-                        <field name="earning_id"/>
-                        <field name="department_id"/>
+                        <field name="period_id" force_save="1"/>
+                        <field name="earning_id" force_save="1"/>
+                        <field name="department_id" force_save="1"/>
                     </group>
 
                     <notebook>
                         <page string="შესაქმნელი ანაზღაურებები">
                             <field name="line_ids_not_created">
                                 <list editable="bottom" create="false">
-                                    <field name="selected" optional="show" width="80"/>
-                                    <field name="employee_id" optional="show" width="80" readonly="1"/>
-                                    <field name="earning_id" optional="show" width="80"/>
-                                    <field name="contract_id" optional="show" width="80" readonly="1"/>
-                                    <field name="identification_number" optional="show" width="80" readonly="1"/>
-                                    <field name="position_id" optional="show" width="80" readonly="1"/>
-                                    <field name="start_date" optional="show" width="80" readonly="1"/>
-                                    <field name="end_date" optional="show" width="80" readonly="1"/>
-                                    <field name="amount" optional="show" width="80"/>
-                                    <field name="currency_id" optional="show" width="80"/>
+                                    <field name="selected" optional="show" width="80" force_save="1"/>
+                                    <field name="employee_id" optional="show" width="80" readonly="1" force_save="1"/>
+                                    <field name="earning_id" optional="show" width="80" force_save="1"/>
+                                    <field name="contract_id" optional="show" width="80" readonly="1" force_save="1"/>
+                                    <field name="identification_number" optional="show" width="80" readonly="1" force_save="1"/>
+                                    <field name="position_id" optional="show" width="80" readonly="1" force_save="1"/>
+                                    <field name="start_date" optional="show" width="80" readonly="1" force_save="1"/>
+                                    <field name="end_date" optional="show" width="80" readonly="1" force_save="1"/>
+                                    <field name="amount" optional="show" width="80" force_save="1"/>
+                                    <field name="currency_id" optional="show" width="80" force_save="1"/>
                                 </list>
                             </field>
                         </page>

@@ -6,7 +6,7 @@
 
     'description': """Proxima solution payroll""",
 
-    'author': "Proxima Solutions",
+    'author': """T.C and A.G""",
     'website': "https://www.proxima.solutions",
 
     'category': 'Proxima',
@@ -16,6 +16,7 @@
         'base',
         'hr_contract',
         'hr_holidays',
+        'hr_recruitment',
         'resource',
         'prx_calendar',
         'prx_income_tax',
@@ -73,6 +74,7 @@
         'views/prx_payroll_actions.xml',
         'views/prx_payroll_res_config_settings.xml',
         'views/prx_payroll_menu.xml',
+        'views/ext_hr_applicant_view.xml',
 
     ],
     'assets': {
@@ -93,3 +95,4 @@
     },
 
 }
+

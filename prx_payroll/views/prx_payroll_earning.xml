@@ -47,8 +47,9 @@
                                 <field name="another_income"/>
                                 <field name="salary_type" widget="radio" options="{'horizontal': true}"/>
                                 <field name="bonus"/>
-                                <field name="insurance"/>
-                                <field name="link_insurance_ded" invsble="not insurance" required="insurance"/>
+                                <field name="pension_check" invisible="1"/>
+                                <field name="insurance" invisible="pension_check == False"/>
+                                <field name="link_insurance_ded" invisible="not insurance or pension_check == False" required="insurance"/>
                             </group>
                         </group>
                     </sheet>

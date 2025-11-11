@@ -118,4 +118,11 @@
         <field name="groups" eval="[(4, ref('prx_payroll.prx_payroll_administrator'))]"/>
     </record>
 
+    <record id="prx_rule_earning_manager_production_base_only" model="ir.rule">
+        <field name="name">Earning: production_base only for worksheet managers</field>
+        <field name="model_id" ref="model_prx_payroll_earning"/>
+        <field name="domain_force">[('production_base','=', True)]</field>
+        <field name="groups" eval="[(4, ref('prx_payroll.prx_payroll_worksheet_manager'))]"/>
+    </record>
+
 </odoo>
