@@ -24,9 +24,10 @@ class PRXPayrollEmployeeDeduction(models.Model):
     insurance_pension_linked_earning_id = fields.Many2one('prx.payroll.position.earning')
 
     def unlink(self):
+        unlinking_from_position = self.env.context.get('prx_unlinking_from_position')
         for rec in self:
-            if rec.insurance_pension_linked_earning_id:
-                rec.insurance_pension_linked_earning_id.unlink()
+            if rec.insurance_pension_linked_earning_id and not unlinking_from_position:
+                rec.insurance_pension_linked_earning_id.with_context(prx_unlinking_from_deduction=True).unlink()
         return super().unlink()
 
     @api.depends('deduction_id','start_date')

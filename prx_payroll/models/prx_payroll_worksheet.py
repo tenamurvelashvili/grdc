@@ -1,10 +1,9 @@
-from calendar import monthrange
-from datetime import date
 from datetime import timedelta
-
 from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
 from .configuration.prx_enum_selection import WorksheetType, WorksheetStatus, SalaryType
+from datetime import date
+from calendar import monthrange
 
 
 class PRXPayrollWorksheet(models.Model):
@@ -63,12 +62,10 @@ class PRXPayrollWorksheet(models.Model):
     def unlink(self):
         not_open = self.filtered(lambda ws: ws.status != 'open')
         if not_open:
-            print(not_open)
-        # raise UserError("ტაბელის წაშლა შესაძლებელი არის სტატუსზე: 'ღია'")
+            raise UserError("ტაბელის წაშლა შესაძლებელი არის სტატუსზე: 'ღია'")
         for rec in self:
             if rec.transferred:
-                print(rec.transferred)
-                # raise UserError("გადარიცხული ტრანზაქციის წაშლა შეუძლებელია!")
+                raise UserError("გადარიცხული ტრანზაქციის წაშლა შეუძლებელია!")
             tx_exists = self.env['prx.payroll.transaction'].search_count([
                 ('worksheet_id', '=', rec.id)
             ])
@@ -200,12 +197,11 @@ class PRXPayrollWorksheet(models.Model):
             if tabel.status == 'open':
                 if not prx_manual_not_unlink:
                     tabel.worksheet_line_ids.filtered(
-                        lambda record: record.source == 'manual' and not record.is_production_base).sudo().unlink()
+                        lambda record: record.source == 'manual' and not record.is_production_base).unlink()
                 if not prx_system_not_unlink:
-                    tabel.worksheet_line_ids.filtered(lambda record: record.source == 'system').sudo().unlink()
+                    tabel.worksheet_line_ids.filtered(lambda record: record.source == 'system').unlink()
                 if not prx_earning_not_unlink:
                     tabel.worksheet_line_ids.filtered(lambda record: record.is_production_base).unlink()
-
         if self.status != 'open':
             raise UserError("დეტალების გენერაცია შესაძლებელი არის მხოლოდ 'ღია' სტატუსში!")
 
@@ -322,8 +318,7 @@ class PRXPayrollWorksheet(models.Model):
                                 'date': work_day,
                                 'earning_id': earning.id,
                                 'quantity': 1,
-                                'rate': (earning.amount / len(
-                                    working_days_period_full)) if working_days_period_full else 0.0,
+                                'rate': (earning.amount / len(working_days_period_full)) if working_days_period_full else 0.0,
                                 'source': 'system',
                             })
                             single_line.append((4, line.id, 0))
