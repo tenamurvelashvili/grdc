@@ -14,6 +14,7 @@
                     <field name="earning_unit" optional="show" width="80"/>
                     <field name="record_type" optional="show" width="80"/>
                     <field name="no_material" optional="show" width="80"/>
+                    <field name="no_material_without_tax" optional="show" width="80"/>
                     <field name="production_base" optional="show" width="80"/>
                     <field name="tax_report" optional="show" width="80"/>
                     <field name="salary_type" optional="show" width="80"/>
@@ -43,13 +44,13 @@
                             <group>
                                 <field name="tax_report"/>
                                 <field name="no_material"/>
+                                <field name="no_material_without_tax"/>
                                 <field name="production_base"/>
                                 <field name="another_income"/>
                                 <field name="salary_type" widget="radio" options="{'horizontal': true}"/>
                                 <field name="bonus"/>
-                                <field name="pension_check" invisible="1"/>
-                                <field name="insurance" invisible="pension_check == False"/>
-                                <field name="link_insurance_ded" invisible="not insurance or pension_check == False" required="insurance"/>
+                                <field name="insurance"/>
+                                <field name="link_insurance_ded" invsble="not insurance" required="insurance"/>
                             </group>
                         </group>
                     </sheet>

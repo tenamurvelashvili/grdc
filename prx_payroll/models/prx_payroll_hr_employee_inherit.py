@@ -10,7 +10,7 @@ class Employee(models.Model):
     tax_country = fields.Many2one('prx.tax.report.country', string='Tax Country', groups="hr.group_hr_user")
     tax_category = fields.Many2one('prx.tax.report.category', string='Tax Category', groups="hr.group_hr_user")
     county_code = fields.Char(string='County Code', related='country_id.code', readonly=True, groups="hr.group_hr_user")
-    bonus_category = fields.Many2one('prx.payroll.bonus.category',string='ბონუსის კატეგორია')
+    bonus_category = fields.Many2one('prx.payroll.bonus.category',string='ბონუსის კატეგორია', groups="hr.group_hr_user")
 
     def create(self, vals):
         if 'first_name' in vals or 'last_name' in vals:

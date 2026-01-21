@@ -55,7 +55,6 @@
                     <field name="position_id" optional="show" width="80"/>
                     <field name="identification_number" optional="show" width="80"/>
                     <field name="earning_id" optional="show" width="80"/>
-                    <field name="comment" optional="show" width="100" />
                     <field name="start_date" optional="show" width="80"/>
                     <field name="end_date" optional="show" width="80"/>
                     <field name="amount" optional="show" width="80"/>
@@ -76,7 +75,6 @@
                             <field name="employee_id"/>
                             <field name="contract_id" domain="[('employee_id','=',employee_id),('state','=','open')]"/>
                             <field name="earning_id"/>
-                            <field name="comment" />
                             <field name="start_date"/>
                             <field name="end_date" required="is_one_time_period == True"/>
                             <field name="amount"/>
@@ -89,3 +87,4 @@
 
     </data>
 </odoo>
+
