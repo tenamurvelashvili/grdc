@@ -60,6 +60,9 @@ class PrxPayrollTransaction(models.Model):
     tax_proportion = fields.Float(digits=(19, 2), string="გადასახადის წილი")
     earning_proportion = fields.Float(digits=(19, 10),string="ანაზღაურების წილი")
     transferred = fields.Boolean(string="გადარიცხულია")
+    
+    no_material_without_tax = fields.Boolean(string='არაფულადი სარგებელი (გადასახადის გარეშე)',tracking=True)
+    
 
     def unlink(self):
         for rec in self:

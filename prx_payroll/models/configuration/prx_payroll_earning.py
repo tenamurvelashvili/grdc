@@ -15,21 +15,26 @@ class PRXPayrollEarning(models.Model):
     earning_unit = fields.Selection(EarningUnit.selection(),string = 'ანაზღაურების ერთეული',required=True,tracking=True)
     record_type = fields.Selection(RecordType.selection(),string = 'ჩანაწერის რაოდენობა',required=True,tracking=True)
     production_base = fields.Boolean(string='გამომუშავებით',tracking=True)
+    no_material_without_tax = fields.Boolean(string='არაფულადი სარგებელი (გადასახადის გარეშე)',tracking=True)
     tax_report = fields.Many2one('prx.tax.report.earning.type',string = 'განაცემის სახე',tracking=True)
     another_income = fields.Boolean(string='სხვა ფულადი შემოსავალი')
     salary_type = fields.Selection(SalaryType.selection(),required=True,default='standard',string="პროცესის ტიპი")
     code = fields.Char(string="კოდი")
     report_name = fields.Char(compute="_compute_report_name", string="რეპორტის დასახელება", store=True,compute_sudo=True)
-    insurance = fields.Boolean(string='დაზღვევა',tracking=True)
+    insurance = fields.Boolean(string='დაზღვევა')
     bonus = fields.Boolean(string='მონაწილეობს ბონუსი',help='მიიღოს ბუნუსის დაანგარიშებაში მონაწილეობა')
     link_insurance_ded = fields.Many2one('prx.payroll.deduction',string="დაქვითვა",domain=[('deduction_calc_type','=','percentage')])
-    
-    pension_check = fields.Boolean(compute='_compute_pension_check', store=False, compute_sudo=True)    
 
     @api.constrains('production_base','earning_unit')
     def _validate_earning_unit(self):
         if not self.production_base and self.earning_unit in ('unit','shift','half_time'):
             raise ValidationError(f"ანაზღაურების ერთეული '{dict(self._fields['earning_unit'].selection).get(self.earning_unit)}' შესაძლებელია მხოლოდ გამომუშავებითზე!")
+
+    @api.constrains('no_material', 'no_material_without_tax')
+    def _check_no_material_mutual_exclusivity(self):
+        for rec in self:
+            if rec.no_material and rec.no_material_without_tax:
+                raise ValidationError("არ შეიძლება ერთდროულად მონიშნული იყოს 'არაფულადი სარგებელი' და 'არაფულადი სარგებელი (გადასახადის გარეშე)'!")
 
     @api.onchange('insurance')
     def _onchange_insurance(self):
@@ -49,9 +54,3 @@ class PRXPayrollEarning(models.Model):
     def _compute_display_name(self):
         for rec in self:
             rec.display_name = "{}".format(rec.earning)
-            
-    def _compute_pension_check(self):
-        config_param = self.env['ir.config_parameter'].sudo()
-        for rec in self:
-            value = config_param.get_param('prx_payroll.prx_pension_insurance')
-            rec.pension_check = bool(value and value not in ['False', '0'])

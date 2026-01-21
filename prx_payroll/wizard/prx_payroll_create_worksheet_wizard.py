@@ -1,8 +1,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
-import logging
-_logger = logging.getLogger(__name__)
 
 class PRXPayrollCreateWorksheetWizard(models.TransientModel):
     _name = "prx.payroll.create.worksheet.wizard"
@@ -42,14 +40,10 @@ class PRXPayrollCreateWorksheetWizard(models.TransientModel):
         if not self.date or not self.earning_id:
             return
 
-        if self.env.user.has_group('prx_payroll.prx_payroll_administrator'):
-            access_employees = self.env['prx.payroll.worksheet.manager'].search([]).line_ids.mapped('employee_id')
-        else:
-            access_employees = self.env['prx.payroll.worksheet.manager'].search(
-                [('worksheet_manager_id', '=', self.env.user.employee_id.id)]
-            ).line_ids.mapped('employee_id')
+        access_employees = self.env['prx.payroll.worksheet.manager'].search(
+            [('worksheet_manager_id', '=', self.env.user.employee_id.id)]
+        ).line_ids.mapped('employee_id')
 
-        _logger.info(f"ACCESS ALL EMPLOYEESS{self.env.user.name}: {[emp.name for emp in access_employees]}")
         earnings = self.env['prx.payroll.position.earning'].search([
             ('start_date', '<=', self.date),
             '|',
@@ -59,7 +53,8 @@ class PRXPayrollCreateWorksheetWizard(models.TransientModel):
             ('earning_id', '=', self.earning_id.id),
         ])
 
-        earnings = earnings.filtered(lambda c: c.employee_id in access_employees)
+        if not self.env.user.has_group('prx_payroll.prx_payroll_administrator'):
+            earnings = earnings.filtered(lambda c: c.employee_id in access_employees)
 
         if self.department_id:
             earnings = earnings.filtered(lambda c: c.employee_id.department_id == self.department_id)

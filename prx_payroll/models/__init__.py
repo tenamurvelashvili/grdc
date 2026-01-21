@@ -16,4 +16,3 @@ from . import prx_payroll_transactions_cost
 from . import prx_payroll_masking
 from . import prx_payroll_todo_list
 from . import prx_payroll_employee_conduct_ext
-from . import ext_hr_recruitment

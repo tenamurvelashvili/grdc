@@ -8,7 +8,7 @@
 Long description of module's purpose
     """,
 
-    'author': "Proxima Solutions",
+    'author': "Tariel Chkuaseli and Anaconda",
     'website': "https://www.proxima.solutions",
 
     'category': 'Proxima',

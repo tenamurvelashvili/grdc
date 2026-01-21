@@ -155,19 +155,44 @@ class PRXPayrollWorksheetCalculation(models.Model):
             'employee_tax_id': kwargs.get('employee_tax_id', False),
             'employee_deduction_id': kwargs.get('employee_deduction_id', False),
             'report_name': kwargs.get('report_name', ''),
+            'no_material_without_tax': kwargs.get('no_material_without_tax', False),
         }
 
     @staticmethod
     def compute_tax_base_by_employee(vals_list):
         amounts_by_employee = defaultdict(float)
+        amount_by_employee_no_material_without_tax = defaultdict(float)
+
         for val in vals_list:
-            if val.get('include_tax_base') and val.get('amount', 0):
+            include_tax_base = val.get('include_tax_base', False)
+            amount = val.get('amount', 0)
+            # no_material_without_tax = val.get('no_material_without_tax', False)
+            if include_tax_base and amount:
                 emp_id = val.get('employee_id')
                 if emp_id:
                     amounts_by_employee[emp_id] += val['amount']
+            # elif no_material_without_tax and amount:
+            #     emp_id = val.get('employee_id')
+            #     if emp_id:
+            #         amount_by_employee_no_material_without_tax[emp_id] += val['amount']
 
-        return amounts_by_employee
+        return amounts_by_employee, amount_by_employee_no_material_without_tax
 
+    #Transaction creation will blow my brains out
+#    ⢘⣾⣾⣿⣾⣽⣯⣼⣿⣿⣴⣽⣿⣽⣭⣿⣿⣿⣿⣿⣧
+# ⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+# ⠀⠀⠠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+# ⠀⠀⣰⣯⣾⣿⣿⡼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿
+# ⠀⠀⠛⠛⠋⠁⣠⡼⡙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁
+# ⠀⠀⠀⠤⣶⣾⣿⣿⣿⣦⡈⠉⠉⠉⠙⠻⣿⣿⣿⣿⣿⠿⠁⠀
+# ⠀⠀⠀⠀⠈⠟⠻⢛⣿⣿⣿⣷⣶⣦⣄⠀⠸⣿⣿⣿⠗⠀⠀⠀
+# ⠀⠀⠀⠀⠀⣼⠀⠄⣿⡿⠋⣉⠈⠙⢿⣿⣦⣿⠏⡠⠂⠀⠀⠀
+# ⠀⠀⠀⠀⢰⡌⠀⢠⠏⠇⢸⡇⠐⠀⡄⣿⣿⣃⠈⠀⠀⠀⠀⠀
+# ⠀⠀⠀⠀⠈⣻⣿⢫⢻⡆⡀⠁⠀⢈⣾⣿⠏⠀⠀⠀⠀⠀⠀⠀
+# ⠀⠀⠀⠀⢀⣿⣻⣷⣾⣿⣿⣷⢾⣽⢭⣍⠀⠀⠀⠀⠀⠀⠀⠀
+# ⠀⠀⠀⠀⣼⣿⣿⣿⣿⡿⠈⣹⣾⣿⡞⠐⠁⠀⠀⠀⠁⠀⠀⠀
+# ⠀⠀⠀⠨⣟⣿⢟⣯⣶⣿⣆⣘⣿⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
+# ⠀⠀⠀⠀⠀⡆⠀⠐⠶⠮⡹⣸⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     def create_transaction(self, worksheet):
         target_emp_ids = list({ws.worker_id.id for ws in worksheet.filtered(lambda d:d.transferred == False)})
 
@@ -187,6 +212,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
         period_end = self.period.end_date
         tr = self.env['prx.payroll.transaction'].search([('transferred','=',False)])
         total_by_emp = defaultdict(float)
+        total_special_by_emp = defaultdict(float)
         tr.search([('worksheet_id', 'in', worksheet.ids),('transferred','=',False)]).unlink()
 
         vals_list = []
@@ -194,6 +220,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
             for det in ws.worksheet_detail_ids:
                 emp_id = ws.worker_id.id
                 total_by_emp[emp_id] += det.amount
+                if det.earning_id.earning_id.no_material_without_tax:
+                    total_special_by_emp[emp_id] += det.amount
                 vals_list.append(
                     self._prepare_transaction_vals(
                         employee_id=ws.worker_id.id,
@@ -215,6 +243,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                         tax_proportion=0.0,
                         pension_proportion=0.0,
                         earning_proportion=det.proportion,
+                        no_material_without_tax=False,
                     ))
         if not vals_list:
             return None
@@ -256,46 +285,99 @@ class PRXPayrollWorksheetCalculation(models.Model):
 
             if ded.deduction_id.deduction_calc_type == 'fix_amount':
                 amt = ded.amount
+                special_amt = 0.0
             else:
-                amt = total_by_emp.get(emp, 0.0) * ded.percentage
+                if ded.deduction_id.pension:
+                    special_gross = total_special_by_emp.get(emp, 0.0)
+                    standard_gross = total_by_emp.get(emp, 0.0) - special_gross
+                    amt = standard_gross * ded.percentage
+                    special_amt = special_gross * ded.percentage
+                else:
+                    amt = total_by_emp.get(emp, 0.0) * ded.percentage
+                    special_amt = 0.0
+
             # თუ არაქვს ანაზღაურება არ აქვს დაქვითვა
             if total_by_emp.get(emp, 0.0):
                 # საპენსიოს ტრანზაქციები
-                vals_list.append(
-                    self._prepare_transaction_vals(
-                        worksheet_id=employee_worksheet(emp),
-                        employee_id=emp,
-                        amount=-amt,
-                        code=ded.deduction_id.deduction,
-                        transaction_type='deduction',
-                        start_date=period_start,
-                        end_date=period_end,
-                        deduction_id=ded.deduction_id.id,
-                        employee_deduction_id=ded.id,
-                        creditor=ded.vendor.id if ded.vendor else False,
-                        period_id=self.period.id,
-                        include_tax_base=True,
-                        report_name=ded.deduction_id.report_name,
-                        tax_proportion=0.0,
-                        pension_proportion=0.0,
-                    ))
+                if amt != 0.0 or (ded.deduction_id.pension and special_amt == 0.0):
+                    vals_list.append(
+                        self._prepare_transaction_vals(
+                            worksheet_id=employee_worksheet(emp),
+                            employee_id=emp,
+                            amount=-amt,
+                            code=ded.deduction_id.deduction,
+                            transaction_type='deduction',
+                            start_date=period_start,
+                            end_date=period_end,
+                            deduction_id=ded.deduction_id.id,
+                            employee_deduction_id=ded.id,
+                            creditor=ded.vendor.id if ded.vendor else False,
+                            period_id=self.period.id,
+                            include_tax_base=True,
+                            report_name=ded.deduction_id.report_name,
+                            tax_proportion=0.0,
+                            pension_proportion=0.0,
+                            no_material_without_tax=False,
+                        ))
+                
+                if ded.deduction_id.pension and special_amt != 0.0:
+                    vals_list.append(
+                        self._prepare_transaction_vals(
+                            worksheet_id=employee_worksheet(emp),
+                            employee_id=emp,
+                            amount=-special_amt,
+                            code=ded.deduction_id.deduction,
+                            transaction_type='deduction',
+                            start_date=period_start,
+                            end_date=period_end,
+                            deduction_id=ded.deduction_id.id,
+                            employee_deduction_id=ded.id,
+                            creditor=ded.vendor.id if ded.vendor else False,
+                            period_id=self.period.id,
+                            include_tax_base=False,
+                            report_name=ded.deduction_id.report_name,
+                            tax_proportion=0.0,
+                            pension_proportion=0.0,
+                            no_material_without_tax=True,
+                        ))
+
                 if ded.deduction_id.pension:
-                    for sign in (-1, 1):
-                        vals_list.append(
-                            self._prepare_transaction_vals(
-                                worksheet_id=employee_worksheet(emp),
-                                employee_id=emp,
-                                amount=amt * sign,
-                                transaction_type='company_pension',
-                                start_date=period_start,
-                                end_date=period_end,
-                                creditor=ded.vendor.id if ded.vendor else False,
-                                period_id=self.period.id,
-                                include_tax_base=False,
-                                tax_proportion=0.0,
-                                pension_proportion=0.0,
+                    if amt != 0.0:
+                        for sign in (-1, 1):
+                            vals_list.append(
+                                self._prepare_transaction_vals(
+                                    worksheet_id=employee_worksheet(emp),
+                                    employee_id=emp,
+                                    amount=amt * sign,
+                                    transaction_type='company_pension',
+                                    start_date=period_start,
+                                    end_date=period_end,
+                                    creditor=ded.vendor.id if ded.vendor else False,
+                                    period_id=self.period.id,
+                                    include_tax_base=False,
+                                    tax_proportion=0.0,
+                                    pension_proportion=0.0,
+                                    no_material_without_tax=False,
+                                )
                             )
-                        )
+                    if special_amt != 0.0:
+                        for sign in (-1, 1):
+                            vals_list.append(
+                                self._prepare_transaction_vals(
+                                    worksheet_id=employee_worksheet(emp),
+                                    employee_id=emp,
+                                    amount=special_amt * sign,
+                                    transaction_type='company_pension',
+                                    start_date=period_start,
+                                    end_date=period_end,
+                                    creditor=ded.vendor.id if ded.vendor else False,
+                                    period_id=self.period.id,
+                                    include_tax_base=False,
+                                    tax_proportion=0.0,
+                                    pension_proportion=0.0,
+                                    no_material_without_tax=True,
+                                )
+                            )
 
         all_tax_ids = self.env['prx.payroll.employee.tax'].search(
             [
@@ -305,7 +387,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 ('end_date', '>=', period_start),
                 ('end_date', '=', False)]
         )
-        amount_by_employee = self.compute_tax_base_by_employee(vals_list)
+        amount_by_employee, amount_by_employee_no_material_without_tax = self.compute_tax_base_by_employee(vals_list)
         non_rate_base_taxes = all_tax_ids.filtered(lambda t: t.tax.rate_base == 0.0)
         for tax in non_rate_base_taxes:
             emp = tax.employee_id.id

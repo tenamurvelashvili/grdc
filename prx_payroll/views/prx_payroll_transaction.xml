@@ -89,6 +89,7 @@
                     <field name="earning_proportion" optional="show" width="80"/>
                     <field name="pension_proportion" optional="show" width="80"/>
                     <field name="include_tax_base" optional="show" width="80"/>
+                    <field name="no_material_without_tax" optional="show" width="80"/>
                     <field name="start_date" optional="show" width="80"/>
                     <field name="end_date" optional="show" width="80"/>
                     <field name="earning_unit" optional="show" width="80"/>
@@ -126,6 +127,7 @@
                                 <field name="tax_id"/>
                                 <field name="deduction_id"/>
                                 <field name="include_tax_base"/>
+                                <field name="no_material_without_tax"/>
                                 <field name="start_date"/>
                                 <field name="end_date"/>
                             </group>
