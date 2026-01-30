@@ -422,7 +422,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
             current_month_amount = sum(tr.search([('start_date', '>=', period_start), ('end_date', '<=', period_end),('worksheet_id','=',employee_worksheet(emp)),
                                                   ('include_tax_base', '=', True), ('employee_id', '=', emp)]).mapped('amount'))
             remining_limit = tax.tax.rate_base
-            if tax.start_date >= current_year:
+            if tax.start_date.year >= current_year.year:
                 remining_limit = tax.tax.rate_base - tax.used_tax_amount
 
             if year_tax_amount - remining_limit <= 0:
