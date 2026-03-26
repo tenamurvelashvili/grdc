@@ -27,6 +27,9 @@
                         <setting id="prx_close_tabel" colspan="4">
                             <field name="close_tabel"/>
                         </setting>
+                        <setting id="prx_export_time_conf" colspan="4" help="საშემოსავლო დეკლარაცია">
+                            <field name="prx_export_time"/>
+                        </setting>
                         <block title="ბონუსი">
                             <setting id="prx_bonus_salary" colspan="4" help="ბონუსი">
                                 <field name="bonus_salary"/>

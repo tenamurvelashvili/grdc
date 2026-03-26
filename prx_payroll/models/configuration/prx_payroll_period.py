@@ -5,6 +5,7 @@ from odoo.exceptions import UserError, ValidationError
 class PRXPayrollPeriod(models.Model):
     _name = 'prx.payroll.period'
     _description = 'Period of payroll module'
+    _rec_name = 'period'
 
     company_id = fields.Many2one('res.company', string='კომპანია', default=lambda self: self.env.company, required=True)
     period = fields.Char(string='პერიოდი', required=True)

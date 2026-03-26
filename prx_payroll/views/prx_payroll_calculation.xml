@@ -2,6 +2,17 @@
 <odoo>
     <data>
 
+    <record id="view_prx_payroll_worksheet_calculation_search" model="ir.ui.view">
+        <field name="name">prx.payroll.worksheet.calculation.search</field>
+        <field name="model">prx.payroll.worksheet.calculation</field>
+        <field name="arch" type="xml">
+            <search string="Calculations">
+                <field name="display_name"/>
+                <field name="worksheet"/>
+            </search>
+        </field>
+    </record>
+
     <record id="view_prx_payroll_worksheet_calculation_list" model="ir.ui.view">
         <field name="name">prx.payroll.worksheet.calculation.list</field>
         <field name="model">prx.payroll.worksheet.calculation</field>

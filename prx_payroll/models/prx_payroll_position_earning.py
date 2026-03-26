@@ -25,20 +25,33 @@ class PRXPayrollPositionEarning(models.Model):
     insurance_pension_deduction_id = fields.Many2one('prx.payroll.employee.deduction')
     from_wizard = fields.Boolean()
     wizard_period_id = fields.Many2one('prx.payroll.period')
+    comment = fields.Text(string="კომენტარი")
+    
 
     def unlink(self):
+        unlinking_from_deduction = self.env.context.get('prx_unlinking_from_deduction')
         for rec in self:
-            if rec.insurance_pension_deduction_id:
-                rec.insurance_pension_deduction_id.unlink()
+            if rec.insurance_pension_deduction_id and not unlinking_from_deduction:
+                rec.insurance_pension_deduction_id.with_context(prx_unlinking_from_position=True).unlink()
         return super(PRXPayrollPositionEarning, self).unlink()
 
+    #return true if fond pension for employee
+    def _check_if_ded_eligible(self, rec):
+        #rec position earning
+        domain = [
+            ('employee_id', '=', rec.employee_id.id),
+            ('deduction_id.pension', '=', True),
+        ]
+        return bool(self.env['prx.payroll.employee.deduction'].search_count(domain))
+        
+        
     @api.model_create_multi
     def create(self, vals_list):
         records = super(PRXPayrollPositionEarning, self).create(vals_list)
         for rec in records:
             if rec.earning_id.insurance:
                 link_ded = rec.earning_id.link_insurance_ded
-                if link_ded:
+                if link_ded and self._check_if_ded_eligible(rec):
                     insurance_ded_id = self.env['prx.payroll.employee.deduction'].create({
                         'employee_id': rec.employee_id.id,
                         'deduction_id': link_ded.id,

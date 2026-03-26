@@ -1,3 +1,4 @@
+import re
 from odoo import models, fields, api
 from .configuration.prx_enum_selection import TransactionType
 from odoo.exceptions import UserError
@@ -61,7 +62,7 @@ class PrxPayrollTransaction(models.Model):
     earning_proportion = fields.Float(digits=(19, 10),string="ანაზღაურების წილი")
     transferred = fields.Boolean(string="გადარიცხულია")
     
-    no_material_without_tax = fields.Boolean(string='არაფულადი სარგებელი (გადასახადის გარეშე)',tracking=True)
+    no_material_without_tax = fields.Boolean(string='არაფულადი - საპენსიოს გარეშე',related='earning_id.no_material_without_tax',tracking=True)
     
 
     def unlink(self):
