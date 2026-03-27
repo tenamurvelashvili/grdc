@@ -1,5 +1,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
+from decimal import Decimal, ROUND_HALF_UP
 from collections import defaultdict
 from datetime import date, timedelta
 import logging
@@ -472,6 +473,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
 
         with_rate_base_taxes = all_tax_ids.filtered(lambda t: t.tax.rate_base != 0.0)
         tax_proportion_plans = []
+        self._add_not_material_tax_to(worksheet)
         for tax in with_rate_base_taxes:
             emp = tax.employee_id.id
             ws_id = employee_worksheet(emp)
@@ -582,9 +584,11 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 ))
         tr.create(vals_list)
         vals_list.clear()
-        self.update_proportions_for_existing_transactions(worksheet)
+        
         _logger.info(f"TAX PROPORTION: {tax_proportion_plans}")
 
+
+        
         if tax_proportion_plans:
             #TODO აქ რაცხა წავშალე რო რამე ვაბრუნებ
             # New distribution is only for employees that have rate_base taxes.
@@ -598,7 +602,6 @@ class PRXPayrollWorksheetCalculation(models.Model):
                                                                            and not d.deduction_id.avanse
                                                                            and not d.insurance_pension_linked_earning_id
                                                                  )
-        self._add_not_material_tax_to(worksheet)
 
         def get_earning_codes():
             earning_code = [rec.link_insurance_ded.id for rec in self.env['prx.payroll.earning'].search([('link_insurance_ded','!=',False)])]
@@ -667,6 +670,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
         ordered_vals.sort(key=lambda x: x[0])
         vals_list.extend(vals for _, vals in ordered_vals)
         # აქ დალაგებული არის deduction_order მიხედვით და ამის მიხედვით მოხდება ჩანაწერების შექმნა რაღაც დონეზე
+        _logger.info(f"CREATING DEDUCTION TRANSACTIONS FOR EMPLOYEES: {[ded.employee_id.name for ded in not_reduces_income_tax_base]} with ordered vals: {ordered_vals}")
         tr.create(vals_list)
         vals_list.clear()
 
@@ -711,6 +715,10 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 )
                 tr.create(pension_vals)
 
+    def math_round(self, number, places=2):  
+        format_str = '0.1' if places == 0 else '0.' + '1'.zfill(places)
+        return Decimal(str(number)).quantize(Decimal(format_str), rounding=ROUND_HALF_UP)
+
     def update_proportions_for_existing_transactions(self, worksheet):
         """Update tax and pension proportions for all EARNING transactions in worksheet."""
         pension_ids = self.env['prx.payroll.deduction'].search([('pension', '=', True)]).ids
@@ -745,16 +753,18 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 '|', ('end_date', '>=', earning.worksheet_id.period_id.start_date), ('end_date', '=', False),
                 ('tax.rate_base', '!=', 0.0)
             ]) > 0
-
+            
+            _logger.info(f"SHITTY LOGS 2 {float(self.math_round(pension_amount))} === {float(self.math_round(pension_amount)) * base} - {base}" )
             if has_rate_base:
                 earning.write({
                     'tax_proportion': tax_amount,
-                    'pension_proportion':  pension_amount * base,
+                    'pension_proportion':  float(self.math_round(pension_amount,)) * base,
                 })
             else:
+                
                 earning.write({
                     'tax_proportion': tax_amount * base,
-                    'pension_proportion': pension_amount * base,
+                    'pension_proportion':float(self.math_round(pension_amount,)) * base,
                 })
 
     def _add_not_material_tax_to(self, worksheet):
@@ -861,6 +871,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
             return
 
         grouped_plans = defaultdict(list)
+        
+        _logger.info(f"GROUPING TAX PROPORTION PLANS BY EMPLOYEE AND WORKSHEET")
         for plan in tax_proportion_plans:
             key = (plan['employee_id'], plan['worksheet_id'])
             grouped_plans[key].append(plan)
@@ -904,7 +916,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 for tx in no_material_earnings:
                     taxable_tx_amount = max(
                         0.0,
-                        tx.amount - self._get_effective_pension_amount(tx.pension_proportion)
+                        tx.amount -  self._get_effective_pension_amount(tx.pension_proportion) 
                     )
                     aggregated[tx.id] += -(taxable_tx_amount * plan['tax_rate'])
 
