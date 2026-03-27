@@ -10,7 +10,7 @@
     'website': "https://www.proxima.solutions",
 
     'category': 'Proxima',
-    'version': '19.0.0.0.1',
+    'version': '18.0.0.0.1',
 
     'depends': [
         'base',
