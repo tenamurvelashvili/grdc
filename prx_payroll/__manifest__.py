@@ -6,16 +6,17 @@
 
     'description': """Proxima solution payroll""",
 
-    'author': """T.C and A.G""",
+    'author': """Proxima Solutions""",
     'website': "https://www.proxima.solutions",
 
     'category': 'Proxima',
-    'version': '0.1',
+    'version': '18.0.0.0.1',
 
     'depends': [
         'base',
         'hr_contract',
         'hr_holidays',
+        'hr_recruitment',
         'resource',
         'prx_calendar',
         'prx_income_tax',
@@ -73,6 +74,7 @@
         'views/prx_payroll_actions.xml',
         'views/prx_payroll_res_config_settings.xml',
         'views/prx_payroll_menu.xml',
+        'views/ext_hr_applicant_view.xml',
 
     ],
     'assets': {

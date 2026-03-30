@@ -156,7 +156,7 @@ class PRXPayrollEarningBonusWizard(models.TransientModel):
                 emp_earning = position_earning.filtered(lambda s: s.employee_id == emp)
                 need_earnings = self.env['prx.payroll.position.earning']
                 for earn in emp_earning:
-                    if earn.start_date.year == year or (earn.start_date.year != year and earn.end_date.year == year):
+                    if earn.start_date.year == year or (earn.start_date.year != year and (not earn.end_date or earn.end_date.year == year)):
                         earning_months = self.get_earning_month(earn)
                         print(earning_months)
                         if not earning_months:

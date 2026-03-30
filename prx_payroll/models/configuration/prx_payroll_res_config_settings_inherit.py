@@ -5,6 +5,8 @@ class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
     prx_manual = fields.Boolean(string='Manual', config_parameter='prx_payroll.prx_manual_not_unlink')
+    #საშემოსავლო დეკლარაცია თავზე
+    prx_export_time = fields.Boolean(string='გაცემის თარიღი', config_parameter='prx_payroll.prx_export_time_not_unlink')
     prx_system = fields.Boolean(string='System', config_parameter='prx_payroll.prx_system_not_unlink')
     prx_earning = fields.Boolean(string='გამომუშავებით', config_parameter='prx_payroll.prx_earning_not_unlink')
     prx_pension_insurance = fields.Boolean(string='დაზღვევა საპენსიოს',

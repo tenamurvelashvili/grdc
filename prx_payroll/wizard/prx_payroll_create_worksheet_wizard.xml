@@ -15,7 +15,8 @@
             <form string="ტაბელის შექმნა">
                 <group>
                     <field name="date"/>
-                    <field name="earning_id" domain="[('salary_type','=','standard')]"/>
+                    <field name="allowed_earning_ids" invisible="1"/>
+                    <field name="earning_id"/>
                     <field name="department_id"/>
                 </group>
 

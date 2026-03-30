@@ -1,23 +1,60 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
+import logging
+_logger = logging.getLogger(__name__)
 
 class PRXPayrollCreateWorksheetWizard(models.TransientModel):
     _name = "prx.payroll.create.worksheet.wizard"
     _description = "Worksheet wizard"
 
     date = fields.Date(string="თარიღი", required=True)
-    earning_id = fields.Many2one('prx.payroll.earning', string="ანაზღაურება",required=True)
+    earning_id = fields.Many2one('prx.payroll.earning', string="ანაზღაურება",required=True, domain="[('id', 'in', allowed_earning_ids),( 'salary_type','=','standard')]")
     department_id = fields.Many2one('hr.department', string="დეპარტამენტი")
 
     count_not_created = fields.Integer(string="რაოდენობა(შესაქმნელი)", compute="_compute_amount_totals")
     count_created = fields.Integer(string="რაოდენობა(შექმნილი)", compute="_compute_amount_totals")
-
+    
+    allowed_earning_ids = fields.Many2many(
+        'prx.payroll.earning',
+        compute='_compute_allowed_earning_ids',
+        string="Allowed Earnings",
+        store=False
+    )
+            
     @api.depends('line_ids_not_created', 'line_ids_created')
     def _compute_amount_totals(self):
         for wizard in self:
             wizard.count_not_created = len(wizard.line_ids_not_created)
             wizard.count_created = len(wizard.line_ids_created)
+    
+    @api.model
+    def default_get(self, fields_list):
+        res = super(PRXPayrollCreateWorksheetWizard, self).default_get(fields_list)
+        if 'allowed_earning_ids' in fields_list:
+            if self.env.user.has_group('prx_payroll.prx_payroll_administrator'):
+                res['allowed_earning_ids'] = [(6, 0, self.env['prx.payroll.earning'].search([]).ids)]
+            elif self.env.user.has_group('prx_payroll.prx_payroll_worksheet_manager'):
+                res['allowed_earning_ids'] = [(6, 0, self.env['prx.payroll.earning'].search([
+                    ('production_base', '=', True)
+                ]).ids)]
+        return res
+        
+    @api.depends()
+    def _compute_allowed_earning_ids(self):
+        _logger.info(f"COMPUTING ALLOWED EARNING IDS FOR USER: {self.env.user.name}")
+        
+        for wizard in self:
+            _logger.info(f"IS ADMIN: {self.env.user.has_group('prx_payroll.prx_payroll_administrator')}")
+            _logger.info(f"IS WORKSHEET MANAGER: {self.env.user.has_group('prx_payroll.prx_payroll_worksheet_manager')}")
+            if self.env.user.has_group('prx_payroll.prx_payroll_administrator'):
+                wizard.allowed_earning_ids = self.env['prx.payroll.earning'].search([])
+            elif self.env.user.has_group('prx_payroll.prx_payroll_worksheet_manager'):
+                wizard.allowed_earning_ids = self.env['prx.payroll.earning'].search([
+                    ('production_base', '=', True)
+                ])
+            else:
+                wizard.allowed_earning_ids = self.env['prx.payroll.earning']
 
     line_ids_not_created = fields.One2many(
         'prx.payroll.create.worksheet.wizard.line',
@@ -40,10 +77,14 @@ class PRXPayrollCreateWorksheetWizard(models.TransientModel):
         if not self.date or not self.earning_id:
             return
 
-        access_employees = self.env['prx.payroll.worksheet.manager'].search(
-            [('worksheet_manager_id', '=', self.env.user.employee_id.id)]
-        ).line_ids.mapped('employee_id')
+        if self.env.user.has_group('prx_payroll.prx_payroll_administrator'):
+            access_employees = self.env['prx.payroll.worksheet.manager'].search([]).line_ids.mapped('employee_id')
+        else:
+            access_employees = self.env['prx.payroll.worksheet.manager'].search(
+                [('worksheet_manager_id', '=', self.env.user.employee_id.id)]
+            ).line_ids.mapped('employee_id')
 
+        _logger.info(f"ACCESS ALL EMPLOYEESS{self.env.user.name}: {[emp.name for emp in access_employees]}")
         earnings = self.env['prx.payroll.position.earning'].search([
             ('start_date', '<=', self.date),
             '|',
@@ -53,8 +94,7 @@ class PRXPayrollCreateWorksheetWizard(models.TransientModel):
             ('earning_id', '=', self.earning_id.id),
         ])
 
-        if not self.env.user.has_group('prx_payroll.prx_payroll_administrator'):
-            earnings = earnings.filtered(lambda c: c.employee_id in access_employees)
+        earnings = earnings.filtered(lambda c: c.employee_id in access_employees)
 
         if self.department_id:
             earnings = earnings.filtered(lambda c: c.employee_id.department_id == self.department_id)

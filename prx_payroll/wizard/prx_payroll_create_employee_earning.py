@@ -1,6 +1,8 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
+import logging
+_logger = logging.getLogger(__name__)
 
 class PRXPayrollPositionEarningWizard(models.TransientModel):
     _name = "prx.payroll.position.earning.wizard"
@@ -45,12 +47,10 @@ class PRXPayrollPositionEarningWizard(models.TransientModel):
         string="შექმნილი"
     )
 
-    @api.onchange('period_id', 'earning_id', 'department_id')
+    @api.onchange('period_id', 'department_id','earning_id')
     def _onchange_period_id(self):
-        if not self.period_id:
-            self.line_ids_not_created = [(5, 0, 0)]
-            self.line_ids_created = [(5, 0, 0)]
-            return
+        self.line_ids_not_created = False
+        self.line_ids_created = False
 
         contracts = self.env['hr.contract'].search([
             ('state', '=', 'open'),
@@ -63,9 +63,12 @@ class PRXPayrollPositionEarningWizard(models.TransientModel):
         if self.department_id:
             contracts = contracts.filtered(lambda c: c.employee_id.department_id == self.department_id)
 
-        access_employees = self.env['prx.payroll.worksheet.manager'].search(
-            [('worksheet_manager_id', '=', self.env.user.employee_id.id)]
-        ).line_ids.mapped('employee_id')
+        if self.env.user.has_group('prx_payroll.prx_payroll_administrator'):
+            access_employees = self.env['prx.payroll.worksheet.manager'].search([]).line_ids.mapped('employee_id')
+        else:
+            access_employees = self.env['prx.payroll.worksheet.manager'].search(
+                [('worksheet_manager_id', '=', self.env.user.employee_id.id)]
+            ).line_ids.mapped('employee_id')
 
         lines_not_created, lines_created = [], []
 
@@ -78,12 +81,7 @@ class PRXPayrollPositionEarningWizard(models.TransientModel):
             if contract.date_end and contract.date_end < self.period_id.end_date:
                 end_date = contract.date_end
 
-            if self.env.user.has_group('prx_payroll.prx_payroll_administrator'):
-                allow_employee = True
-            else:
-                allow_employee = contract.employee_id in access_employees
-
-            if not allow_employee:
+            if contract.employee_id not in access_employees:
                 continue
 
             exists = self.env['prx.payroll.position.earning'].search([
@@ -92,55 +90,66 @@ class PRXPayrollPositionEarningWizard(models.TransientModel):
                 ('employee_id', '=', contract.employee_id.id),
             ])
 
-            if self.earning_id:
-                exists = exists.filtered(lambda c: c.earning_id == self.earning_id)
-
             if self.department_id:
                 exists = exists.filtered(lambda c: c.employee_id.department_id == self.department_id)
 
-            line_vals = {
+            base_vals = {
                 'employee_id': contract.employee_id.id,
                 'contract_id': contract.id,
                 'start_date': start_date,
                 'end_date': end_date,
-                'earning_id': self.earning_id.id,
                 'currency_id': contract.company_id.currency_id.id,
             }
 
-            if exists:
-                line_vals = line_vals | {
-                    'amount': exists.amount,
-                    'start_date': exists.start_date,
-                    'end_date': exists.end_date,
-                    'currency_id': exists.currency_id.id,
-                    'earning_id': exists.earning_id.id,
-                    'moved': True,
-                    'wizard_created_id': self.id
-
-                }
-                lines_created.append((0, 0, line_vals))
+            if self.earning_id:
+                exists_for_earning = exists.filtered(lambda r: r.earning_id == self.earning_id)
+                if exists_for_earning:
+                    for existing in exists_for_earning:
+                        line_vals = base_vals | {
+                            'earning_id': existing.earning_id.id,
+                            'amount': existing.amount,
+                            'start_date': existing.start_date,
+                            'end_date': existing.end_date,
+                            'currency_id': existing.currency_id.id,
+                            'moved': True,
+                            'wizard_created_id': self.id,
+                        }
+                        lines_created.append((0, 0, line_vals))
+                else:
+                    new_vals = base_vals | {
+                        'earning_id': self.earning_id.id,
+                    }
+                    lines_not_created.append((0, 0, new_vals | {'moved': False, 'wizard_id': self.id}))
             else:
-                lines_not_created.append((0, 0, line_vals | {'moved': False, 'wizard_id': self.id}))
+                line_vals = base_vals | {'moved': False, 'wizard_id': self.id}
+                lines_not_created.append((0, 0, line_vals))
 
-        self.line_ids_not_created = [(5, 0, 0)] + lines_not_created
-        self.line_ids_created = [(5, 0, 0)] + lines_created
+        self.line_ids_not_created = lines_not_created
+        self.line_ids_created = lines_created
+
 
     def action_confirm(self):
+        _logger.info("==================ACTION CONFIRM==================")
+        _logger.info(self.line_ids_not_created)
+
         for line in self.line_ids_not_created.filtered(lambda l: l.selected):
+            _logger.info(line)
+            _logger.info(line.contract_id)
             contract = line.contract_id
 
             start_date = self.period_id.start_date
             end_date = self.period_id.end_date
-
+            #
             if self.period_id.start_date < contract.date_start:
                 start_date = contract.date_start
+
             if contract.date_end and contract.date_end < self.period_id.end_date:
                 end_date = contract.date_end
 
             if not line.amount:
                 raise UserError(f'{contract.employee_id.name} შეიყვანე ანაზღაურების თანხა')
 
-            self.env['prx.payroll.position.earning'].create({
+            data_create = self.env['prx.payroll.position.earning'].create({
                 'employee_id': contract.employee_id.id,
                 'contract_id': contract.id,
                 'position_id': contract.job_id.id,
@@ -152,6 +161,8 @@ class PRXPayrollPositionEarningWizard(models.TransientModel):
                 'from_wizard': True,
                 'wizard_period_id': self.period_id.id,
             })
+            _logger.info("=================== ENDING IN CREATE ======================")
+            _logger.info(data_create)
 
 class PRXPayrollPositionEarningWizardLine(models.TransientModel):
     _name = "prx.payroll.position.earning.wizard.line"
@@ -182,3 +193,7 @@ class PRXPayrollPositionEarningWizardLine(models.TransientModel):
         for rec in self:
             if rec.contract_id:
                 rec.employee_id = rec.contract_id.employee_id
+
+
+    def create(self,vals):
+        return super().create(vals)

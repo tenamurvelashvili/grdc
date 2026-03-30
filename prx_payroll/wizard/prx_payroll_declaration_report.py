@@ -21,6 +21,10 @@ class PRXPayrollDeclarationWizard(models.TransientModel):
             ('period_id', '=', self.period_id.id),
         ])
 
+        config_param = self.env['ir.config_parameter'].sudo()
+        export_time_raw = config_param.get_param('prx_payroll.prx_export_time_not_unlink')
+        export_time = str(export_time_raw).lower() in ('1', 'true', 'yes') if export_time_raw is not None else False
+
         data = []
         for t in txs:
             earning_amount = sum(r.amount for r in txs if r.transaction_type == 'earning' and r.earning_id and r.employee_id.id == t.employee_id.id)
@@ -53,26 +57,27 @@ class PRXPayrollDeclarationWizard(models.TransientModel):
                 'rate_gross': emp_rate_gross,
                 'earning_amount':earning_amount,
                 'another_benefit':another_benefit,
-                'payment_date': t.period_id.payment_date,
+                'payment_date': t.period_id.payment_date if export_time else None,
             })
         df = pd.DataFrame(data)
         if df.empty:
             raise UserError('ჩანაწერი არ მოიძებნა!')
+        group_agg = {
+            'earning_amount': pd.NamedAgg(column='earning_amount', aggfunc='first'),
+            'first_name': pd.NamedAgg(column='first_name', aggfunc='first'),
+            'last_name': pd.NamedAgg(column='last_name', aggfunc='first'),
+            'tax_report': pd.NamedAgg(column='tax_report', aggfunc='first'),
+            'private_street': pd.NamedAgg(column='private_street', aggfunc='first'),
+            'resident_country': pd.NamedAgg(column='resident_country', aggfunc='first'),
+            'tax_category': pd.NamedAgg(column='tax_category', aggfunc='first'),
+            'rate_gross': pd.NamedAgg(column='rate_gross', aggfunc='first'),
+            'personal_number': pd.NamedAgg(column='personal_number', aggfunc='first'),
+            'another_benefit': pd.NamedAgg(column='another_benefit', aggfunc='first'),
+            'payment_date': pd.NamedAgg(column='payment_date', aggfunc='first'),
+        }
         grouped = (
-            df.groupby(['employee_id','period_id'],dropna=False, as_index=False)
-            .agg(
-                earning_amount=('earning_amount', 'first'),
-                first_name=('first_name', 'first'),
-                last_name=('last_name', 'first'),
-                tax_report=('tax_report', 'first'),
-                private_street=('private_street', 'first'),
-                resident_country=('resident_country', 'first'),
-                tax_category=('tax_category', 'first'),
-                rate_gross=('rate_gross', 'first'),
-                personal_number=('personal_number', 'first'),
-                another_benefit=('another_benefit', 'first'),
-                payment_date=('payment_date','first')
-            )
+            df.groupby(['employee_id','period_id'], dropna=False, as_index=False)
+            .agg(**group_agg)
             .reset_index()
         )
 
