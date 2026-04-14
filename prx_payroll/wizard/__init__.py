@@ -3,6 +3,7 @@ from . import prx_payroll_payslip_report_wizard
 from . import prx_payroll_declaration_report
 from . import prx_payroll_bank_reports
 from . import prx_payroll_transaction_report
+from . import prx_payroll_transaction_report_2
 from . import prx_payroll_tabel_report
 from . import prx_payroll_pension_alimony
 from . import prx_payroll_creditor_wizard

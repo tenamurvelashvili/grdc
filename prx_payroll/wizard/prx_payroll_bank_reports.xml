@@ -8,18 +8,18 @@
                 <form string="Payroll Declaration Report">
                     <sheet>
                         <group>
-                            <field name="period_id"/>
-                            <field name="bank"/>
-                            <field name="process_type" widget="radio" options="{'horizontal': true}"/>
-                            <field name="transaction_type" widget="radio" options="{'horizontal': true}"/>
-                            <field name="file_name" invisible="1"/>
-                            <field name="file_download" filename="file_name" widget="download"/>
+                            <field name="period_id" />
+                            <field name="bank" />
+                            <field name="report_language" widget="radio" options="{'horizontal': true}" />
+                            <field name="process_type" widget="radio" options="{'horizontal': true}" />
+                            <field name="transaction_type" widget="radio" options="{'horizontal': true}" />
+                            <field name="file_name" invisible="1" />
+                            <field name="file_download" filename="file_name" widget="download" />
                         </group>
                     </sheet>
                     <footer>
-                        <button string="Generate" type="object" name="action_generate_bank_reports"
-                                class="btn-primary"/>
-                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        <button string="Generate" type="object" name="action_generate_bank_reports" class="btn-primary" />
+                        <button string="Cancel" class="btn-secondary" special="cancel" />
                     </footer>
                 </form>
             </field>

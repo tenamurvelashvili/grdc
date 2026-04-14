@@ -17,7 +17,7 @@ class PRXPayrollPositionEarning(models.Model):
     identification_number = fields.Char(string='პირადი ნომერი', related='employee_id.identification_id', store=True,
                                         readonly=True, )
     earning_id = fields.Many2one('prx.payroll.earning', string='ანაზღაურება', required=True)
-    start_date = fields.Date(string='საწყისი თარიღი', required=True)
+    start_date = fields.Date(string='საწყისი თარიღი', required=True, default=lambda self: fields.Date.today())
     end_date = fields.Date(string='საბოლოო თარიღი', compute='_default_end', store=True, readonly=False)
     salary_type = fields.Selection(SalaryType.selection(),related='earning_id.salary_type',string="პროცესის ტიპი")
     exception = fields.Boolean(string="გამონაკლისი")
@@ -142,7 +142,7 @@ class PRXPayrollPositionEarning(models.Model):
     @api.onchange('contract_id','exception')
     def get_contract_data(self):
         if self.contract_id:
-            self.start_date = self.contract_id.date_start
+            # self.start_date = self.contract_id.date_start
             self.end_date = self.contract_id.date_end
             if self.contract_id.state != 'open' and not self.exception:
                 self.contract_id = None

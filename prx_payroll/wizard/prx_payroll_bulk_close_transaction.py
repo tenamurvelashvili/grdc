@@ -7,6 +7,7 @@ class PRXPayrollCloseTransactionWizard(models.TransientModel):
     period = fields.Many2one('prx.payroll.period')
     process_type = fields.Selection(SalaryType.selection()+[('all','ყველა')], string='პროცესის ტიპი',default='all',required=True)
     worksheet_id = fields.Many2one('prx.payroll.worksheet',string='ტაბელი')
+    transferred_time = fields.Date(string='გადარიცხვის დრო', default=fields.Date.today())
 
     def action_close_transactions(self):
         transaction = self.env['prx.payroll.transaction']
@@ -62,7 +63,7 @@ class PRXPayrollCloseTransactionWizard(models.TransientModel):
                 'end_date': ws.period_id.end_date or False,
             })
 
-            txs_ws.write({'transferred': True})
+            txs_ws.write({'transferred': True, "prx_transferred_time": self.transferred_time or fields.Date.today() })
             txs_ws.mapped('worksheet_id').write({'transferred':True})
         if vals:
             transaction.create(vals)

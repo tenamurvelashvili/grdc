@@ -33,7 +33,8 @@
             <menuitem id="prx_payroll_menu_report" name="სახელფასო უწყისი" sequence="5" action="action_prx_payroll_report_wizard"/>
               <menuitem id="prx_payroll_declaration_report_menu" action="action_prx_payroll_declaration_wizard" sequence="10" name="საშემოსავლოს დეკლარაციები"/>
               <menuitem id="prx_payroll_bank_report_menu" action="action_prx_payroll_bank_reports_wizard_act" sequence="15" name="ბანკის ფაილი"/>
-              <menuitem id="prx_payroll_transaction_report_menu" action="action_prx_payroll_transaction_reports_wizard_act" sequence="20" name="ტრანზაქციების რეპორტი"/>
+              <menuitem id="prx_payroll_transaction_report_menu" action="action_prx_payroll_transaction_reports_wizard_act" sequence="20" name="ტრანზაქციების რეპორტი დეტალური"/>
+              <menuitem id="prx_payroll_transaction_report_menu_2" action="action_prx_payroll_transaction_reports_2_wizard_act" sequence="23" name="ტრანზაქციების რეპორტი"/>
               <menuitem id="prx_payroll_tabel_report_menu" action="action_prx_payroll_tabel_reports_wizard_act" sequence="20" name="ტაბელის რეპორტი"/>
               <menuitem id="prx_payroll_pension_alimony_report_menu" action="action_prx_payroll_pension_alimony_reports_wizard_act" sequence="25" name="საპენსიო/ალიმენტი რეპორტი"/>
               <menuitem id="prx_payroll_creditor_report_menu" action="action_prx_payroll_creditor_reports_wizard_act" sequence="30" name="კრედიტორის რეპორტი"/>

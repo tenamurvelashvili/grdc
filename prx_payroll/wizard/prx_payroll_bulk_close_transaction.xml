@@ -10,6 +10,7 @@
                         <field name="period" required="1"/>
                         <field name="process_type" options="{'horizontal': true}" required="1"/>
                         <field name="worksheet_id" domain="[('period_id','=',period),('salary_type','=',process_type)]"/>
+                        <field name="transferred_time"/>
                     </group>
                     <footer>
                         <button string="გატარებეის დახურვა"

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+<data>
+
+
+    <record id="prx_hr_applicant_view_form_inherit" model="ir.ui.view">
+        <field name="name">hr.recruitment.name.view.form.inherit</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='email_from']" position="before">
+                <field name="first_name" placeholder="Enter first name ..."/>
+                <field name="last_name" placeholder="Enter last name ..."/>                
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <record id="inherit_view_id_inherit_module_name" model="ir.ui.view">
+        <field name="name">model.name.view.form.inherit</field>
+        <field name="model">hr.candidate</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_candidate_view_form"/>
+        <field name="arch" type="xml">
+            
+
+            <xpath expr="//field[@name='partner_name']" position="attributes">
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+            <xpath expr= "//field[@name='partner_id']" position="before">
+                <field name="first_name" placeholder="Enter first name ..."/>
+                <field name="last_name" placeholder="Enter last name ..."/>
+                
+            </xpath>
+        </field>
+    </record>
+</data>
+        
+</odoo>

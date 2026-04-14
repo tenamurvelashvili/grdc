@@ -63,7 +63,8 @@ class PrxPayrollTransaction(models.Model):
     transferred = fields.Boolean(string="გადარიცხულია")
     
     no_material_without_tax = fields.Boolean(string='არაფულადი - საპენსიოს გარეშე',related='earning_id.no_material_without_tax',tracking=True)
-    
+
+    prx_transferred_time = fields.Date(string="გადარიცხვის დრო")
 
     def unlink(self):
         for rec in self:

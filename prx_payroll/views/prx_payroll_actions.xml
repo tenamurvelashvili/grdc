@@ -217,6 +217,14 @@
             <field name="view_id" ref="view_prx_payroll_transaction_wizard_form"/>
         </record>
 
+        <record id="action_prx_payroll_transaction_reports_2_wizard_act" model="ir.actions.act_window">
+            <field name="name">ტრანზაქციების რეპორტი 2</field>
+            <field name="res_model">prx.payroll.transaction.report.2</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_prx_payroll_transaction_report_2_form"/>
+        </record>
+
         <record id="action_prx_payroll_tabel_reports_wizard_act" model="ir.actions.act_window">
             <field name="name">ტაბელის რეპორტი</field>
             <field name="res_model">prx.payroll.tabel.reports</field>
