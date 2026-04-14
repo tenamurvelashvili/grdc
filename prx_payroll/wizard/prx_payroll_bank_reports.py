@@ -15,8 +15,58 @@ class PRXPayrollBankReports(models.TransientModel):
     bank = fields.Selection(BankReports.selection(), string='ბანკი', required=True)
     transaction_type = fields.Selection(BankTransactionReportType.selection(), string='ტრანზაქციის ტიპი', default='all',required=True)
     process_type = fields.Selection(SalaryType.selection(), string='პროცესის ტიპი',required=True)
+    report_language = fields.Selection([
+        ('ka_GE', 'Georgian'),
+        ('en_US', 'English')
+    ], string='ენა', default='ka_GE', required=True)
     file_download = fields.Binary("File", readonly=True)
     file_name = fields.Char("Filename")
+
+    def _get_transaction_domain(self):
+        domain = [
+            ('period_id', '=', self.period_id.id),
+            ('code', '!=', False),
+        ]
+        if self.transaction_type == 'non_transferred':
+            domain += [('transferred', '=', False)]
+        elif self.transaction_type == 'transferred':
+            domain += [('transferred', '=', True)]
+        return domain
+
+    def _get_employee_amounts_map(self):
+        transaction_model = self.env['prx.payroll.transaction']
+        domain = self._get_transaction_domain()
+        transactions = transaction_model.search(domain)
+        amounts_map = {}
+
+        for transaction in transactions:
+            employee_id = transaction.employee_id.id
+            if not employee_id:
+                continue
+
+            employee_amounts = amounts_map.setdefault(employee_id, {
+                'amount': 0.0,
+                'salary_amount': 0.0,
+                'advance_amount': 0.0,
+                'bonus_amount': 0.0,
+            })
+            amount = transaction.amount or 0.0
+            employee_amounts['amount'] += amount
+
+            salary_type = transaction.worksheet_id.salary_type
+            if salary_type == 'standard':
+                employee_amounts['salary_amount'] += amount
+            elif salary_type == 'avanse':
+                employee_amounts['advance_amount'] += amount
+            elif salary_type == 'one_time':
+                employee_amounts['bonus_amount'] += amount
+
+        return amounts_map
+
+    def _get_employee_name(self, employee):
+        if self.report_language == 'en_US':
+            return f"{employee.prx_firstname_en or ''} {employee.prx_lastname_en or ''}".strip() or employee.name or ''
+        return employee.name or ''
 
     def action_generate_bank_reports(self):
         self.ensure_one()
@@ -27,28 +77,35 @@ class PRXPayrollBankReports(models.TransientModel):
             header, values = self.get_bog_excel_header_and_values()
             ws.column_dimensions['A'].width = 30
             ws.column_dimensions['B'].width = 45
-            ws.column_dimensions['C'].width = 25
+            ws.column_dimensions['C'].width = 30
             ws.column_dimensions['D'].width = 20
-            ws.column_dimensions['E'].width = 25
-            ws.column_dimensions['F'].width = 55
+            ws.column_dimensions['E'].width = 18
+            ws.column_dimensions['F'].width = 18
+            ws.column_dimensions['G'].width = 18
+            ws.column_dimensions['H'].width = 55
             ws.append(header)
         elif self.bank == 'tbc':
             header, values = self.get_tbc_excel_header_and_values()
             ws.column_dimensions['A'].width = 20
             ws.column_dimensions['B'].width = 30
-            ws.column_dimensions['C'].width = 10
-            ws.column_dimensions['D'].width = 20
-            ws.append(header[0])
-            ws.append(header[1])
+            ws.column_dimensions['C'].width = 12
+            ws.column_dimensions['D'].width = 18
+            ws.column_dimensions['E'].width = 18
+            ws.column_dimensions['F'].width = 18
+            ws.column_dimensions['G'].width = 20
+            ws.append(header)
         else:
             raise UserError('აირჩიე ბანკი!')
 
         for value in values:
             ws.append(value)
 
-        for row in range(2, ws.max_row + 1):
-            ws["{}{}".format("C" if self.bank == 'tbc' else "E" , row)].number_format = numbers.FORMAT_NUMBER_00
-            ws["{}{}".format( "D", row)].number_format = numbers.FORMAT_TEXT
+        amount_columns = ['C', 'D', 'E', 'F'] if self.bank == 'tbc' else ['E', 'F', 'G']
+        start_row = 3 if self.bank == 'tbc' else 2
+        for row in range(start_row, ws.max_row + 1):
+            for column in amount_columns:
+                ws[f"{column}{row}"].number_format = numbers.FORMAT_NUMBER_00
+            ws[f"A{row}"].number_format = numbers.FORMAT_TEXT
 
         bio = io.BytesIO()
         wb.save(bio)
@@ -65,17 +122,34 @@ class PRXPayrollBankReports(models.TransientModel):
 
 
     def get_bog_excel_header_and_values(self):
-        header = ['მიმღების ანგარიშის ნომერი',
-                  'მიმღები ბანკის კოდი(არასავალდებულო)',
-                  'მიმღების დასახელება',
-                  'დანიშნულება',
-                  'გადასარიცხი თანხა',
-                  'მიმღების საიდენტიფიკაციო კოდი(არასავალდებულო)']
-        domain = [('period_id', '=', self.period_id.id),('code','!=',False),('worksheet_id.salary_type','=',self.process_type)]
-        if self.transaction_type == 'non_transferred':
-            domain += [('transferred','=',False)]
-        if self.transaction_type == 'transferred':
-            domain += [('transferred', '=', True)]
+        if self.report_language == 'en_US':
+            header = [
+                'Receiver Account Number',
+                'Receiver Bank Code (Optional)',
+                'Receiver Name',
+                'Purpose',
+                'Transfer Amount',
+                'Take Home Salary',
+                'Take Home Advance',
+                'Take Home Bonus',
+                'Receiver Identification Code (Optional)'
+            ]
+            purpose = 'Salary'
+        else:
+            header = [
+                'მიმღების ანგარიშის ნომერი',
+                'მიმღები ბანკის კოდი(არასავალდებულო)',
+                'მიმღების დასახელება',
+                'დანიშნულება',
+                'გადასარიცხი თანხა',
+                'ხელზე ასაღები ხელფასი',
+                'ხელზე ასაღები ავანსი',
+                'ხელზე ასაღები ბონუსი',
+                'მიმღების საიდენტიფიკაციო კოდი(არასავალდებულო)'
+            ]
+            purpose = 'ხელფასი'
+
+        domain = self._get_transaction_domain() + [('worksheet_id.salary_type', '=', self.process_type)]
 
         txs = self.env['prx.payroll.transaction'].read_group(
             domain,
@@ -83,29 +157,50 @@ class PRXPayrollBankReports(models.TransientModel):
             ['employee_id'])
 
         values=[]
+        employee_amounts_map = self._get_employee_amounts_map()
         employee_model = self.env['hr.employee']
         for empl in txs:
             employee = employee_model.browse(empl['employee_id'][0])
+            bank_account = employee.primary_bank_account_id or (employee.bank_account_ids[:1] if employee.bank_account_ids else False)
+            employee_amounts = employee_amounts_map.get(employee.id, {})
             values.append([
-                employee.bank_account_id.acc_number or '',
-                employee.bank_account_id.bank_id.bic or '',
-                employee.name or '',
-                'ხელფასი',
+                bank_account.acc_number if bank_account else '',
+                bank_account.bank_id.bic if bank_account and bank_account.bank_id else '',
+                self._get_employee_name(employee),
+                purpose,
                 empl['amount'] or 0.0,
+                employee_amounts.get('salary_amount', 0.0),
+                employee_amounts.get('advance_amount', 0.0),
+                employee_amounts.get('bonus_amount', 0.0),
                 employee.identification_id or '',
                 ])
         return header, values
 
     def get_tbc_excel_header_and_values(self):
-        header_geo = ['მიმღების ანგარიში','მიმღების სახელი და გვარი','თანხა','დანიშნულება']
-        header_eng = ['Account Number',"Employee's Name",'Amount','Description']
-        header = [header_geo,header_eng]
+        if self.report_language == 'en_US':
+            header = [
+                'Account Number',
+                "Employee's Name",
+                'Amount',
+                'Take Home Salary',
+                'Take Home Advance',
+                'Take Home Bonus',
+                'Description',
+            ]
+            purpose = 'Salary'
+        else:
+            header = [
+                'მიმღების ანგარიში',
+                'მიმღების სახელი და გვარი',
+                'თანხა',
+                'ხელზე ასაღები ხელფასი',
+                'ხელზე ასაღები ავანსი',
+                'ხელზე ასაღები ბონუსი',
+                'დანიშნულება',
+            ]
+            purpose = 'ხელფასი'
 
-        domain = [('period_id', '=', self.period_id.id),('code','!=',False),('worksheet_id.salary_type','=',self.process_type)]
-        if self.transaction_type == 'non_transferred':
-            domain += [('transferred','=',False)]
-        if self.transaction_type == 'transferred':
-            domain += [('transferred', '=', True)]
+        domain = self._get_transaction_domain() + [('worksheet_id.salary_type', '=', self.process_type)]
 
 
         txs = self.env['prx.payroll.transaction'].read_group(
@@ -114,14 +209,20 @@ class PRXPayrollBankReports(models.TransientModel):
             ['employee_id'])
 
         values=[]
+        employee_amounts_map = self._get_employee_amounts_map()
         employee_model = self.env['hr.employee']
         for empl in txs:
             employee = employee_model.browse(empl['employee_id'][0])
+            bank_account = employee.primary_bank_account_id or (employee.bank_account_ids[:1] if employee.bank_account_ids else False)
+            employee_amounts = employee_amounts_map.get(employee.id, {})
             values.append([
-                employee.bank_account_id.acc_number or '',
-                employee.name or '',
+                bank_account.acc_number if bank_account else '',
+                self._get_employee_name(employee),
                 empl['amount'] or 0.0,
-                'ხელფასი',
+                employee_amounts.get('salary_amount', 0.0),
+                employee_amounts.get('advance_amount', 0.0),
+                employee_amounts.get('bonus_amount', 0.0),
+                purpose,
                 ])
 
         return header,values

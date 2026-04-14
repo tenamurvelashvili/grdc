@@ -1,10 +1,16 @@
 import base64
 import io
+from collections import defaultdict
 import pandas as pd
 from openpyxl import Workbook
 from odoo import api, fields, models
 from odoo.exceptions import UserError
-from openpyxl.styles import numbers,Font, Alignment, PatternFill, Side
+from openpyxl.styles import numbers, Font, Alignment, PatternFill, Side
+import logging
+import pprint
+
+_logger = logging.getLogger(__name__)
+
 
 class PRXPayrollDeclarationWizard(models.TransientModel):
     _name = 'prx.payroll.declaration.wizard'
@@ -21,30 +27,88 @@ class PRXPayrollDeclarationWizard(models.TransientModel):
             ('period_id', '=', self.period_id.id),
         ])
 
-        config_param = self.env['ir.config_parameter'].sudo()
-        export_time_raw = config_param.get_param('prx_payroll.prx_export_time_not_unlink')
-        export_time = str(export_time_raw).lower() in ('1', 'true', 'yes') if export_time_raw is not None else False
-
+        employee_txs_cache = {}
         data = []
+        buckets_by_employee = defaultdict(list)
+        processed_keys = set()
+
         for t in txs:
-            earning_amount = sum(r.amount for r in txs if r.transaction_type == 'earning' and r.earning_id and r.employee_id.id == t.employee_id.id)
-            another_benefit = 0.0
-            for rec in txs.search([('transaction_type','=','tax'),('employee_id','=',t.employee_id.id),('period_id','=',self.period_id.id)]):
-                var_s = sum(txs.search([('employee_id','=',t.employee_id.id),('include_tax_base','=',True),('period_id','=',self.period_id.id)]).mapped('amount'))
-                if rec.tax_id.rate_base > 0:
-                    if rec.tax_id and rec.amount == 0:
-                        """ქეისი როცა ტრანზაქციებში არის 0 საშემოსავლო ტრანზაქციებში ვწერთ [გაითვალისწინოს გადასახადის დასაანგარიშებლად ჯამი]"""
-                        another_benefit = var_s
-                    else:
-                        another_benefit = (rec.amount / rec.tax_id.rate_gross) + var_s
+            if t.transaction_type != 'earning' or not t.earning_id or not t.employee_id:
+                continue
 
-            tax_code = t.earning_id.tax_report.code if t.earning_id.tax_report else ''
-            emp_tax = txs.search([('employee_id','=',t.employee_id.id),('transaction_type','=','tax'),('period_id', '=', self.period_id.id)],limit=1)
-            emp_rate_gross = emp_tax.tax_id.rate_gross * 100 if emp_tax else 0.0
+            earning_tax_report = t.earning_id.tax_report
+            if not earning_tax_report:
+                continue
+
+            emp_id = t.employee_id.id
+            transferred_time = t.prx_transferred_time
+            transferred_time_key = str(transferred_time) if transferred_time else '__no_transfer__'
+            key = (emp_id, earning_tax_report.id, transferred_time_key)
+            if key in processed_keys:
+                continue
+            processed_keys.add(key)
+
+            if emp_id not in employee_txs_cache:
+                employee_txs_cache[emp_id] = txs.filtered(lambda r, employee=emp_id: r.employee_id.id == employee)
+            employee_txs = employee_txs_cache[emp_id]
+
+            earning_amount = sum(
+                r.amount
+                for r in employee_txs
+                if (
+                        r.transaction_type == 'earning'
+                        and r.earning_id
+                        and r.earning_id.tax_report == earning_tax_report
+                        and r.prx_transferred_time == transferred_time
+                )
+            )
+
+            tax_base_amount = sum(
+                base.amount
+                for base in employee_txs
+                if base.include_tax_base
+                and base.prx_transferred_time == transferred_time
+                and (
+                        (base.earning_id and base.earning_id.tax_report == earning_tax_report)
+                        or (not base.earning_id and not earning_tax_report)
+                )
+            )
+
+            pension_sum_proportion = sum(
+                r.pension_proportion
+                for r in employee_txs
+                if (
+                        r.transaction_type == 'earning'
+                        and r.prx_transferred_time == transferred_time
+                        and (
+                                (r.earning_id and r.earning_id.tax_report == earning_tax_report)
+                                or (not r.earning_id and not earning_tax_report)
+                        )
+                )
+            )
+
+            tax_sum_proportion = sum(
+                r.tax_proportion
+                for r in employee_txs
+                if (
+                        r.transaction_type == 'earning'
+                        and r.prx_transferred_time == transferred_time
+                        and (
+                                (r.earning_id and r.earning_id.tax_report == earning_tax_report)
+                                or (not r.earning_id and not earning_tax_report)
+                        )
+                )
+            )
+            _logger.info(
+                f"EMPLOYEE {emp_id} EARNING_AMOUNT: {earning_amount} | TAX_BASE_AMOUNT: {tax_base_amount} | PENSION_PROP: {pension_sum_proportion} | TAX_PROP: {tax_sum_proportion}")
+            tax_code = earning_tax_report.code or ''
             info = self.env['prx.payroll.report']._get_employee_create_vals(t.employee_id)
+            gross_rate = t.tax_id.rate_gross * 100 if t.tax_id else 0.0
+            pension_proportion = t.pension_proportion or 0.0
+            tax_proportion = t.tax_proportion or 0.0
 
-            data.append({
-                'employee_id': t.employee_id.id,
+            entry = {
+                'employee_id': emp_id,
                 'period_id': self.period_id.id,
                 'personal_number': t.personal_number or '',
                 'first_name': t.employee_id.first_name,
@@ -54,30 +118,92 @@ class PRXPayrollDeclarationWizard(models.TransientModel):
                 'tax_category': t.employee_id.tax_category.code or '',
                 'tax_report': tax_code,
                 'amount': t.amount or 0.0,
-                'rate_gross': emp_rate_gross,
-                'earning_amount':earning_amount,
-                'another_benefit':another_benefit,
-                'payment_date': t.period_id.payment_date if export_time else None,
-            })
+                # here bullshit fuck
+                'rate_gross': gross_rate,
+                'earning_amount': earning_amount,
+                'another_benefit': (earning_amount - abs(pension_sum_proportion)),
+                'tax_proportion': tax_sum_proportion,
+                '_tax_base_amount': tax_base_amount,
+                'payment_date': t.prx_transferred_time if t.prx_transferred_time else t.period_id.payment_date,
+                'transferred_time': transferred_time_key,
+            }
+            data.append(entry)
+            _logger.info(f"ENTRY: {pprint.pformat(entry)}")
+            buckets_by_employee[emp_id].append(entry)
+
+        # _logger.info(f"BUCKETS: {buckets_by_employee}")
+        # Tax base tax calculation logic:
+
+        _logger.info(f"BUCKETTSTSTSTTTSS BY EMPLOYEEE: {pprint.pformat(buckets_by_employee)}")
+
+        # update
+
+        for employee_id, buckets in buckets_by_employee.items():
+            employee_taxes = employee_txs_cache.get(employee_id, self.env['prx.payroll.transaction'])
+
+            # get ones that has tax base
+            tax_records = employee_taxes.filtered(
+                lambda r: r.transaction_type == 'tax'
+                          and r.tax_id
+                          and r.tax_id.rate_base > 0
+            )
+            if not tax_records:
+                continue
+
+            sorted_buckets = sorted(buckets, key=lambda b: b['_tax_base_amount'], reverse=True)
+            sorted_taxes = sorted(tax_records, key=lambda rec: abs(rec.amount or 0.0), reverse=True)
+
+            counter = 0
+            for bucket, tax in zip(sorted_buckets, sorted_taxes):
+                # # _logger.info(f"PROCCESSING BUCKET: {bucket} WITH TAX: {tax}")
+                # counter += 1
+                # _logger.info(f"LOOP COUNTER: {counter}")
+                # base_amount = bucket['_tax_base_amount'] or 0.0
+                # benefit = 0.0
+                # if tax.amount == 0:
+                #     benefit = base_amount
+                # elif tax.tax_id.rate_gross:
+                #     benefit = (tax.amount / tax.tax_id.rate_gross) + base_amount
+
+                # bucket['another_benefit'] = benefit
+                bucket['rate_gross'] = tax.tax_id.rate_gross * 100 if tax.tax_id and bucket['rate_gross'] == 0 else 0.0
+                # _logger.info(
+                #     "MAPPED TAX %s (amount=%s) TO DECLARATION BUCKET tax_report=%s BASE=%s -> BENEFIT=%s",
+                #     tax.id,
+                #     tax.amount,
+                #     bucket['tax_report'],
+                #     base_amount,
+                #     benefit,
+                # )
+
+        # Format the FINAL DATA log for better readability
+
+        self._update_bucket_taxes(buckets_by_employee, self.period_id)
+        _logger.info("FINAL DATA:\n%s", pprint.pformat(data))
+
+        # update: tax gross_rates, recheck for each
+
         df = pd.DataFrame(data)
         if df.empty:
             raise UserError('ჩანაწერი არ მოიძებნა!')
-        group_agg = {
-            'earning_amount': pd.NamedAgg(column='earning_amount', aggfunc='first'),
-            'first_name': pd.NamedAgg(column='first_name', aggfunc='first'),
-            'last_name': pd.NamedAgg(column='last_name', aggfunc='first'),
-            'tax_report': pd.NamedAgg(column='tax_report', aggfunc='first'),
-            'private_street': pd.NamedAgg(column='private_street', aggfunc='first'),
-            'resident_country': pd.NamedAgg(column='resident_country', aggfunc='first'),
-            'tax_category': pd.NamedAgg(column='tax_category', aggfunc='first'),
-            'rate_gross': pd.NamedAgg(column='rate_gross', aggfunc='first'),
-            'personal_number': pd.NamedAgg(column='personal_number', aggfunc='first'),
-            'another_benefit': pd.NamedAgg(column='another_benefit', aggfunc='first'),
-            'payment_date': pd.NamedAgg(column='payment_date', aggfunc='first'),
-        }
+        if '_tax_base_amount' in df.columns:
+            df = df.drop(columns=['_tax_base_amount'])
+
         grouped = (
-            df.groupby(['employee_id','period_id'], dropna=False, as_index=False)
-            .agg(**group_agg)
+            df.groupby(['employee_id', 'period_id', 'tax_report', 'transferred_time'], dropna=False, as_index=False)
+            .agg(
+                earning_amount=('earning_amount', 'first'),
+                first_name=('first_name', 'first'),
+                last_name=('last_name', 'first'),
+                tax_report=('tax_report', 'first'),
+                private_street=('private_street', 'first'),
+                resident_country=('resident_country', 'first'),
+                tax_category=('tax_category', 'first'),
+                rate_gross=('rate_gross', 'first'),
+                personal_number=('personal_number', 'first'),
+                another_benefit=('another_benefit', 'first'),
+                payment_date=('payment_date', 'first')
+            )
             .reset_index()
         )
 
@@ -151,6 +277,15 @@ class PRXPayrollDeclarationWizard(models.TransientModel):
         self.file_download = base64.b64encode(bio.read())
         self.file_name = f"Declaration_{self.period_id.period}.xlsx"
 
+        _logger.info("\n--- Declaration Report Generated ---\n")
+        for _, row in grouped.iterrows():
+            _logger.info(
+                "Declaration row | employee=%s | tax_report=%s | earning=%s | benefit=%s",
+                row['employee_id'],
+                row['tax_report'],
+                row['earning_amount'],
+                row['another_benefit'],
+            )
         return {
             'type': 'ir.actions.act_window',
             'res_model': self._name,
@@ -158,3 +293,26 @@ class PRXPayrollDeclarationWizard(models.TransientModel):
             'res_id': self.id,
             'target': 'new',
         }
+
+    def _update_bucket_taxes(self, buckets_by_employee, period):
+        for emp_id in buckets_by_employee.keys():
+            # this should only be one
+            employee_tx = self.env['prx.payroll.transaction'].search([
+                ('employee_id', '=', emp_id),
+                ('period_id', '=', period.id),
+                ('transaction_type', '=', 'tax'),
+                # ('tax_id.rate_base', '>', 0)
+            ], limit=1)
+
+            _logger.info(
+                f"EMPLOYEE {emp_id} TAX TRANSACTION: {employee_tx} WITH TAX_ID: {employee_tx.tax_id if employee_tx else 'NO_TX'}")
+            for bucket in buckets_by_employee[emp_id]:
+                rate_gross = employee_tx.tax_id.rate_gross if employee_tx and employee_tx.tax_id else 0.0
+                _logger.info(f"RATE GROSS FOR EMPLOYEE FOUND {emp_id}: {rate_gross}")
+                bucket['rate_gross'] = rate_gross * 100 if bucket['rate_gross'] == 0 else bucket['rate_gross']
+                bucket['another_benefit'] = (bucket['another_benefit']) - abs(bucket['tax_proportion'] / rate_gross)
+
+                # lord help us
+                if bucket['another_benefit'] <= 0.1:
+                    bucket['another_benefit'] = 0.0
+

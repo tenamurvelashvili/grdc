@@ -202,7 +202,7 @@ class PRXPayrollTransactionReports(models.TransientModel):
                 row['დეპარტამენტი'],
                 row['სახელი/გვარი'],
                 row['პირადი ნომერი'],
-                row['პerioდი'],
+                row['პერიოდი'],
                 row['ტაბელი'],
                 row['პერიოდი'],
                 row['ანაზღაურება'],

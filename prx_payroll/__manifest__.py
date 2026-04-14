@@ -55,6 +55,7 @@
         'wizard/prx_payroll_declaration_wizard.xml',
         'wizard/prx_payroll_bank_reports.xml',
         'wizard/prx_payroll_transaction_reports.xml',
+        'wizard/prx_payroll_transaction_report_2.xml',
         'wizard/prx_payroll_tabel_report.xml',
         'wizard/prx_payroll_pension_alimony.xml',
         'wizard/prx_payroll_creditor_wizard.xml',
