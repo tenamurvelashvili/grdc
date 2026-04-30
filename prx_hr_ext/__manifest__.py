@@ -10,7 +10,7 @@
     'website': "https://proxima.solutions",
 
     'category': 'Proxima',
-    'version': '0.1',
+    'version': '0.2',
 
     'depends': ['base','hr','prx_calendar','hr_holidays'],
 

@@ -14,6 +14,7 @@
 
     'depends': [
         'base',
+        'prx_hr_ext',
         'hr_contract',
         'hr_holidays',
         'hr_recruitment',

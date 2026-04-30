@@ -408,7 +408,7 @@ class PRXPayrollWorksheet(models.Model):
                 lines.write({
                     'time_of_type': leave.holiday_status_id.id
                 })
-                if leave.holiday_status_id.time_type == 'leave':
+                if leave.holiday_status_id.prx_time_off_code_id:
                     lines.write({
                         'amount': 0.0,
                         'quantity': 0.0,
