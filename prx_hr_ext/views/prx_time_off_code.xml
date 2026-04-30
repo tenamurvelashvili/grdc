@@ -9,6 +9,7 @@
                 <list string="შვებულების კოდები" editable="bottom">
                     <field name="code"/>
                     <field name="name"/>
+                    <field name="prx_non_paid"/>
                 </list>
             </field>
         </record>

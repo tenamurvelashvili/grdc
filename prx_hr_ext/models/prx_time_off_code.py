@@ -7,3 +7,4 @@ class PRXTimeOffCode(models.Model):
 
     code = fields.Char(string='კოდი', required=True)
     name = fields.Char(string='აღწერა', required=True)
+    prx_non_paid = fields.Boolean(string='არა ანაზღაურებადი')
