@@ -24,7 +24,11 @@ class PRXPayrollEarning(models.Model):
     insurance = fields.Boolean(string='დაზღვევა',tracking=True)
     bonus = fields.Boolean(string='მონაწილეობს ბონუსი',help='მიიღოს ბუნუსის დაანგარიშებაში მონაწილეობა')
     link_insurance_ded = fields.Many2one('prx.payroll.deduction',string="დაქვითვა",domain=[('deduction_calc_type','=','percentage')])
-    
+    account_line_ids = fields.One2many(
+        'prx.payroll.earning.account.line',
+        'earning_id',
+        string='Accounting Lines',
+    )
     pension_check = fields.Boolean(compute='_compute_pension_check', store=False, compute_sudo=True)    
 
     @api.constrains('production_base','earning_unit')

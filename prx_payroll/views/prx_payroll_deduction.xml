@@ -53,9 +53,24 @@
                                 <field name="ignor_living_wage" invisible="1"/>
                                 <field name="deduction_order"/>
                                 <field name="code"/>
-                                <field name="salary_type" widget="radio"  options="{'horizontal': true}"/>
+                                <field name="salary_type" widget="radio" options="{'horizontal': true}"/>
                             </group>
                         </group>
+                        <notebook>
+                            <page string="Accounting">
+                                <field name="account_line_ids">
+                                    <list editable="bottom">
+                                        <field name="take_account_from_position"/>
+                                        <!--                                        <field name="account_id"/>-->
+                                        <field name="exact_account"/>
+                                        <field name="debit_percent"/>
+                                        <field name="credit_percent"/>
+                                        <field name="analytic_plan_id"/>
+                                        <field name="use_transaction_creditor"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                     <chatter/>
                 </form>

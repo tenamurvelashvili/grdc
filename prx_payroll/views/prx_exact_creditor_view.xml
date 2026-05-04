@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Wizard Form View ──────────────────────────────────────── -->
+    <record id="view_prx_sync_wizard_form" model="ir.ui.view">
+        <field name="name">prx.sync.wizard.form</field>
+        <field name="model">prx.sync.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Sync from MS SQL">
+                <sheet>
+                    <group>
+                        <div class="alert alert-info" role="alert">
+                            This will fetch all records from MS SQL
+                            <strong>ZVSalaryCredit</strong> table.
+                            Existing records (matched by Credit Number)
+                            will be skipped. New records will be inserted.
+                        </div>
+                    </group>
+                </sheet>
+                <footer>
+                    <button
+                            name="action_sync"
+                            string="Sync from MS SQL"
+                            type="object"
+                            class="btn-primary"
+                    />
+                    <button
+                            string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"
+                    />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Creditor Form View ─────────────────────────────────────── -->
+    <record id="view_prx_exact_creditor_form" model="ir.ui.view">
+        <field name="name">prx.exact.creditor.form</field>
+        <field name="model">prx.exact.creditor</field>
+        <field name="arch" type="xml">
+            <form string="Exact Creditor" readonly="1">
+                <sheet>
+                    <group>
+                        <field name="crdnr"/>
+                        <field name="cmp_name"/>
+                        <field name="cmp_code"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Creditor List View ─────────────────────────────────────── -->
+    <record id="view_prx_exact_creditor_list" model="ir.ui.view">
+        <field name="name">prx.exact.creditor.list</field>
+        <field name="model">prx.exact.creditor</field>
+        <field name="arch" type="xml">
+            <list string="Exact Creditors" create="false" edit="false">
+                <field name="crdnr"/>
+                <field name="cmp_name"/>
+                <field name="cmp_code"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Open Wizard Action ─────────────────────────────────────── -->
+    <record id="action_open_prx_sync_wizard" model="ir.actions.act_window">
+        <field name="name">Sync from MS SQL</field>
+        <field name="res_model">prx.sync.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ── Creditor List Action ───────────────────────────────────── -->
+    <record id="action_prx_exact_creditor" model="ir.actions.act_window">
+        <field name="name">Exact Creditors</field>
+        <field name="res_model">prx.exact.creditor</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ── Menu: Exact Creditors list ────────────────────────────── -->
+    <menuitem
+            id="menu_prx_exact_creditor"
+            name="Exact Creditors"
+            parent="hr.menu_hr_root"
+            action="action_prx_exact_creditor"
+            sequence="50"
+    />
+
+    <!-- ── Menu: Sync Creditors (opens wizard directly) ──────────── -->
+    <menuitem
+            id="menu_prx_sync_wizard"
+            name="Sync Creditors from MS SQL"
+            parent="hr.menu_hr_root"
+            action="action_open_prx_sync_wizard"
+            sequence="51"
+    />
+
+    <!-- ── Add creditor_id field to hr.employee form ─────────────── -->
+    <record id="view_hr_employee_creditor" model="ir.ui.view">
+        <field name="name">hr.employee.creditor</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='department_id']" position="after">
+                <field name="creditor_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_creditor_list_ext" model="ir.ui.view">
+        <field name="name">hr.employee.creditor.ext</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='department_id']" position="after">
+                <field name="creditor_id"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

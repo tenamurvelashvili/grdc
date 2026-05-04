@@ -51,9 +51,24 @@
                                 <field name="bonus"/>
                                 <field name="pension_check" invisible="1"/>
                                 <field name="insurance" invisible="pension_check == False"/>
-                                <field name="link_insurance_ded" invisible="not insurance or pension_check == False" required="insurance"/>
+                                <field name="link_insurance_ded" invisible="not insurance or pension_check == False"
+                                       required="insurance"/>
                             </group>
                         </group>
+                        <notebook>
+                            <page string="Accounting">
+                                <field name="account_line_ids">
+                                    <list editable="top">
+                                        <field name="take_account_from_position"/>
+                                        <!--                                        <field name="account_id"/>-->
+                                        <field name="exact_account"/>
+                                        <field name="debit_percent"/>
+                                        <field name="credit_percent"/>
+                                        <field name="analytic_plan_id"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                     <chatter/>
                 </form>

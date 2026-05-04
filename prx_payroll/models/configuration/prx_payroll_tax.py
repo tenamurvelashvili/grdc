@@ -13,7 +13,11 @@ class PRXPayrollTax(models.Model):
     rate_base = fields.Float(string='საბაზისო განაკვეთი', digits=(19, 2),tracking=True)
     code = fields.Char(string="კოდი")
     report_name = fields.Char(compute="_compute_report_name", string="რეპორტის დასახელება", store=True,compute_sudo=True)
-
+    account_line_ids = fields.One2many(
+        'prx.payroll.tax.account.line',
+        'tax_id',
+        string='Accounting Lines',
+    )
     @api.depends('code', 'tax')
     def _compute_report_name(self):
         for rec in self:

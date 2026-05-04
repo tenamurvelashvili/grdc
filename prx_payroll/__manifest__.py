@@ -28,6 +28,7 @@
         'security/ir_groups.xml',
         'security/ir.model.access.csv',
         'security/ir_rule.xml',
+        'data/mssql_config.xml',
         'data/prx_payroll_dashboard_warning.xml',
         'data/prx_payroll_default_records.xml',
         'views/prx_payroll_period.xml',
@@ -77,6 +78,8 @@
         'views/prx_payroll_res_config_settings.xml',
         'views/prx_payroll_menu.xml',
         'views/ext_hr_applicant_view.xml',
+        'views/prx_exact_creditor_view.xml',
+        'wizard/prx_sync_wizard_views.xml',
 
     ],
     'assets': {
@@ -97,4 +100,3 @@
     },
 
 }
-

@@ -6,3 +6,5 @@ htmldocx
 beautifulsoup4
 PyMuPDF
 pandas
+pymssql>=2.3.0
+pyodbc>=5.1.0

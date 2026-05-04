@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Wizard Form ────────────────────────────────────────────── -->
+    <record id="view_prx_sync_wizard_form" model="ir.ui.view">
+        <field name="name">prx.sync.wizard.form</field>
+        <field name="model">prx.sync.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Sync from MS SQL">
+                <sheet>
+                    <group>
+                        <div class="alert alert-info" role="alert">
+                            This will fetch all records from MS SQL
+                            <strong>ZVSalaryCredit</strong> table.
+                            Existing records (matched by Credit Number)
+                            will be skipped. New records will be inserted.
+                        </div>
+                    </group>
+                </sheet>
+                <footer>
+                    <button
+                            name="action_sync"
+                            string="Sync from MS SQL"
+                            type="object"
+                            class="btn-primary"
+                    />
+                    <button
+                            string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"
+                    />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Action to open wizard ─────────────────────────────────── -->
+    <record id="action_open_prx_sync_wizard" model="ir.actions.act_window">
+        <field name="name">Sync from MS SQL</field>
+        <field name="res_model">prx.sync.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ── Server Action bound to list view ──────────────────────── -->
+    <record id="action_sync_exact_creditor_server" model="ir.actions.server">
+        <field name="name">Sync from MS SQL</field>
+        <field name="model_id" ref="model_prx_exact_creditor"/>
+        <field name="binding_model_id" ref="model_prx_exact_creditor"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': 'Sync from MS SQL',
+                'res_model': 'prx.sync.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+            }
+        </field>
+    </record>
+
+</odoo>

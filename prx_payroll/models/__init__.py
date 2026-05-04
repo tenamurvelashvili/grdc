@@ -17,3 +17,9 @@ from . import prx_payroll_masking
 from . import prx_payroll_todo_list
 from . import prx_payroll_employee_conduct_ext
 from . import ext_hr_recruitment
+from . import prx_payroll_deduction_account_line
+from . import prx_payroll_tax_account_line
+from . import prx_payroll_earning_account_line
+from . import prx_MSSQL_connector
+from . import prx_exact_creditor
+from . import ext_hr_employee

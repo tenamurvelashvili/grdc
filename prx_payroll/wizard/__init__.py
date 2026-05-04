@@ -14,3 +14,4 @@ from . import prx_payroll_bulk
 from . import prx_payroll_earning_bonus_wizard
 from . import prx_payroll_transaction_bank_transfer
 from . import prx_payroll_bulk_close_transaction
+from . import prx_sync_wizard
