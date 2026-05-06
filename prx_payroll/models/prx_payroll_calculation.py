@@ -6,6 +6,7 @@ from datetime import date, timedelta
 import logging
 from .configuration.prx_enum_selection import SalaryType
 from pprint import pprint
+
 _logger = logging.getLogger(__name__)
 
 
@@ -81,7 +82,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
         employee_without_worksheet = self.env['prx.payroll.worksheet'].search(
             [('worker_id', 'in', employees_ids), ('period_id', '=', self.period.id),
              ('salary_type', '=', self.salary_type)]).mapped('worker_id').ids
-        
+
         _logger.info(f"EMPLOYEES WITHOUT WORKSHEET IDS: {employee_without_worksheet}")
 
         employees = list(set(employees_ids) - set(employee_without_worksheet))  # ამ პერიოდზე ვისაც არაქვს ტაბელი
@@ -141,9 +142,11 @@ class PRXPayrollWorksheetCalculation(models.Model):
                     self.env['prx.payroll.worksheet'].search([('salary_type', '=', self.salary_type),
                                                               ('period_id', '=', self.period.id),
                                                               ('status', '=', 'open'),
-                                                              ('worker_id','in',need_employees.ids)]).document_close() # ვხურავ ტაბელებს რომლებიც არ არის
-                worksheet = self.env['prx.payroll.worksheet'].search([('status', '=', 'closed'), ('salary_type', '=', self.salary_type),
-                                              ('period_id', '=', self.period.id)])
+                                                              ('worker_id', 'in',
+                                                               need_employees.ids)]).document_close()  # ვხურავ ტაბელებს რომლებიც არ არის
+                worksheet = self.env['prx.payroll.worksheet'].search(
+                    [('status', '=', 'closed'), ('salary_type', '=', self.salary_type),
+                     ('period_id', '=', self.period.id)])
                 self.create_transaction(worksheet=worksheet)
             if self.worksheet:
                 if self.worksheet.status != 'closed':
@@ -153,7 +156,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
                         self.worksheet.document_close()
                 self.create_transaction(worksheet=self.worksheet)
 
-    def _prepare_transaction_vals(self, employee_id, amount, transaction_type, start_date, end_date,code=False, **kwargs):
+    def _prepare_transaction_vals(self, employee_id, amount, transaction_type, start_date, end_date, code=False,
+                                  **kwargs):
         return {
             'worksheet_id': kwargs.get('worksheet_id', None),
             'employee_id': employee_id,
@@ -230,13 +234,13 @@ class PRXPayrollWorksheetCalculation(models.Model):
 
             taxable_amount = tx.amount - self._get_effective_pension_amount(tx.pension_proportion)
 
-            if tx.earning_id.no_material or tx.earning_id.no_material_without_tax:
+            if tx.earning_id.no_material or tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == "avanse":
                 employee_bases[emp_id]['no_material'] += taxable_amount
             else:
                 employee_bases[emp_id]['normal'] += taxable_amount
 
             employee_bases[emp_id]['total'] += taxable_amount
-            
+
         _logger.info(f"COMPUTED EMPLOYEE TAX BASES: {dict(employee_bases)}")
 
         return employee_bases
@@ -249,7 +253,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
             ('transaction_type', '=', 'earning'),
             ('include_tax_base', '=', True),
             ('transferred', '=', False),
-        ]).filtered(lambda tx: tx.amount and tx.earning_id and (tx.earning_id.no_material or tx.earning_id.no_material_without_tax))
+        ]).filtered(lambda tx: tx.amount and tx.earning_id and (
+                    tx.earning_id.no_material or tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == "avanse"))
 
         return sum(
             tx.amount - self._get_effective_pension_amount(tx.pension_proportion)
@@ -257,7 +262,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
         )
 
     def create_transaction(self, worksheet):
-        target_emp_ids = list({ws.worker_id.id for ws in worksheet.filtered(lambda d:d.transferred == False)})
+        target_emp_ids = list({ws.worker_id.id for ws in worksheet.filtered(lambda d: d.transferred == False)})
 
         def employee_worksheet(employee_id):
             domain_search = [
@@ -274,12 +279,12 @@ class PRXPayrollWorksheetCalculation(models.Model):
         period_start = self.period.start_date
         period_end = self.period.end_date
         TransactionModel = self.env['prx.payroll.transaction']
-        TransactionModel.search([('worksheet_id', 'in', worksheet.ids),('transferred','=',False)]).unlink()
+        TransactionModel.search([('worksheet_id', 'in', worksheet.ids), ('transferred', '=', False)]).unlink()
         tr = TransactionModel  # fresh model reference (no stale record IDs)
         total_by_emp = defaultdict(float)
 
         vals_list = []
-        for ws in worksheet.filtered(lambda d: d.transferred==False):
+        for ws in worksheet.filtered(lambda d: d.transferred == False):
             for det in ws.worksheet_detail_ids:
                 emp_id = ws.worker_id.id
                 total_by_emp[emp_id] += det.amount
@@ -395,22 +400,22 @@ class PRXPayrollWorksheetCalculation(models.Model):
         )
         tr.create(vals_list)
         vals_list.clear()
-        
+
         prx_pension_insurance = self.env['ir.config_parameter'].sudo().get_param('prx_payroll.prx_pension_insurance')
         if prx_pension_insurance:
             self.create_insurance_pension_deductions(worksheet=worksheet)
             _logger.info(f"CREATED INSURANCE PENSION DEDUCTIONS FOR WORKSHEET")
         self.update_proportions_for_existing_transactions(worksheet)
         _logger.info(f"UPDATED PROPORTIONS FOR EXISTING TRANSACTIONS FOR WORKSHEET")
-        
 
         taxable_transactions = tr.search([
             ('employee_id', 'in', target_emp_ids),
             ('period_id', '=', self.period.id),
             ('worksheet_id', 'in', worksheet.ids),
-            ('transaction_type', '=', 'earning'),
+            # ('transaction_type', 'in', ['earning',]),
             ('transferred', '=', False),
-        ])
+        ]).filtered(lambda tx: tx.transaction_type == "earning" or tx.deduction_id.avanse)
+        _logger.info(f"TAXABLE TRANSACTIONS COUNT: {taxable_transactions}")
         employee_tax_bases = self._build_employee_tax_bases(taxable_transactions)
         self._log_tax_base_summary(employee_tax_bases, label='current_period_taxable_transactions')
 
@@ -424,26 +429,27 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 continue
             employee_base = employee_tax_bases.get(emp, {})
             total_taxable_amount = (
-                employee_base.get('normal', 0.0)
-                + employee_base.get('no_material', 0.0)
-                + employee_base.get('adjustment', 0.0)
+                    employee_base.get('normal', 0.0)
+                    + employee_base.get('no_material', 0.0)
+                    + employee_base.get('adjustment', 0.0)
             )
             if total_by_emp.get(emp, 0.0):
                 # If there are earnings marked with `no_material_without_tax`, calculate
                 # non-rate-base taxes per-earning as (earning - pension_proportion) * gross_rate
-                if self._earning_no_material_check():
-                    emp_taxable_transactions = taxable_transactions.filtered(
-                        lambda tr: tr.employee_id.id == emp and tr.transaction_type == 'earning' and tr.include_tax_base and not tr.transferred
-                    )
-                    tax_amount = sum(
-                        max(0.0, tx.amount - self._get_effective_pension_amount(tx.pension_proportion)) * tax.tax.rate_gross
-                        for tx in emp_taxable_transactions
-                    )
-                    
-                    _logger.info(f"NON RATE BASE TAXES FOR EMPLOYEE {emp}: {[(tx.id, tx.amount) for tx in emp_taxable_transactions]}")
-                else:
-                    tax_amount = total_taxable_amount * tax.tax.rate_gross
-                    _logger.info(f"MATERIAL NO NON RATE BASE TAX FOR EMPLOYEE {emp}: total_taxable_amount={total_taxable_amount} tax_rate={tax.tax.rate_gross} calculated_tax_amount={tax_amount}")
+                # if self._earning_no_material_check():
+                #     emp_taxable_transactions = taxable_transactions.filtered(
+                #         lambda tr: tr.employee_id.id == emp and tr.transaction_type == 'earning' and tr.include_tax_base and not tr.transferred
+                #     )
+                #     tax_amount = sum(
+                #         max(0.0, tx.amount - self._get_effective_pension_amount(tx.pension_proportion)) * tax.tax.rate_gross
+                #         for tx in emp_taxable_transactions
+                #     )
+                #
+                #     _logger.info(f"NON RATE BASE TAXES FOR EMPLOYEE {emp}: {[(tx.id, tx.amount) for tx in emp_taxable_transactions]}")
+                # else:
+                tax_amount = total_taxable_amount * tax.tax.rate_gross
+                _logger.info(
+                    f"MATERIAL NO NON RATE BASE TAX FOR EMPLOYEE {emp}: total_taxable_amount={total_taxable_amount} tax_rate={tax.tax.rate_gross} calculated_tax_amount={tax_amount}")
 
                 _logger.info(
                     "NON RATE TAX employee=%s(%s) tax=%s normal=%s no_material=%s adjustment=%s total_taxable=%s gross_rate=%s tax_amount=%s",
@@ -459,7 +465,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 )
                 vals_list.append(
                     self._prepare_transaction_vals(
-                        amount= -self.math_round(tax_amount),
+                        amount=-self.math_round(tax_amount),
                         worksheet_id=ws_id,
                         employee_id=emp,
                         include_tax_base=False,
@@ -474,7 +480,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
                         tax_proportion=0.0,
                         pension_proportion=0.0,
                     ))
-        _logger.info(f"PREPARED TAX TRANSACTIONS FOR EMPLOYEES: {[tax.employee_id.name for tax in non_rate_base_taxes]}")
+        _logger.info(
+            f"PREPARED TAX TRANSACTIONS FOR EMPLOYEES: {[tax.employee_id.name for tax in non_rate_base_taxes]}")
 
         with_rate_base_taxes = all_tax_ids.filtered(lambda t: t.tax.rate_base != 0.0)
         tax_proportion_plans = []
@@ -493,14 +500,15 @@ class PRXPayrollWorksheetCalculation(models.Model):
             # if current_year >= tax.start_date:
             #     year_tax_amount = sum(tr.search([('start_date', '>=', tax.start_date), ('end_date', '<=', period_end),
             #                                          ('include_tax_base', '=', True), ('employee_id', '=', emp)]).mapped('amount'))
-            if current_year.year > tax.start_date.year or (current_year.year <= tax.start_date.year and self._has_previously_used_limit(emp, tax.start_date)): 
+            if current_year.year > tax.start_date.year or (
+                    current_year.year <= tax.start_date.year and self._has_previously_used_limit(emp, tax.start_date)):
                 _logger.info("""
                             CURRENT YEAR {} -
                             TAX START DATE {} -
                             PERIOD END {} -
-                            
+
                             CALCULATING YEAR TAX AMOUNT FOR EMPLOYEE {}
-                             
+
                              """.format(current_year, tax.start_date, period_end, tax.employee_id.name))
                 year_tax_transactions = tr.search([
                     ('start_date', '>=', current_year),
@@ -510,59 +518,67 @@ class PRXPayrollWorksheetCalculation(models.Model):
                     ('transferred', '=', False),
                 ])
                 year_tax_base = self._build_employee_tax_bases(year_tax_transactions)[emp]
-                _logger.info(f"YEAR TAX BASE FOR EMPLOYEE {tax.employee_id.name} is {year_tax_base} based on transactions: {year_tax_transactions.ids}")
+                _logger.info(
+                    f"YEAR TAX BASE FOR EMPLOYEE {tax.employee_id.name} is {year_tax_base} based on transactions: {year_tax_transactions.ids}")
                 year_tax_amount = year_tax_base['normal']
-                _logger.info(f"YEAR TAX AMOUNT FOR EMPLOYEE {tax.employee_id.name} is {year_tax_amount} based on year tax base {year_tax_amount}")
-            
+                _logger.info(
+                    f"YEAR TAX AMOUNT FOR EMPLOYEE {tax.employee_id.name} is {year_tax_amount} based on year tax base {year_tax_amount}")
+
             elif current_year <= tax.start_date and not self._has_previously_used_limit(emp, tax.start_date):
-                #calculate tax from that month (means that was not used during the year)
+                # calculate tax from that month (means that was not used during the year)
                 _logger.info("CORRECTLY CALLED THIS BUSHIT")
-                year_tax_transactions = tr.search([ 
+                year_tax_transactions = tr.search([
                     ('start_date', '>=', tax.start_date),
                     ('end_date', '<=', period_end),
                     ('include_tax_base', '=', True),
                     ('employee_id', '=', emp)])
-                
+
                 year_tax_base = self._build_employee_tax_bases(year_tax_transactions)[emp]
-                _logger.info(f"YEAR TAX BASE FOR EMPLOYEE {tax.employee_id.name} (using previous transactions since tax start date) is {year_tax_base} based on transactions: {year_tax_transactions.ids}")
-                
+                _logger.info(
+                    f"YEAR TAX BASE FOR EMPLOYEE {tax.employee_id.name} (using previous transactions since tax start date) is {year_tax_base} based on transactions: {year_tax_transactions.ids}")
+
                 year_tax_amount = year_tax_base['normal']
-                _logger.info(f"YEAR TAX AMOUNT FOR EMPLOYEE {tax.employee_id.name} is {year_tax_amount} based on year tax base {year_tax_amount}")
+                _logger.info(
+                    f"YEAR TAX AMOUNT FOR EMPLOYEE {tax.employee_id.name} is {year_tax_amount} based on year tax base {year_tax_amount}")
 
             else:
                 year_tax_amount = 0.0
-            
+
             #  TODO გადასახადების დაანგარიშებისას V1 იყო (year_tax_amount * tax.tax.rate_gross)  და (current_month_amount * tax.tax.rate_gross) შემდეგ ეს ლოგიკა ამოვიღეთ
             #  TODO ('worksheet_id','=',employee_worksheet(emp)) ეს დავამატე ბოლოს
             current_month_amount = normal_current_amount
-            _logger.info(f"CURRENT MONTH AMOUNT FOR EMPLOYEE {tax.employee_id.name} is {current_month_amount} based on normal_current_amount {normal_current_amount}")
-            
+            _logger.info(
+                f"CURRENT MONTH AMOUNT FOR EMPLOYEE {tax.employee_id.name} is {current_month_amount} based on normal_current_amount {normal_current_amount}")
+
             remining_limit = tax.tax.rate_base
-            _logger.info(f"INITIAL REMAINING LIMIT for EMPLOYEE {tax.employee_id.name} is {remining_limit} based on tax.rate_base {tax.tax.rate_base}")
+            _logger.info(
+                f"INITIAL REMAINING LIMIT for EMPLOYEE {tax.employee_id.name} is {remining_limit} based on tax.rate_base {tax.tax.rate_base}")
             normal_tax_amount = 0.0
             no_material_tax_amount = no_material_current_amount * tax.tax.rate_gross
             if tax.start_date.year >= current_year.year:
                 remining_limit = tax.tax.rate_base - tax.used_tax_amount
-            
-            #TODO არ შეეხო
-            #ᲒᲐᲓᲐᲡᲐᲮᲐᲓᲘᲡ ᲬᲘᲚᲘᲡᲛᲐᲤᲓᲔᲘᲗᲘ (ᲪᲐᲚᲙᲔ)
+
+            # TODO არ შეეხო
+            # ᲒᲐᲓᲐᲡᲐᲮᲐᲓᲘᲡ ᲬᲘᲚᲘᲡᲛᲐᲤᲓᲔᲘᲗᲘ (ᲪᲐᲚᲙᲔ)
             if year_tax_amount - remining_limit <= 0:
                 normal_tax_amount = 0.0
             elif year_tax_amount - remining_limit > 0:
                 if year_tax_amount - remining_limit <= current_month_amount:
-                    #TODO აქ ის ზემოდან მაღლა ლოგიკა
+                    # TODO აქ ის ზემოდან მაღლა ლოგიკა
                     normal_tax_amount = (year_tax_amount - remining_limit) * tax.tax.rate_gross
-                    _logger.info(f"YEAR TAX AMOUNT {year_tax_amount} has exceeded the remaining limit {remining_limit} for EMPLOYEE {tax.employee_id.name}, applying tax to the exceeded amount: {year_tax_amount - remining_limit}")
+                    _logger.info(
+                        f"YEAR TAX AMOUNT {year_tax_amount} has exceeded the remaining limit {remining_limit} for EMPLOYEE {tax.employee_id.name}, applying tax to the exceeded amount: {year_tax_amount - remining_limit}")
                 else:
-                    #TODO პროპორციეციულად
+                    # TODO პროპორციეციულად
                     normal_tax_amount = current_month_amount * tax.tax.rate_gross
-                    _logger.info(f"YEAR TAX AMOUNT {year_tax_amount} has exceeded the remaining limit {remining_limit} for EMPLOYEE {tax.employee_id.name}, but the exceeded amount is greater than current month amount {current_month_amount}, applying tax to the entire current month amount")
+                    _logger.info(
+                        f"YEAR TAX AMOUNT {year_tax_amount} has exceeded the remaining limit {remining_limit} for EMPLOYEE {tax.employee_id.name}, but the exceeded amount is greater than current month amount {current_month_amount}, applying tax to the entire current month amount")
 
             tax_amount = normal_tax_amount + no_material_tax_amount
             # print(f"თანამშრომელი <> {tax.employee_id.name} -- წლიური-{year_tax_amount} - თვიური გადასახადი - {current_month_amount} -- დარჩენილი ლიმიტი {remining_limit} -- გადასახადი ჯამური:{tax_amount}")
 
             _logger.info(f"APPENDED: {tax_amount}")
-            
+
             tax_proportion_plans.append({
                 'employee_id': emp,
                 'worksheet_id': ws_id,
@@ -591,13 +607,12 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 ))
         tr.create(vals_list)
         vals_list.clear()
-        self.update_proportions_for_existing_transactions(worksheet,pension_update=False, has_no_material_without_tax= self._earning_no_material_check())  
+        self.update_proportions_for_existing_transactions(worksheet, pension_update=False,
+                                                          has_no_material_without_tax=self._earning_no_material_check())
         _logger.info(f"TAX PROPORTION: {tax_proportion_plans}")
 
-
-        
         if tax_proportion_plans:
-            #TODO აქ რაცხა წავშალე რო რამე ვაბრუნებ
+            # TODO აქ რაცხა წავშალე რო რამე ვაბრუნებ
             # New distribution is only for employees that have rate_base taxes.
             self._apply_tax_proportion_by_code_distribution(tax_proportion_plans)
         else:
@@ -611,10 +626,12 @@ class PRXPayrollWorksheetCalculation(models.Model):
                                                                  )
 
         def get_earning_codes():
-            earning_code = [rec.link_insurance_ded.id for rec in self.env['prx.payroll.earning'].search([('link_insurance_ded','!=',False)])]
+            earning_code = [rec.link_insurance_ded.id for rec in
+                            self.env['prx.payroll.earning'].search([('link_insurance_ded', '!=', False)])]
             return earning_code
 
-        not_reduces_income_tax_base = not_reduces_income_tax_base.filtered(lambda d: d.deduction_id.id not in get_earning_codes())
+        not_reduces_income_tax_base = not_reduces_income_tax_base.filtered(
+            lambda d: d.deduction_id.id not in get_earning_codes())
 
         for ded in not_reduces_income_tax_base:
             emp = ded.employee_id.id
@@ -677,7 +694,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
         ordered_vals.sort(key=lambda x: x[0])
         vals_list.extend(vals for _, vals in ordered_vals)
         # აქ დალაგებული არის deduction_order მიხედვით და ამის მიხედვით მოხდება ჩანაწერების შექმნა რაღაც დონეზე
-        _logger.info(f"CREATING DEDUCTION TRANSACTIONS FOR EMPLOYEES: {[ded.employee_id.name for ded in not_reduces_income_tax_base]} with ordered vals: {ordered_vals}")
+        _logger.info(
+            f"CREATING DEDUCTION TRANSACTIONS FOR EMPLOYEES: {[ded.employee_id.name for ded in not_reduces_income_tax_base]} with ordered vals: {ordered_vals}")
         tr.create(vals_list)
         vals_list.clear()
 
@@ -696,16 +714,19 @@ class PRXPayrollWorksheetCalculation(models.Model):
             ('transaction_type', '=', 'earning'),
             ('transferred', '=', False),
             ('pension_proportion', '<', 0.0),
-            ('earning_id', '=', self.env['prx.payroll.earning'].search([('insurance','=',True),('link_insurance_ded','!=',False)],limit=1).id),
+            ('earning_id', '=',
+             self.env['prx.payroll.earning'].search([('insurance', '=', True), ('link_insurance_ded', '!=', False)],
+                                                    limit=1).id),
             ('period_id', '>=', self.period.id),
         ])
-        for earning in earnings.filtered(lambda d:not d.transferred):
-            pension_amount = -abs(self.math_round(earning.amount) * earning.position_earning_id.insurance_pension_deduction_id.percentage)
+        for earning in earnings.filtered(lambda d: not d.transferred):
+            pension_amount = -abs(
+                self.math_round(earning.amount) * earning.position_earning_id.insurance_pension_deduction_id.percentage)
             if pension_amount:
                 pension_vals = self._prepare_transaction_vals(
                     worksheet_id=earning.worksheet_id.id,
                     employee_id=earning.employee_id.id,
-                    amount= self.math_round(pension_amount),
+                    amount=self.math_round(pension_amount),
                     code=earning.earning_id.link_insurance_ded.deduction,
                     transaction_type='deduction',
                     start_date=period_start,
@@ -726,7 +747,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
         format_str = '0.1' if places == 0 else '0.' + '1'.zfill(places)
         return Decimal(str(number)).quantize(Decimal(format_str), rounding=ROUND_HALF_UP)
 
-    def update_proportions_for_existing_transactions(self, worksheet, pension_update=True, has_no_material_without_tax=False):
+    def update_proportions_for_existing_transactions(self, worksheet, pension_update=True,
+                                                     has_no_material_without_tax=False):
         """Update tax and pension proportions for all EARNING transactions in worksheet."""
         pension_ids = self.env['prx.payroll.deduction'].search([('pension', '=', True)]).ids
         earnings = self.env['prx.payroll.transaction'].search([
@@ -735,7 +757,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
             ('transferred', '=', False)
         ])
 
-        for earning in earnings.filtered(lambda d:not d.transferred):
+        for earning in earnings.filtered(lambda d: not d.transferred):
             base = earning.earning_proportion or 1.0
 
             # tax ჩანაწერები
@@ -745,9 +767,10 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 ('transaction_type', '=', 'tax'),
                 ('transferred', '=', False)
             ])
-            gross_rate = tax.tax_id.rate_gross 
-            _logger.info(f"GROSS_RATE: {gross_rate} for tax transactions {tax.ids} of employee {earning.employee_id.name}")
-            
+            gross_rate = tax.tax_id.rate_gross
+            _logger.info(
+                f"GROSS_RATE: {gross_rate} for tax transactions {tax.ids} of employee {earning.employee_id.name}")
+
             tax_amount = self.math_round(sum(tax.mapped('amount')))
 
             pension_amount = sum(self.env['prx.payroll.transaction'].search([
@@ -764,18 +787,24 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 '|', ('end_date', '>=', earning.worksheet_id.period_id.start_date), ('end_date', '=', False),
                 ('tax.rate_base', '!=', 0.0)
             ]) > 0
-            
+
             if has_rate_base:
-                _logger.info(f"UPDATING PROPORTIONS FOR EARNING {earning.id} with base {base}, tax_amount {tax_amount}, pension_amount {pension_amount}")
+                _logger.info(
+                    f"UPDATING PROPORTIONS FOR EARNING {earning.id} with base {base}, tax_amount {tax_amount}, pension_amount {pension_amount}")
                 earning.write({
                     'tax_proportion': tax_amount,
-                    'pension_proportion':  self.math_round(float(self.math_round(pension_amount,)) * base if pension_update else earning.pension_proportion),
+                    'pension_proportion': self.math_round(float(
+                        self.math_round(pension_amount, )) * base if pension_update else earning.pension_proportion),
                 })
             else:
-                _logger.info(f"UPDATING PROPORTIONS FOR EARNING {earning.id} WITHOUT RATE BASE TAX, setting tax_proportion to 0 and pension_proportion to {pension_amount * base}")
+                _logger.info(
+                    f"UPDATING PROPORTIONS FOR EARNING {earning.id} WITHOUT RATE BASE TAX, setting tax_proportion to 0 and pension_proportion to {pension_amount * base}")
                 earning.write({
-                    'tax_proportion': -(float(tax_amount )* base if not has_no_material_without_tax else (earning.amount - abs(earning.pension_proportion)) * gross_rate),
-                    'pension_proportion':float(self.math_round(pension_amount,)) * base if pension_update else earning.pension_proportion,
+                    'tax_proportion': -(float(tax_amount) * base if not has_no_material_without_tax else (
+                                                                                                                     earning.amount - abs(
+                                                                                                                 earning.pension_proportion)) * gross_rate),
+                    'pension_proportion': float(
+                        self.math_round(pension_amount, )) * base if pension_update else earning.pension_proportion,
                 })
 
     def _add_not_material_tax_to(self, worksheet):
@@ -790,14 +819,15 @@ class PRXPayrollWorksheetCalculation(models.Model):
             by_employee[earning.employee_id.id] |= earning
 
         for employee_id, emp_earnings in by_employee.items():
-            
-            no_material_taxes = emp_earnings.filtered(lambda tx: tx.earning_id and tx.earning_id.no_material_without_tax)
-            
+
+            no_material_taxes = emp_earnings.filtered(lambda tx: tx.earning_id and (
+                        tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == 'avanse'))
+
             no_material_pension = sum(
                 no_material_taxes
                 .mapped('pension_proportion')
             )
-            
+
             no_material_taxes.write({'pension_proportion': 0.0})
 
             if not no_material_pension:
@@ -808,20 +838,21 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 key=lambda tx: tx.earning_id.code if tx.earning_id else '',
             )[0]
 
-            _logger.info(f"EMPLOYEE {employee_id} - lowest code: {lowest.earning_id.code}, adding no_material_pension: {no_material_pension}")
+            _logger.info(
+                f"EMPLOYEE {employee_id} - lowest code: {lowest.earning_id.code}, adding no_material_pension: {no_material_pension}")
 
             lowest.write({
                 'pension_proportion': lowest.pension_proportion + no_material_pension
             })
-        
+
     def _calculate_tax_proportion_distribution(
-        self,
-        employee_id,
-        worksheet_id,
-        tax_rate,
-        year_tax_amount,
-        remaining_limit,
-        current_month_amount,
+            self,
+            employee_id,
+            worksheet_id,
+            tax_rate,
+            year_tax_amount,
+            remaining_limit,
+            current_month_amount,
     ):
         """Return mapping {earning_tx_id: negative_tax_amount} for normal earnings only."""
         distributions = {}
@@ -834,16 +865,17 @@ class PRXPayrollWorksheetCalculation(models.Model):
             ('transaction_type', '=', 'earning'),
             ('include_tax_base', '=', True),
             ('transferred', '=', False),
-        ]).filtered(lambda tx: tx.amount > 0.0 and not (tx.earning_id.no_material or tx.earning_id.no_material_without_tax))
+        ]).filtered(lambda tx: tx.amount > 0.0 and not (
+                    tx.earning_id.no_material or tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == 'avanse'))
 
         sorted_earnings = sorted(
             earning_transactions,
             key=lambda tx: tx.earning_id.code if tx.earning_id else '',
             reverse=True,
         )
-        
+
         _logger.info(f"EARNINGS: {[earning.earning_id.code for earning in sorted_earnings]}")
-        
+
         _logger.info(f'FUCKASS DISTRIBUTION FOR {employee_id}')
 
         # Case 1: no tax on normal earnings
@@ -882,12 +914,12 @@ class PRXPayrollWorksheetCalculation(models.Model):
             return
 
         grouped_plans = defaultdict(list)
-        
+
         _logger.info(f"GROUPING TAX PROPORTION PLANS BY EMPLOYEE AND WORKSHEET")
         for plan in tax_proportion_plans:
             key = (plan['employee_id'], plan['worksheet_id'])
             grouped_plans[key].append(plan)
-        
+
         _logger.info(f"TAX PROPORTION PLANS: {grouped_plans}");
 
         for (employee_id, worksheet_id), plans in grouped_plans.items():
@@ -900,8 +932,10 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 ('transferred', '=', False),
             ]).filtered(lambda tx: tx.amount > 0.0 and tx.earning_id)
 
-            normal_earnings = earnings.filtered(lambda tx: not (tx.earning_id.no_material or tx.earning_id.no_material_without_tax))
-            no_material_earnings = earnings.filtered(lambda tx: tx.earning_id.no_material or tx.earning_id.no_material_without_tax)
+            normal_earnings = earnings.filtered(lambda tx: not (
+                        tx.earning_id.no_material or tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == 'avanse'))
+            no_material_earnings = earnings.filtered(lambda
+                                                         tx: tx.earning_id.no_material or tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == 'avanse')
 
             if not earnings:
                 continue
@@ -916,7 +950,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                     employee_id=plan['employee_id'],
                     worksheet_id=plan['worksheet_id'],
                     tax_rate=plan['tax_rate'],
-                    year_tax_amount= plan['year_tax_amount'],
+                    year_tax_amount=plan['year_tax_amount'],
                     remaining_limit=plan['remaining_limit'],
                     current_month_amount=plan['current_month_amount'],
                 )
@@ -927,7 +961,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 for tx in no_material_earnings:
                     taxable_tx_amount = max(
                         0.0,
-                        tx.amount -  self._get_effective_pension_amount(tx.pension_proportion) 
+                        tx.amount - self._get_effective_pension_amount(tx.pension_proportion)
                     )
                     aggregated[tx.id] += -(taxable_tx_amount * plan['tax_rate'])
 
@@ -939,19 +973,19 @@ class PRXPayrollWorksheetCalculation(models.Model):
 
     def _has_previously_used_limit(self, employee_id, start_date):
         tr = self.env['prx.payroll.transaction']
-        #find if employee has base_rate not 0 in previous month
+        # find if employee has base_rate not 0 in previous month
         transactions = tr.search([
             ('employee_id', '=', employee_id),
             ('end_date', '<', start_date - timedelta(days=1)),
             ('tax_id', '!=', False),
-        ], limit=1)#
-        
+        ], limit=1)  #
+
         for tr in transactions:
             if tr.tax_id and tr.tax_id.rate_base and tr.tax_id.rate_base != 0.0:
                 return True
-            
+
         return False
-    
+
     def _earning_no_material_check(self):
         earning = self.env['prx.payroll.earning'].search([('no_material_without_tax', '=', True)], limit=1).exists()
         return earning
