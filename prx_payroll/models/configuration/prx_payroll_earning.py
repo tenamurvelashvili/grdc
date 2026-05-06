@@ -9,6 +9,7 @@ class PRXPayrollEarning(models.Model):
     _description = 'Payroll earning'
 
     earning = fields.Char(string = 'ანაზღაურება',required=True,tracking=True,translate=True)
+    earning_exact = fields.Char(string = 'Exact ანაზღაურება',tracking=True)
     earning_type = fields.Many2one('prx.payroll.earning.type',string = 'ანაზღაურების ტიპი',tracking=True)
     earning_group = fields.Many2one('prx.payroll.earning.group',string = 'ანაზღაურების ჯგუფი',tracking=True)
     no_material = fields.Boolean(string='არაფულადი სარგებელი',tracking=True)

@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <list string="გადასახადები">
                     <field name="tax" optional="show" width="80"/>
+                    <field name="tax_exact" optional="show" width="80"/>
                     <field name="description" optional="show" width="80"/>
                     <field name="rate_gross" optional="show" width="80"/>
                     <field name="rate_net" optional="show" width="80"/>
@@ -27,6 +28,7 @@
                         <group>
                             <group>
                                 <field name="tax"/>
+                                <field name="tax_exact"/>
                                 <field name="description"/>
                                 <field name="rate_gross"/>
                                 <field name="report_name"/>

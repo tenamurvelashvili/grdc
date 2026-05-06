@@ -7,6 +7,7 @@
             <field name="arch" type="xml">
                 <list string="დაქვითვები">
                     <field name="deduction" optional="show" width="80"/>
+                    <field name="deduction_exact" optional="show" width="80"/>
                     <field name="description" optional="show" width="80"/>
                     <field name="deduction_calc_type" optional="show" width="80"/>
                     <field name="deduction_base" optional="show" width="80"/>
@@ -34,6 +35,7 @@
                         <group>
                             <group>
                                 <field name="deduction"/>
+                                <field name="deduction_exact"/>
                                 <field name="description"/>
                                 <field name="deduction_calc_type"/>
                                 <field name="pension"/>

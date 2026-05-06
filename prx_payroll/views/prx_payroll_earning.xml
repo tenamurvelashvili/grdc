@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <list string="ანაზღაურების კოდები">
                     <field name="earning" optional="show" width="80"/>
+                    <field name="earning_exact" optional="show" width="80"/>
                     <field name="earning_type" optional="show" width="80"/>
                     <field name="earning_group" optional="show" width="80"/>
                     <field name="earning_unit" optional="show" width="80"/>
@@ -34,6 +35,7 @@
                         <group>
                             <group>
                                 <field name="earning"/>
+                                <field name="earning_exact"/>
                                 <field name="earning_type"/>
                                 <field name="earning_group"/>
                                 <field name="earning_unit"/>

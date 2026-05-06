@@ -10,6 +10,7 @@ class PRXPayrollDeduction(models.Model):
     _rec_name = 'deduction'
 
     deduction = fields.Char(string='დაქვითვა', required=True, tracking=True, translate=True)
+    deduction_exact = fields.Char(string='Exact დაქვითვა',  tracking=True)
     description = fields.Char(string='აღწერა', tracking=True, translate=True)
     deduction_calc_type = fields.Selection(DeducationType.selection(), string='კალკულაციის ტიპი', required=True,
                                            tracking=True)

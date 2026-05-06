@@ -7,6 +7,7 @@ class PRXPayrollTax(models.Model):
     _rec_name = 'tax'
 
     tax = fields.Char(string='გადასახადი', translate=True, required=True,tracking=True)
+    tax_exact = fields.Char(string='Exact გადასახადი', tracking=True)
     description = fields.Char(string='აღწერა',tracking=True,translate=True)
     rate_gross = fields.Float(string='გროს განაკვეთი',digits=(19, 2),tracking=True)
     rate_net = fields.Float(string='ნეტ განაკვეთი',digits=(19, 2),tracking=True)

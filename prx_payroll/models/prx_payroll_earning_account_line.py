@@ -14,8 +14,8 @@ class PayrollEarningAccountLine(models.Model):
         default=lambda self: self.env.company,
         required=True,
     )
-    account_id = fields.Many2one('account.account', string='Account', check_company=True)
-    exact_account = fields.Char(string='Exact Account')
+    account_id = fields.Many2one('account.account', string='Account')
+    exact_account = fields.Text(string='Exact Account')
     take_account_from_position = fields.Boolean(string='Take Account from Position')
     debit_percent = fields.Float(string='Debit %', default=100.0)
     credit_percent = fields.Float(string='Credit %', default=0.0)
