@@ -110,7 +110,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                     for worksheet_id in worksheet_ids:
                         worksheet_id.generate_worksheet()
 
-    def execute_calculation(self):
+    def execute_calculation(self, worksheet=False):
         """'worksheet', 'worksheet_line', 'transaction'"""
         codes = set(self.calc_type.mapped('code'))
 
@@ -234,7 +234,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
 
             taxable_amount = tx.amount - self._get_effective_pension_amount(tx.pension_proportion)
 
-            if tx.earning_id.no_material or tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == "avanse":
+            if tx.earning_id.no_material or tx.earning_id.no_material_without_tax:
                 employee_bases[emp_id]['no_material'] += taxable_amount
             else:
                 employee_bases[emp_id]['normal'] += taxable_amount
@@ -254,7 +254,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
             ('include_tax_base', '=', True),
             ('transferred', '=', False),
         ]).filtered(lambda tx: tx.amount and tx.earning_id and (
-                    tx.earning_id.no_material or tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == "avanse"))
+                    tx.earning_id.no_material or tx.earning_id.no_material_without_tax))
 
         return sum(
             tx.amount - self._get_effective_pension_amount(tx.pension_proportion)
@@ -412,10 +412,9 @@ class PRXPayrollWorksheetCalculation(models.Model):
             ('employee_id', 'in', target_emp_ids),
             ('period_id', '=', self.period.id),
             ('worksheet_id', 'in', worksheet.ids),
-            # ('transaction_type', 'in', ['earning',]),
+            ('transaction_type', '=', 'earning'),
             ('transferred', '=', False),
-        ]).filtered(lambda tx: tx.transaction_type == "earning" or tx.deduction_id.avanse)
-        _logger.info(f"TAXABLE TRANSACTIONS COUNT: {taxable_transactions}")
+        ])
         employee_tax_bases = self._build_employee_tax_bases(taxable_transactions)
         self._log_tax_base_summary(employee_tax_bases, label='current_period_taxable_transactions')
 
@@ -436,20 +435,23 @@ class PRXPayrollWorksheetCalculation(models.Model):
             if total_by_emp.get(emp, 0.0):
                 # If there are earnings marked with `no_material_without_tax`, calculate
                 # non-rate-base taxes per-earning as (earning - pension_proportion) * gross_rate
-                # if self._earning_no_material_check():
-                #     emp_taxable_transactions = taxable_transactions.filtered(
-                #         lambda tr: tr.employee_id.id == emp and tr.transaction_type == 'earning' and tr.include_tax_base and not tr.transferred
-                #     )
-                #     tax_amount = sum(
-                #         max(0.0, tx.amount - self._get_effective_pension_amount(tx.pension_proportion)) * tax.tax.rate_gross
-                #         for tx in emp_taxable_transactions
-                #     )
-                #
-                #     _logger.info(f"NON RATE BASE TAXES FOR EMPLOYEE {emp}: {[(tx.id, tx.amount) for tx in emp_taxable_transactions]}")
-                # else:
-                tax_amount = total_taxable_amount * tax.tax.rate_gross
-                _logger.info(
-                    f"MATERIAL NO NON RATE BASE TAX FOR EMPLOYEE {emp}: total_taxable_amount={total_taxable_amount} tax_rate={tax.tax.rate_gross} calculated_tax_amount={tax_amount}")
+                if self._earning_no_material_check():
+                    emp_taxable_transactions = taxable_transactions.filtered(
+                        lambda
+                            tr: tr.employee_id.id == emp and tr.transaction_type == 'earning' and tr.include_tax_base and not tr.transferred
+                    )
+                    tax_amount = sum(
+                        max(0.0,
+                            tx.amount - self._get_effective_pension_amount(tx.pension_proportion)) * tax.tax.rate_gross
+                        for tx in emp_taxable_transactions
+                    )
+
+                    _logger.info(
+                        f"NON RATE BASE TAXES FOR EMPLOYEE {emp}: {[(tx.id, tx.amount) for tx in emp_taxable_transactions]}")
+                else:
+                    tax_amount = total_taxable_amount * tax.tax.rate_gross
+                    _logger.info(
+                        f"MATERIAL NO NON RATE BASE TAX FOR EMPLOYEE {emp}: total_taxable_amount={total_taxable_amount} tax_rate={tax.tax.rate_gross} calculated_tax_amount={tax_amount}")
 
                 _logger.info(
                     "NON RATE TAX employee=%s(%s) tax=%s normal=%s no_material=%s adjustment=%s total_taxable=%s gross_rate=%s tax_amount=%s",
@@ -700,15 +702,15 @@ class PRXPayrollWorksheetCalculation(models.Model):
         vals_list.clear()
 
         for ws in worksheet:
-            if ws.salary_type == "avanse" and self.has_avanse_worksheet(ws.worker_id, ws.period_id):
-                _logger.info(f"CALLED TRANSACTION {ws.sequence}")
-                self.flip_transactions(ws)
+            if ws.salary_type == "standard":
+                worksheet_av = self.has_avanse_worksheet(ws.worker_id, ws.period_id)
+                if worksheet_av:
+                    _logger.info(f"CALLED TRANSACTION {ws.sequence}")
+                    self.flip_transactions(worksheet_av, ws)
 
         return True
 
     def create_insurance_pension_deductions(self, worksheet):
-        """Create pension deductions for EARNINGGs with insurance = True and pension_proportion > 0."""
-        """დაზღვევის საპენსიოს ტრანზაქცია"""
 
         tr = self.env['prx.payroll.transaction']
         period_start = self.period.start_date
@@ -825,8 +827,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
 
         for employee_id, emp_earnings in by_employee.items():
 
-            no_material_taxes = emp_earnings.filtered(lambda tx: tx.earning_id and (
-                        tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == 'avanse'))
+            no_material_taxes = emp_earnings.filtered(
+                lambda tx: tx.earning_id and tx.earning_id.no_material_without_tax)
 
             no_material_pension = sum(
                 no_material_taxes
@@ -870,8 +872,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
             ('transaction_type', '=', 'earning'),
             ('include_tax_base', '=', True),
             ('transferred', '=', False),
-        ]).filtered(lambda tx: tx.amount > 0.0 and not (
-                    tx.earning_id.no_material or tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == 'avanse'))
+        ]).filtered(
+            lambda tx: tx.amount > 0.0 and not (tx.earning_id.no_material or tx.earning_id.no_material_without_tax))
 
         sorted_earnings = sorted(
             earning_transactions,
@@ -937,10 +939,10 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 ('transferred', '=', False),
             ]).filtered(lambda tx: tx.amount > 0.0 and tx.earning_id)
 
-            normal_earnings = earnings.filtered(lambda tx: not (
-                        tx.earning_id.no_material or tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == 'avanse'))
-            no_material_earnings = earnings.filtered(lambda
-                                                         tx: tx.earning_id.no_material or tx.earning_id.no_material_without_tax or tx.earning_id.salary_type == 'avanse')
+            normal_earnings = earnings.filtered(
+                lambda tx: not (tx.earning_id.no_material or tx.earning_id.no_material_without_tax))
+            no_material_earnings = earnings.filtered(
+                lambda tx: tx.earning_id.no_material or tx.earning_id.no_material_without_tax)
 
             if not earnings:
                 continue
@@ -997,20 +999,52 @@ class PRXPayrollWorksheetCalculation(models.Model):
 
     def has_avanse_worksheet(self, emp_id, period_id):
         return self.env['prx.payroll.worksheet'].search([
-            ("worker_id",'=',emp_id.id),
+            ("worker_id", '=', emp_id.id),
             ('period_id', '=', period_id.id),
             ('salary_type', '=', 'avanse')
-        ]).exists()
+        ],limit=1)
 
-    def flip_transactions(self, worksheet):
+    def flip_transactions(self, worksheet, worksheet_id):
         _logger.info(f"FLIPPING TRANSACTIONS FOR WORKSHEET {worksheet.sequence}")
+
+
         transactions = self.env['prx.payroll.transaction'].search([
             ('worksheet_id', '=', worksheet.id),
         ])
+        if not transactions:
+            return None
         _logger.info(f"FLIPPING TRANSACTIONS: {transactions}")
-        for transaction in transactions:
-            transaction.write({'amount': -transaction.amount,
-                               'tax_proportion': -transaction.tax_proportion,
-                               'pension_proportion': -transaction.pension_proportion,
-                               'exchange_rate': -transaction.exchange_rate,
-                               })
+        vals_list = []
+        for tx in transactions:
+            vals = {
+                'worksheet_id': worksheet_id.id,
+                'employee_id': tx.employee_id.id,
+                'period_id': tx.period_id.id,
+                'code': tx.code,
+                'amount': -tx.amount,
+                'transaction_type': tx.transaction_type,
+                'earning_id': tx.earning_id.id or False,
+                'position_earning_id': tx.position_earning_id.id or False,
+                'tax_id': tx.tax_id.id or False,
+                'deduction_id': tx.deduction_id.id or False,
+                'tax_proportion': -tx.tax_proportion,
+                'pension_proportion': -tx.pension_proportion,
+                'earning_proportion': tx.earning_proportion,
+                'include_tax_base': tx.include_tax_base,
+                'start_date': tx.start_date,
+                'end_date': tx.end_date,
+                'earning_unit': tx.earning_unit,
+                'qty': tx.qty,
+                'rate': tx.rate,
+                'exchange_rate': tx.exchange_rate,
+                'creditor': tx.creditor.id or False,
+                'employee_tax_id': tx.employee_tax_id.id or False,
+                'employee_deduction_id': tx.employee_deduction_id.id or False,
+                'report_name': tx.report_name,
+            }
+            vals_list.append(vals)
+        if vals_list:
+            self.env['prx.payroll.transaction'].sudo().create(vals_list)
+            _logger.info(f"CREATED {len(vals_list)} FLIPPED TRANSACTIONS FOR WORKSHEET {worksheet.sequence}")
+
+        return None
