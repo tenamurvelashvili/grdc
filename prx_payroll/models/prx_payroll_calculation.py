@@ -699,6 +699,11 @@ class PRXPayrollWorksheetCalculation(models.Model):
         tr.create(vals_list)
         vals_list.clear()
 
+        for ws in worksheet:
+            if ws.salary_type == "standard" and self.has_avanse_worksheet(ws.worker_id, ws.period_id):
+                _logger.info(f"CALLED TRANSACTION {ws.sequence}")
+                self.flip_transactions(ws)
+
         return True
 
     def create_insurance_pension_deductions(self, worksheet):
@@ -989,3 +994,19 @@ class PRXPayrollWorksheetCalculation(models.Model):
     def _earning_no_material_check(self):
         earning = self.env['prx.payroll.earning'].search([('no_material_without_tax', '=', True)], limit=1).exists()
         return earning
+
+    def has_avanse_worksheet(self, emp_id, period_id):
+        return self.env['prx.payroll.worksheet'].search([
+            ("worker_id",'=',emp_id.id),
+            ('period_id', '=', period_id.id),
+            ('salary_type', '=', 'avanse')
+        ]).exists()
+
+    def flip_transactions(self, worksheet):
+        _logger.info(f"FLIPPING TRANSACTIONS FOR WORKSHEET {worksheet.sequence}")
+        transactions = self.env['prx.payroll.transaction'].search([
+            ('worksheet_id', '=', worksheet.id),
+        ])
+        _logger.info(f"FLIPPING TRANSACTIONS: {transactions}")
+        for transaction in transactions:
+            transaction.write({'amount': -transaction.amount})
