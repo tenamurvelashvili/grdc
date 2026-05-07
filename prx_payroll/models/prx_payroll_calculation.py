@@ -700,7 +700,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
         vals_list.clear()
 
         for ws in worksheet:
-            if ws.salary_type == "standard" and self.has_avanse_worksheet(ws.worker_id, ws.period_id):
+            if ws.salary_type == "avanse" and self.has_avanse_worksheet(ws.worker_id, ws.period_id):
                 _logger.info(f"CALLED TRANSACTION {ws.sequence}")
                 self.flip_transactions(ws)
 
@@ -1009,4 +1009,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
         ])
         _logger.info(f"FLIPPING TRANSACTIONS: {transactions}")
         for transaction in transactions:
-            transaction.write({'amount': -transaction.amount})
+            transaction.write({'amount': -transaction.amount,
+                               'tax_proportion': -transaction.tax_proportion,
+                               'pension_proportion': -transaction.pension_proportion,
+                               'exchange_rate': -transaction.exchange_rate,
+                               })
