@@ -4,7 +4,7 @@ from collections import defaultdict
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, PatternFill
 from openpyxl.utils import get_column_letter
-from openpyxl.styles import numbers
+from openpyxl.styles import numbers, Font, Border, Side
 from odoo import fields, models
 from odoo.exceptions import UserError
 
@@ -124,6 +124,37 @@ class PRXTransactionReport2(models.TransientModel):
         # Personal number column as text
         for row_idx in range(2, ws.max_row + 1):
             ws.cell(row=row_idx, column=3).number_format = numbers.FORMAT_TEXT
+
+        # Bold bottom border on the last data row
+        thick = Side(style='medium')
+        last_data_row = ws.max_row
+        for col_idx in range(1, len(header) + 1):
+            cell = ws.cell(row=last_data_row, column=col_idx)
+            existing = cell.border
+            cell.border = Border(
+                left=existing.left,
+                right=existing.right,
+                top=existing.top,
+                bottom=thick,
+            )
+
+        # Totals row
+        totals_row = ['ჯამი', '', '', '', '']
+        for col_idx in range(numeric_start_col, len(header) + 1):
+            col_sum = sum(
+                ws.cell(row=r, column=col_idx).value or 0
+                for r in range(2, last_data_row + 1)
+            )
+            totals_row.append(col_sum)
+        ws.append(totals_row)
+
+        totals_row_idx = ws.max_row
+        bold_font = Font(bold=True)
+        for col_idx in range(1, len(header) + 1):
+            cell = ws.cell(row=totals_row_idx, column=col_idx)
+            cell.font = bold_font
+            if col_idx >= numeric_start_col:
+                cell.number_format = numbers.FORMAT_NUMBER_00
 
         bio = io.BytesIO()
         wb.save(bio)

@@ -204,7 +204,6 @@ class PRXPayrollTransactionReports(models.TransientModel):
                 row['პირადი ნომერი'],
                 row['პერიოდი'],
                 row['ტაბელი'],
-                row['პერიოდი'],
                 row['ანაზღაურება'],
                 row['გადასახადი'] if 'გადასახადი' in row.index else row['გადასახადა'],
                 row['დაქვითვა'],
