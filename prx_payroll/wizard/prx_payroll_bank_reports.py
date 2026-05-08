@@ -21,12 +21,15 @@ class PRXPayrollBankReports(models.TransientModel):
     ], string='ენა', default='ka_GE', required=True)
     file_download = fields.Binary("File", readonly=True)
     file_name = fields.Char("Filename")
+    department_id = fields.Many2one("hr.department", string="დეპარტამენტი")
 
     def _get_transaction_domain(self):
         domain = [
             ('period_id', '=', self.period_id.id),
             ('code', '!=', False),
         ]
+        if self.department_id:
+            domain.append(('department', '=', self.department_id.id))
         if self.transaction_type == 'non_transferred':
             domain += [('transferred', '=', False)]
         elif self.transaction_type == 'transferred':

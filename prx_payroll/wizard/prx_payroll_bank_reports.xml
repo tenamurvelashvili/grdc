@@ -10,6 +10,7 @@
                         <group>
                             <field name="period_id" />
                             <field name="bank" />
+                            <field name="department_id"/>
                             <field name="report_language" widget="radio" options="{'horizontal': true}" />
                             <field name="process_type" widget="radio" options="{'horizontal': true}" />
                             <field name="transaction_type" widget="radio" options="{'horizontal': true}" />
