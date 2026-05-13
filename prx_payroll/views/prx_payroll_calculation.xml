@@ -39,6 +39,21 @@
                             <field name="salary_type" widget="radio" options="{'horizontal': true}"/>
                             <field name="worksheet" domain="[('id','in',worksheet_domain)]"/>
                             <field name="calc_type" widget="many2many_checkboxes"/>
+                            <field name="prx_currency_date"/>
+                        </group>
+                    </group>
+                    <group invisible="not prx_currency_date" string="კურსები">
+                        <field name="prx_currency_lines" nolabel="1">
+                            <list editable="bottom">
+                                <field name="is_selected" widget="boolean_toggle"/>
+                                <field name="currency_id"/>
+                                <field name="prx_currency_rate"/>
+                                <field name="prx_currency_rate_date"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group>
+                        <group>
                             <button name="execute_calculation" type="object" string="კალკულაცია" class="btn btn-primary"/>
                         </group>
                     </group>
