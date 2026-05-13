@@ -24,6 +24,57 @@ class PRXPayrollWorksheetCalculation(models.Model):
     worksheet_domain = fields.Many2many('prx.payroll.worksheet', compute="_get_worksheet_domain")
     salary_type = fields.Selection(SalaryType.selection(), required=True, default='standard', string="პროცესის ტიპი")
 
+    prx_currency_date = fields.Date("კურსის თარიღი")
+    prx_currency_lines = fields.One2many(
+        "prx.payroll.course.line", "calculation_id", string="კურსები"
+    )
+
+    @api.onchange('prx_currency_date')
+    def _onchange_prx_currency_date(self):
+        if not self.prx_currency_date:
+            self.prx_currency_lines = [(5, 0, 0)]
+            return
+        company = self.env.company
+        company_currency = company.currency_id
+        currencies = self.env['res.currency'].search([
+            ('active', '=', True),
+            ('id', '!=', company_currency.id),
+        ])
+        new_lines = []
+        for currency in currencies:
+            try:
+                rate = self.env['res.currency']._get_conversion_rate(
+                    currency, company_currency, company, self.prx_currency_date
+                )
+                _logger.info(f"COMPANY CURRENCY: {company_currency.name} RATE: {rate}")
+                new_lines.append((0, 0, {
+                    'currency_id': currency.id,
+                    'prx_currency_rate': rate,
+                    'prx_currency_rate_date': self.prx_currency_date,
+                }))
+            except Exception:
+                pass
+        self.prx_currency_lines = [(5, 0, 0)] + new_lines
+
+    def _recalculate_worksheet_detail_rates(self, worksheets):
+        selected_lines = self.prx_currency_lines.filtered(lambda l: l.is_selected)
+        if not selected_lines:
+            return
+        company_currency = self.env.company.currency_id
+        rate_by_currency = {line.currency_id.id: line.prx_currency_rate for line in selected_lines}
+        for ws in worksheets:
+            for det in ws.worksheet_detail_ids:
+                det_currency = det.earning_id.currency_id
+                if det_currency and det_currency != company_currency and det_currency.id in rate_by_currency:
+                    rate = rate_by_currency[det_currency.id]
+                    converted_amount = det.amount * rate
+                    det.write({'amount': converted_amount})
+                    _logger.info(
+                        "APPLIED CURRENCY RATE for detail %s (currency %s) rate=%s amount=%s",
+                        det.id, det_currency.name, rate, converted_amount
+                    )
+
+
     @api.depends('period')
     def _get_worksheet_domain(self):
         model = self.env['prx.payroll.worksheet'].search([('status', 'in', ('open', 'closed'))])
@@ -147,6 +198,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 worksheet = self.env['prx.payroll.worksheet'].search(
                     [('status', '=', 'closed'), ('salary_type', '=', self.salary_type),
                      ('period_id', '=', self.period.id)])
+                if self.prx_currency_lines.filtered(lambda l: l.is_selected):
+                    self._recalculate_worksheet_detail_rates(worksheet)
                 self.create_transaction(worksheet=worksheet)
             if self.worksheet:
                 if self.worksheet.status != 'closed':
@@ -154,6 +207,8 @@ class PRXPayrollWorksheetCalculation(models.Model):
                         raise UserError("ტრანზაქციის გატარება შესაძლებელია 'დახურული' სტატუსის ტაბელზე. ")
                     else:
                         self.worksheet.document_close()
+                if self.prx_currency_lines.filtered(lambda l: l.is_selected):
+                    self._recalculate_worksheet_detail_rates(self.worksheet)
                 self.create_transaction(worksheet=self.worksheet)
 
     def _prepare_transaction_vals(self, employee_id, amount, transaction_type, start_date, end_date, code=False,
@@ -1011,8 +1066,6 @@ class PRXPayrollWorksheetCalculation(models.Model):
         transactions = self.env['prx.payroll.transaction'].search([
             ('worksheet_id', '=', worksheet.id),
         ])
-        if not transactions:
-            return None
         _logger.info(f"FLIPPING TRANSACTIONS: {transactions}")
         vals_list = []
         for tx in transactions:
@@ -1047,4 +1100,28 @@ class PRXPayrollWorksheetCalculation(models.Model):
             self.env['prx.payroll.transaction'].sudo().create(vals_list)
             _logger.info(f"CREATED {len(vals_list)} FLIPPED TRANSACTIONS FOR WORKSHEET {worksheet.sequence}")
 
-        return None
+class PRXCourseLines(models.Model):
+    _name = "prx.payroll.course.line"
+    _description = "Payroll Currency Rate Line"
+
+    calculation_id = fields.Many2one(
+        'prx.payroll.worksheet.calculation',
+        string="კალკულაცია",
+        ondelete='cascade',
+    )
+    currency_id = fields.Many2one('res.currency', string="ვალუტა", required=True)
+    prx_currency_rate = fields.Float(string="კურსი", digits=(16, 6), default=1.0)
+    prx_currency_rate_date = fields.Date(string="კურსის თარიღი", default=fields.Date.today)
+    is_selected = fields.Boolean(string="გამოყენება", default=False)
+
+    @api.onchange('is_selected')
+    def _onchange_is_selected(self):
+        if self.is_selected and self.calculation_id:
+            for line in self.calculation_id.prx_currency_lines:
+                if line != self and line.is_selected:
+                    line.is_selected = False
+
+    def _compute_display_name(self):
+        for rec in self:
+            rec.display_name = f"{rec.currency_id.name or ''}: {rec.prx_currency_rate:.4f} ({rec.prx_currency_rate_date or ''})"
+
