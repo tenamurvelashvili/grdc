@@ -378,7 +378,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 # ავანსი მხოლოდ სტანდარტულ ტაბელზე დაგენერირდეს
                 continue
             if ded.deduction_id.avanse:
-                total_by_emp[emp] += - ded.amount
+                total_by_emp[emp] += - ded.amount * self.prx_active_rate
 
             is_one_time_ws = ws.salary_type in ['one_time', 'avanse']
             is_one_time_ded = ded.deduction_id.salary_type in ['one_time', 'avanse']
