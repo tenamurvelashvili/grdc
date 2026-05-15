@@ -28,6 +28,28 @@ class PRXPayrollWorksheet(models.Model):
     cost_line_ids = fields.One2many('prx_payroll.worksheet.cost.line', 'worksheet_id', string="დეტალები")
     salary_type = fields.Selection(SalaryType.selection(), required=True, default='standard', string="პროცესის ტიპი")
 
+    has_transactions = fields.Boolean(compute="_compute_has_transactions")
+
+    def _compute_has_transactions(self):
+        for rec in self:
+            rec.has_transactions = self.env["prx.payroll.transaction"].search_count([
+                ("worksheet_id", "=", rec.id)
+            ]) > 0
+
+    def action_delete_transactions_and_open(self):
+        for rec in self:
+            if rec.transferred:
+                raise UserError("გადარიცხული ტაბელის ტრანზაქციების წაშლა შეუძლებელია.")
+
+            # Find and delete associated transactions
+            transactions = self.env["prx.payroll.transaction"].search([
+                ("worksheet_id", "=", rec.id)
+            ])
+            transactions.unlink()
+
+            # Return status to open
+            rec.write({"status": "open"})
+
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=100):
         args = args or []

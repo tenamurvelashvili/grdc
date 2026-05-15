@@ -36,6 +36,15 @@
                         <field name="readonly_worksheet" invisible="1"/>
                         <field name="status" widget="statusbar" options="{'clickable': '1'}" readonly="1"/>
 
+                        <field name="has_transactions" invisible="1"/>
+
+                        <button name="action_delete_transactions_and_open"
+                                type="object"
+                                string="ტრანზაქციების წაშლა და დაბრუნება"
+                                class="btn btn-danger"
+                                confirm="ნამდვილად გსურთ ტრანზაქციების წაშლა და ტაბელის დაბრუნება ღია სტატუსზე?"
+                                invisible="not has_transactions"/>
+
                         <button name="document_close" type="object" string="დახურვა" class="btn btn-primary"
                                 invisible="status != 'open'"/>
                         <button name="document_post" type="object" string="დაპოსტვა" class="btn btn-primary"
