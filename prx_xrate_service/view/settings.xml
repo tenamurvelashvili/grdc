@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+   <record model="ir.ui.view" id="view_nbg_currency_rate_form">
+    <field name="name">nbg.currency.rate.form</field>
+    <field name="model">nbg.currency.rate</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="currency_id"/>
+                </group>
+                 <footer>
+                    <button name="get_nbg_currency" type="object" string="Fetch Rates" class="btn-primary"/>
+                </footer>
+            </form>
+
+        </field>
+    </record>
+
+
+      <record id="get_nbg_historical_rates_action" model="ir.actions.act_window">
+        <field name="name">Get NBG Historical Currency</field>
+        <field name="res_model">nbg.currency.rate</field>
+        <field name="view_id" ref="view_nbg_currency_rate_form"/>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+      </record>
+
+      <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">
+           res.config.settings.view.form.inherit.nbg.rate
+        </field>
+       <field name="model">res.config.settings</field>
+       <field name="priority" eval="15"/>
+       <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+       <field name="arch" type="xml">
+           <xpath expr="//form" position="inside">
+               <app data-string="Configuration" string='NBG Currency' name="xrate_service">
+                   <block title="NBG Rate Service" name="employee_management">
+
+                       <setting string="Update NBG historical rates"
+                                help="Update NBG historical rates"
+                                id="xrate_service_setting">
+                           <button name="prx_xrate_service.get_nbg_historical_rates_action" icon="oi-arrow-right" type="action"
+                                   string="Get NBG historical rate" class="btn btn-danger btn-sm"/>
+                       </setting>
+
+                   </block>
+               </app>
+           </xpath>
+       </field>
+    </record>
+
+</data>
+</odoo>

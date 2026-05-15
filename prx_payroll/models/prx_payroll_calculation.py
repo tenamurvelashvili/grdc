@@ -28,6 +28,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
     prx_currency_lines = fields.One2many(
         "prx.payroll.course.line", "calculation_id", string="კურსები"
     )
+    prx_active_rate = fields.Float(string="Active Rate", digits=(16, 6), default=1.0, store=False)
 
     @api.onchange('prx_currency_date')
     def _onchange_prx_currency_date(self):
@@ -56,23 +57,6 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 pass
         self.prx_currency_lines = [(5, 0, 0)] + new_lines
 
-    def _recalculate_worksheet_detail_rates(self, worksheets):
-        selected_lines = self.prx_currency_lines.filtered(lambda l: l.is_selected)
-        if not selected_lines:
-            return
-        company_currency = self.env.company.currency_id
-        rate_by_currency = {line.currency_id.id: line.prx_currency_rate for line in selected_lines}
-        for ws in worksheets:
-            for det in ws.worksheet_detail_ids:
-                det_currency = det.earning_id.currency_id
-                if det_currency and det_currency != company_currency and det_currency.id in rate_by_currency:
-                    rate = rate_by_currency[det_currency.id]
-                    converted_amount = det.amount * rate
-                    det.write({'amount': converted_amount})
-                    _logger.info(
-                        "APPLIED CURRENCY RATE for detail %s (currency %s) rate=%s amount=%s",
-                        det.id, det_currency.name, rate, converted_amount
-                    )
 
 
     @api.depends('period')
@@ -198,8 +182,6 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 worksheet = self.env['prx.payroll.worksheet'].search(
                     [('status', '=', 'closed'), ('salary_type', '=', self.salary_type),
                      ('period_id', '=', self.period.id)])
-                if self.prx_currency_lines.filtered(lambda l: l.is_selected):
-                    self._recalculate_worksheet_detail_rates(worksheet)
                 self.create_transaction(worksheet=worksheet)
             if self.worksheet:
                 if self.worksheet.status != 'closed':
@@ -207,8 +189,6 @@ class PRXPayrollWorksheetCalculation(models.Model):
                         raise UserError("ტრანზაქციის გატარება შესაძლებელია 'დახურული' სტატუსის ტაბელზე. ")
                     else:
                         self.worksheet.document_close()
-                if self.prx_currency_lines.filtered(lambda l: l.is_selected):
-                    self._recalculate_worksheet_detail_rates(self.worksheet)
                 self.create_transaction(worksheet=self.worksheet)
 
     def _prepare_transaction_vals(self, employee_id, amount, transaction_type, start_date, end_date, code=False,
@@ -338,15 +318,20 @@ class PRXPayrollWorksheetCalculation(models.Model):
         tr = TransactionModel  # fresh model reference (no stale record IDs)
         total_by_emp = defaultdict(float)
 
+        # resolve active exchange rate from selected currency line (1.0 = no conversion)
+        selected_rate_line = self.prx_currency_lines.filtered(lambda l: l.is_selected)
+        self.prx_active_rate = selected_rate_line[0].prx_currency_rate if selected_rate_line else 1.0
+
         vals_list = []
         for ws in worksheet.filtered(lambda d: d.transferred == False):
             for det in ws.worksheet_detail_ids:
                 emp_id = ws.worker_id.id
-                total_by_emp[emp_id] += det.amount
+                converted_amount = det.amount * self.prx_active_rate
+                total_by_emp[emp_id] += converted_amount
                 vals_list.append(
                     self._prepare_transaction_vals(
                         employee_id=ws.worker_id.id,
-                        amount=self.math_round(det.amount),
+                        amount=self.math_round(converted_amount),
                         code=det.earning_id.earning_id.earning,
                         transaction_type='earning',
                         start_date=det.period_id.start_date,
@@ -358,7 +343,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                         earning_unit=det.earning_id.earning_id.earning_unit,
                         qty=det.quantity,
                         rate=det.rate,
-                        exchange_rate=det.rate,
+                        exchange_rate=self.prx_active_rate,
                         include_tax_base=True,
                         report_name=det.earning_id.earning_id.report_name,
                         tax_proportion=0.0,
@@ -393,7 +378,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 # ავანსი მხოლოდ სტანდარტულ ტაბელზე დაგენერირდეს
                 continue
             if ded.deduction_id.avanse:
-                total_by_emp[emp] += - ded.amount
+                total_by_emp[emp] += - ded.amount * self.prx_active_rate
 
             is_one_time_ws = ws.salary_type in ['one_time', 'avanse']
             is_one_time_ded = ded.deduction_id.salary_type in ['one_time', 'avanse']
@@ -403,10 +388,10 @@ class PRXPayrollWorksheetCalculation(models.Model):
                     continue
 
             if ded.deduction_id.deduction_calc_type == 'fix_amount':
-                amt = ded.amount
+                amt = ded.amount * self.prx_active_rate
             else:
                 amt = total_by_emp.get(emp, 0.0) * ded.percentage
-            # თუ არაქვს ანაზღაურება არ აქვს დაქვითვა
+            # თუ არაქვს ანაზღურება არ აქვს დაქვითვა
             if total_by_emp.get(emp, 0.0):
                 # საპენსიოს ტრანზაქციები
                 vals_list.append(
@@ -426,6 +411,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                         report_name=ded.deduction_id.report_name,
                         tax_proportion=0.0,
                         pension_proportion=0.0,
+                        exchange_rate=self.prx_active_rate,
                     ))
                 if ded.deduction_id.pension:
                     for sign in (-1, 1):
@@ -616,7 +602,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 remining_limit = tax.tax.rate_base - tax.used_tax_amount
 
             # TODO არ შეეხო
-            # ᲒᲐᲓᲐᲡᲐᲮᲐᲓᲘᲡ ᲬᲘᲚᲘᲡᲛᲐᲤᲓᲔᲘᲗᲘ (ᲪᲐᲚᲙᲔ)
+            # ᲒᲐᲓᲐᲡᲐᲮᲐᲓᲘᲡ ᲬᲘᲚᲘᲡᲛᲐᲤᲓᲔᲘ (ᲪᲐᲚᲙᲔ)
             if year_tax_amount - remining_limit <= 0:
                 normal_tax_amount = 0.0
             elif year_tax_amount - remining_limit > 0:
@@ -705,7 +691,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                     continue
 
             if ded.deduction_id.deduction_calc_type == 'fix_amount':
-                amt = ded.amount
+                amt = ded.amount * self.prx_active_rate
             else:
                 # პროცენტულს აქ ვითვლი დაქვითვას
                 if ded.deduction_id.deduction_base == 'net_amount':
@@ -746,6 +732,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                     report_name=ded.deduction_id.report_name,
                     tax_proportion=0.0,
                     pension_proportion=0.0,
+                    exchange_rate=self.prx_active_rate,
                 )
                 ordered_vals.append((ded.deduction_id.deduction_order or 0, vals))
         ordered_vals.sort(key=lambda x: x[0])
@@ -1113,13 +1100,6 @@ class PRXCourseLines(models.Model):
     prx_currency_rate = fields.Float(string="კურსი", digits=(16, 6), default=1.0)
     prx_currency_rate_date = fields.Date(string="კურსის თარიღი", default=fields.Date.today)
     is_selected = fields.Boolean(string="გამოყენება", default=False)
-
-    @api.onchange('is_selected')
-    def _onchange_is_selected(self):
-        if self.is_selected and self.calculation_id:
-            for line in self.calculation_id.prx_currency_lines:
-                if line != self and line.is_selected:
-                    line.is_selected = False
 
     def _compute_display_name(self):
         for rec in self:
