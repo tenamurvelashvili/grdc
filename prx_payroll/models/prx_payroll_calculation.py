@@ -326,7 +326,14 @@ class PRXPayrollWorksheetCalculation(models.Model):
         for ws in worksheet.filtered(lambda d: d.transferred == False):
             for det in ws.worksheet_detail_ids:
                 emp_id = ws.worker_id.id
-                converted_amount = det.amount * self.prx_active_rate
+
+                # Determine the conversion rate for this specific earning
+                # If earning currency is company currency, rate must be 1.0
+                current_rate = self.prx_active_rate
+                if det.earning_id.currency_id == self.env.company.currency_id:
+                    current_rate = 1.0
+
+                converted_amount = det.amount * current_rate
                 total_by_emp[emp_id] += converted_amount
                 vals_list.append(
                     self._prepare_transaction_vals(
@@ -343,7 +350,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                         earning_unit=det.earning_id.earning_id.earning_unit,
                         qty=det.quantity,
                         rate=det.rate,
-                        exchange_rate=self.prx_active_rate,
+                        exchange_rate=current_rate,
                         include_tax_base=True,
                         report_name=det.earning_id.earning_id.report_name,
                         tax_proportion=0.0,
@@ -378,7 +385,12 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 # ავანსი მხოლოდ სტანდარტულ ტაბელზე დაგენერირდეს
                 continue
             if ded.deduction_id.avanse:
-                total_by_emp[emp] += - ded.amount * self.prx_active_rate
+                # Determine rate for avanse (fixed amount)
+                current_rate = self.prx_active_rate
+                # Assuming avanse/deductions follow company currency if not specified otherwise
+                # For now, forcing 1.0 if we want to treat it as local currency as per requirements
+                current_rate = 1.0
+                total_by_emp[emp] += - ded.amount * current_rate
 
             is_one_time_ws = ws.salary_type in ['one_time', 'avanse']
             is_one_time_ded = ded.deduction_id.salary_type in ['one_time', 'avanse']
@@ -387,8 +399,11 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 if not is_one_time_ded and not ded.deduction_id.pension:
                     continue
 
+            current_ded_rate = self.prx_active_rate
             if ded.deduction_id.deduction_calc_type == 'fix_amount':
-                amt = ded.amount * self.prx_active_rate
+                # Apply 1.0 if we want to treat fixed deductions as local currency
+                current_ded_rate = 1.0
+                amt = ded.amount * current_ded_rate
             else:
                 amt = total_by_emp.get(emp, 0.0) * ded.percentage
             # თუ არაქვს ანაზღურება არ აქვს დაქვითვა
@@ -411,7 +426,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                         report_name=ded.deduction_id.report_name,
                         tax_proportion=0.0,
                         pension_proportion=0.0,
-                        exchange_rate=self.prx_active_rate,
+                        exchange_rate=current_ded_rate,
                     ))
                 if ded.deduction_id.pension:
                     for sign in (-1, 1):
@@ -925,7 +940,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
 
         _logger.info(f"EARNINGS: {[earning.earning_id.code for earning in sorted_earnings]}")
 
-        _logger.info(f'FUCKASS DISTRIBUTION FOR {employee_id}')
+        _logger.info(f'DISTRIBUTION FOR {employee_id}')
 
         # Case 1: no tax on normal earnings
         if exceeded_amount <= 0:
