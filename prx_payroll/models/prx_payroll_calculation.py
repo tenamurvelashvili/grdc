@@ -390,7 +390,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                 # Assuming avanse/deductions follow company currency if not specified otherwise
                 # For now, forcing 1.0 if we want to treat it as local currency as per requirements
                 current_rate = 1.0
-                total_by_emp[emp] += - ded.amount * current_rate
+                total_by_emp[emp] += - ded.amount
 
             is_one_time_ws = ws.salary_type in ['one_time', 'avanse']
             is_one_time_ded = ded.deduction_id.salary_type in ['one_time', 'avanse']
@@ -403,7 +403,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
             if ded.deduction_id.deduction_calc_type == 'fix_amount':
                 # Apply 1.0 if we want to treat fixed deductions as local currency
                 current_ded_rate = 1.0
-                amt = ded.amount * current_ded_rate
+                amt = ded.amount
             else:
                 amt = total_by_emp.get(emp, 0.0) * ded.percentage
             # თუ არაქვს ანაზღურება არ აქვს დაქვითვა
@@ -706,7 +706,7 @@ class PRXPayrollWorksheetCalculation(models.Model):
                     continue
 
             if ded.deduction_id.deduction_calc_type == 'fix_amount':
-                amt = ded.amount * self.prx_active_rate
+                amt = ded.amount
             else:
                 # პროცენტულს აქ ვითვლი დაქვითვას
                 if ded.deduction_id.deduction_base == 'net_amount':
