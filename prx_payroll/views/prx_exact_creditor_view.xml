@@ -64,6 +64,20 @@
         </field>
     </record>
 
+    <record id="view_prx_exact_creditor_search" model="ir.ui.view">
+        <field name="name">prx.exact.creditor.search</field>
+        <field name="model">prx.exact.creditor</field>
+        <field name="arch" type="xml">
+            <search string="Search Exact Creditors">
+                <field name="cmp_name"/>
+                 <field name="crdnr"/>
+                <field name="cmp_code"/>
+                <group expand="0" string="Group By">
+                    <filter string="Company Code" name="group_by_cmp_code" context="{'group_by': 'cmp_code'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
     <!-- ── Open Wizard Action ─────────────────────────────────────── -->
     <record id="action_open_prx_sync_wizard" model="ir.actions.act_window">
         <field name="name">Sync from MS SQL</field>
