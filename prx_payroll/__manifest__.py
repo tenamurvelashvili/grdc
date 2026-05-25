@@ -63,6 +63,7 @@
         'wizard/prx_payroll_creditor_wizard.xml',
         'wizard/prx_payroll_transaction_bank_transfer.xml',
         'wizard/prx_payroll_bulk_close_transaction.xml',
+        'wizard/prx_exact_export_wizard_view.xml',
         'reports/prx_payroll_payslip_pdf.xml',
         'views/prx_payroll_cost_center.xml',
         'views/prx_payroll_cost_unit.xml',
