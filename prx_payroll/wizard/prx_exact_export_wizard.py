@@ -84,6 +84,7 @@ class PrxExactExportWizard(models.TransientModel):
 
         UNION ALL
 
+        -- tax: DEBIT (and any non-creditor) lines, one row per account line
         SELECT
             EXTRACT(YEAR FROM p.end_date) AS Year,
             EXTRACT(MONTH FROM p.end_date) AS Period,
@@ -100,7 +101,8 @@ class PrxExactExportWizard(models.TransientModel):
         FROM prx_payroll_transaction tr
         INNER JOIN prx_payroll_period p ON p.id = tr.period_id
         INNER JOIN prx_payroll_tax t ON tr.tax_id = t.id
-        LEFT OUTER JOIN prx_payroll_tax_account_line tal ON tal.tax_id = t.id
+        INNER JOIN prx_payroll_tax_account_line tal
+               ON tal.tax_id = t.id AND COALESCE(tal.use_transaction_creditor, false) = false
         LEFT OUTER JOIN hr_employee emp ON emp.id = tr.employee_id
         LEFT OUTER JOIN prx_exact_creditor creditor ON creditor.id = emp.creditor_id
         LEFT OUTER JOIN LATERAL (
@@ -109,10 +111,45 @@ class PrxExactExportWizard(models.TransientModel):
             LEFT OUTER JOIN georgian_map gm ON gm.src = s.ch
         ) emp_name ON true
         LEFT OUTER JOIN prx_payroll_worksheet w ON tr.worksheet_id = w.id AND w.type != ''
-        WHERE p.end_date = %s and creditor.crdnr is not null  
+        WHERE p.end_date = %s and creditor.crdnr is not null
 
         UNION ALL
 
+        -- tax: consolidated CREDITOR line, one row per creditor per period.
+        -- crdnr comes from the tax creditor's res_partner.exact_crdnr_code field.
+        SELECT
+            EXTRACT(YEAR FROM p.end_date) AS Year,
+            EXTRACT(MONTH FROM p.end_date) AS Period,
+            tal.exact_account AS Account,
+            concat('TAX ', tp.exact_crdnr_code) AS Description,
+            tp.exact_crdnr_code AS Crdnr,
+            '' AS CC,
+            '' AS CU,
+            SUM(
+                CASE
+                    WHEN tal.debit_percent = 100 THEN -tr.amount
+                    WHEN tal.credit_percent = 100 THEN tr.amount
+                    ELSE tr.amount
+                END
+            ) AS Amount
+        FROM prx_payroll_transaction tr
+        INNER JOIN prx_payroll_period p ON p.id = tr.period_id
+        INNER JOIN prx_payroll_tax t ON tr.tax_id = t.id
+        INNER JOIN prx_payroll_tax_account_line tal
+               ON tal.tax_id = t.id AND COALESCE(tal.use_transaction_creditor, false) = true
+        LEFT OUTER JOIN res_partner tp ON tp.id = t.creditor
+        LEFT OUTER JOIN hr_employee emp ON emp.id = tr.employee_id
+        LEFT OUTER JOIN prx_exact_creditor creditor ON creditor.id = emp.creditor_id
+        WHERE p.end_date = %s and creditor.crdnr is not null and tp.exact_crdnr_code is not null
+        GROUP BY
+            EXTRACT(YEAR FROM p.end_date),
+            EXTRACT(MONTH FROM p.end_date),
+            tal.exact_account,
+            tp.exact_crdnr_code
+
+        UNION ALL
+
+        -- deduction: DEBIT (and any non-creditor) lines, one row per account line
         SELECT
             EXTRACT(YEAR FROM p.end_date) AS Year,
             EXTRACT(MONTH FROM p.end_date) AS Period,
@@ -129,7 +166,8 @@ class PrxExactExportWizard(models.TransientModel):
         FROM prx_payroll_transaction tr
         INNER JOIN prx_payroll_period p ON p.id = tr.period_id
         INNER JOIN prx_payroll_deduction d ON tr.deduction_id = d.id AND d.deduction_exact != 'avansi'
-        LEFT OUTER JOIN prx_payroll_deduction_account_line dal ON dal.deduction_id = d.id
+        INNER JOIN prx_payroll_deduction_account_line dal
+               ON dal.deduction_id = d.id AND COALESCE(dal.use_transaction_creditor, false) = false
         LEFT OUTER JOIN hr_employee emp ON emp.id = tr.employee_id
         LEFT OUTER JOIN prx_exact_creditor creditor ON creditor.id = emp.creditor_id
         LEFT OUTER JOIN LATERAL (
@@ -137,10 +175,50 @@ class PrxExactExportWizard(models.TransientModel):
             FROM regexp_split_to_table(emp.name, '') WITH ORDINALITY AS s(ch, ord)
             LEFT OUTER JOIN georgian_map gm ON gm.src = s.ch
         ) emp_name ON true
-        WHERE p.end_date = %s and creditor.crdnr is not null  
+        WHERE p.end_date = %s and creditor.crdnr is not null
+
+        UNION ALL
+
+        -- deduction: consolidated CREDITOR line, one row per creditor per period.
+        -- crdnr comes from the deduction creditor's res_partner.exact_crdnr_code field.
+        SELECT
+            EXTRACT(YEAR FROM p.end_date) AS Year,
+            EXTRACT(MONTH FROM p.end_date) AS Period,
+            dal.exact_account AS Account,
+            concat('DEDUCTION ', dp.exact_crdnr_code) AS Description,
+            dp.exact_crdnr_code AS Crdnr,
+            '' AS CC,
+            '' AS CU,
+            SUM(
+                CASE
+                    WHEN dal.debit_percent = 100 THEN -tr.amount
+                    WHEN dal.credit_percent = 100 THEN tr.amount
+                    ELSE tr.amount
+                END
+            ) AS Amount
+        FROM prx_payroll_transaction tr
+        INNER JOIN prx_payroll_period p ON p.id = tr.period_id
+        INNER JOIN prx_payroll_deduction d ON tr.deduction_id = d.id AND d.deduction_exact != 'avansi'
+        INNER JOIN prx_payroll_deduction_account_line dal
+               ON dal.deduction_id = d.id AND COALESCE(dal.use_transaction_creditor, false) = true
+        LEFT OUTER JOIN res_partner dp ON dp.id = d.creditor
+        LEFT OUTER JOIN hr_employee emp ON emp.id = tr.employee_id
+        LEFT OUTER JOIN prx_exact_creditor creditor ON creditor.id = emp.creditor_id
+        WHERE p.end_date = %s and creditor.crdnr is not null and dp.exact_crdnr_code is not null
+        GROUP BY
+            EXTRACT(YEAR FROM p.end_date),
+            EXTRACT(MONTH FROM p.end_date),
+            dal.exact_account,
+            dp.exact_crdnr_code
         ORDER BY Year, Period
         """
-        self.env.cr.execute(sql, (self.period_id.end_date, self.period_id.end_date, self.period_id.end_date))
+        self.env.cr.execute(sql, (
+            self.period_id.end_date,  # earning branch
+            self.period_id.end_date,  # tax debit / non-creditor lines
+            self.period_id.end_date,  # tax consolidated creditor line
+            self.period_id.end_date,  # deduction debit / non-creditor lines
+            self.period_id.end_date,  # deduction consolidated creditor line
+        ))
         return self.env.cr.dictfetchall()
 
     def _export_to_exact(self, conn, rows):

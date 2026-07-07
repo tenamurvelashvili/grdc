@@ -37,6 +37,7 @@
                                 <field name="rate_net"/>
                                 <field name="rate_base"/>
                                 <field name="code"/>
+                                <field name="creditor"/>
                             </group>
                         </group>
                         <notebook>

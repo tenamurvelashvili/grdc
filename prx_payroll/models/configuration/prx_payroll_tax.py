@@ -13,6 +13,7 @@ class PRXPayrollTax(models.Model):
     rate_net = fields.Float(string='ნეტ განაკვეთი',digits=(19, 2),tracking=True)
     rate_base = fields.Float(string='საბაზისო განაკვეთი', digits=(19, 2),tracking=True)
     code = fields.Char(string="კოდი")
+    creditor = fields.Many2one('res.partner', string='კრედიტორი', tracking=True)
     report_name = fields.Char(compute="_compute_report_name", string="რეპორტის დასახელება", store=True,compute_sudo=True)
     account_line_ids = fields.One2many(
         'prx.payroll.tax.account.line',

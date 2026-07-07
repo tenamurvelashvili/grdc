@@ -23,3 +23,4 @@ from . import prx_payroll_earning_account_line
 from . import prx_MSSQL_connector
 from . import prx_exact_creditor
 from . import ext_hr_employee
+from . import ext_res_partner

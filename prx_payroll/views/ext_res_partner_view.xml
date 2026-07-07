@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add the Exact crdnr field to the contact (res.partner) form -->
+    <record id="view_partner_form_crdnr" model="ir.ui.view">
+        <field name="name">res.partner.form.crdnr</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="before">
+                <field name="exact_crdnr_code"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

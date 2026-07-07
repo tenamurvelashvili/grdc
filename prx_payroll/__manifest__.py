@@ -10,7 +10,7 @@
     'website': "https://www.proxima.solutions",
 
     'category': 'Proxima',
-    'version': '18.0.0.0.1',
+    'version': '18.0.0.0.5',
 
     'depends': [
         'base',
@@ -32,6 +32,7 @@
         'data/prx_payroll_dashboard_warning.xml',
         'data/prx_payroll_default_records.xml',
         'views/prx_payroll_period.xml',
+        'views/ext_res_partner_view.xml',
         'wizard/prx_generate_period_wizard.xml',
         'wizard/prx_payroll_bulk.xml',
         'views/prx_payroll_earning_group_and_type.xml',
@@ -80,6 +81,7 @@
         'views/prx_payroll_menu.xml',
         'views/ext_hr_applicant_view.xml',
         'views/prx_exact_creditor_view.xml',
+
         'wizard/prx_sync_wizard_views.xml',
 
     ],
