@@ -51,7 +51,7 @@ class PRXPayrollPositionEarning(models.Model):
         for rec in records:
             if rec.earning_id.insurance:
                 link_ded = rec.earning_id.link_insurance_ded
-                if link_ded and self._check_if_ded_eligible(rec):
+                if link_ded and rec.earning_id.salary_type != "avanse"  and self._check_if_ded_eligible(rec):
                     insurance_ded_id = self.env['prx.payroll.employee.deduction'].create({
                         'employee_id': rec.employee_id.id,
                         'deduction_id': link_ded.id,
