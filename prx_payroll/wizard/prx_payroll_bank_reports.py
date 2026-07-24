@@ -29,7 +29,7 @@ class PRXPayrollBankReports(models.TransientModel):
             ('code', '!=', False),
         ]
         if self.department_id:
-            domain.append(('department', '=', self.department_id.id))
+            domain.append(('organization_unit_id', '=', self.department_id.id))
         if self.transaction_type == 'non_transferred':
             domain += [('transferred', '=', False)]
         elif self.transaction_type == 'transferred':
