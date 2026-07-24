@@ -36,6 +36,15 @@ class PRXPayrollBankReports(models.TransientModel):
             domain += [('transferred', '=', True)]
         return domain
 
+    def _get_employee_bank_account(self, employee):
+        """თანამშრომლის სახელფასო ანგარიში Odoo-ს ვერსიისგან დამოუკიდებლად:
+        primary_bank_account_id / bank_account_ids მხოლოდ ახალ ვერსიებში არსებობს"""
+        if 'primary_bank_account_id' in employee._fields and employee.primary_bank_account_id:
+            return employee.primary_bank_account_id
+        if 'bank_account_ids' in employee._fields and employee.bank_account_ids:
+            return employee.bank_account_ids[:1]
+        return employee.bank_account_id or False
+
     def _get_employee_amounts_map(self):
         transaction_model = self.env['prx.payroll.transaction']
         domain = self._get_transaction_domain()
@@ -164,7 +173,7 @@ class PRXPayrollBankReports(models.TransientModel):
         employee_model = self.env['hr.employee']
         for empl in txs:
             employee = employee_model.browse(empl['employee_id'][0])
-            bank_account = employee.primary_bank_account_id or (employee.bank_account_ids[:1] if employee.bank_account_ids else False)
+            bank_account = self._get_employee_bank_account(employee)
             employee_amounts = employee_amounts_map.get(employee.id, {})
             values.append([
                 bank_account.acc_number if bank_account else '',
@@ -216,7 +225,7 @@ class PRXPayrollBankReports(models.TransientModel):
         employee_model = self.env['hr.employee']
         for empl in txs:
             employee = employee_model.browse(empl['employee_id'][0])
-            bank_account = employee.primary_bank_account_id or (employee.bank_account_ids[:1] if employee.bank_account_ids else False)
+            bank_account = self._get_employee_bank_account(employee)
             employee_amounts = employee_amounts_map.get(employee.id, {})
             values.append([
                 bank_account.acc_number if bank_account else '',
