@@ -8,3 +8,5 @@ PyMuPDF
 pandas
 pymssql>=2.3.0
 pyodbc>=5.1.0
+openpyxl>=3.1.5
+xlsxwriter>=3.2.0

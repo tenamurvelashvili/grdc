@@ -79,6 +79,18 @@
         <field name="domain_force">[('company_id','in', company_ids)]</field>
         <field name="groups" eval="[(4, ref('base.group_user'))]"/>
     </record>
+    <record id="prx_rule_payroll_position_earning_import_multicompany" model="ir.rule">
+        <field name="name">Position Earning Import: multi-company access</field>
+        <field name="model_id" ref="model_prx_payroll_position_earning_import"/>
+        <field name="domain_force">[('company_id','in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="prx_rule_payroll_bank_account_import_multicompany" model="ir.rule">
+        <field name="name">Employee Bank Account Import: multi-company access</field>
+        <field name="model_id" ref="model_prx_payroll_bank_account_import"/>
+        <field name="domain_force">[('company_id','in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
     <record id="prx_rule_payroll_import_wizard_multicompany" model="ir.rule">
         <field name="name">Import Payroll Wizard: multi-company access</field>
         <field name="model_id" ref="model_prx_payroll_import_wizard"/>

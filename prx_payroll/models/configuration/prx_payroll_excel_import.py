@@ -1,5 +1,6 @@
 from odoo import models, fields, api, http
 from odoo.exceptions import UserError
+from odoo.addons.base.models.res_bank import sanitize_account_number
 import base64
 import io
 import pandas as pd
@@ -42,7 +43,9 @@ class PrxPayrollImportWizard(models.TransientModel):
 
         context = self.env.context
         if context.get('position_earning', False):
-            self.env['prx.payroll.position.earning.import'].sudo().search([]).unlink()
+            self.env['prx.payroll.position.earning.import'].sudo().search([
+                ('company_id', 'in', self.env.companies.ids)
+            ]).unlink()
             for idx, row, in df.iterrows():
                 identification_number = row.get('პირადი ნომერი')
                 start_date = row.get('საწყისი თარიღი')
@@ -104,7 +107,9 @@ class PrxPayrollImportWizard(models.TransientModel):
             action = self.env.ref('prx_payroll.action_employee_position_import').read()[0]
             return action
         if context.get('employee_deduction', False):
-            self.env['prx.payroll.employee.deduction.import'].sudo().search([]).unlink()
+            self.env['prx.payroll.employee.deduction.import'].sudo().search([
+                ('company_id', 'in', self.env.companies.ids)
+            ]).unlink()
             for idx, row, in df.iterrows():
                 identification_number = row.get('პირადი ნომერი')
                 amount = row.get('თანხა')
@@ -181,7 +186,9 @@ class PrxPayrollImportWizard(models.TransientModel):
             return action
 
         if context.get('employee_tax', False):
-            self.env['prx.payroll.employee.tax.import'].sudo().search([]).unlink()
+            self.env['prx.payroll.employee.tax.import'].sudo().search([
+                ('company_id', 'in', self.env.companies.ids)
+            ]).unlink()
             for idx, row, in df.iterrows():
                 identification_number = row.get('საიდენთიფიკაციო ნომერი')
                 start_date = row.get('საწყისი თარიღი')
@@ -234,6 +241,26 @@ class PrxPayrollImportWizard(models.TransientModel):
                 self.env['prx.payroll.employee.tax.import'].create(vals)
             action = self.env.ref('prx_payroll.prx_payroll_employee_tax_import_action').read()[0]
             return action
+
+        if context.get('bank_account', False):
+            self.env['prx.payroll.bank.account.import'].sudo().search([
+                ('company_id', 'in', self.env.companies.ids)
+            ]).unlink()
+            vals_list = []
+            for idx, row in df.iterrows():
+                identification_number = row.get('PrivateID')
+                bank_code = row.get('Bank Code')
+                bank_account = row.get('Bank Account')
+
+                vals_list.append({
+                    'identification_number': None if pd.isna(identification_number) else str(identification_number).strip(),
+                    'bank_code': None if pd.isna(bank_code) else str(bank_code).strip(),
+                    'bank_account': None if pd.isna(bank_account) else str(bank_account).strip(),
+                })
+            if vals_list:
+                self.env['prx.payroll.bank.account.import'].create(vals_list)
+            action = self.env.ref('prx_payroll.action_employee_bank_account_import').read()[0]
+            return action
         return None
 
 
@@ -267,14 +294,17 @@ class PrxPayrollEmployeeTaxImport(models.Model):
         for rec in self:
             if rec.tax:
                 rec.tax_name = rec.tax.tax
+            else:
+                rec.tax_name = rec.tax_name
 
+    @api.model_create_multi
     def create(self, vals_list):
         res = super().create(vals_list)
         for rec in res:
             try:
                 rec.validate_record(create=True)
             except UserError as e:
-                rec.error_text = e.name
+                rec.error_text = str(e)
             except Exception as e:
                 rec.error_text = str(e)
         return res
@@ -284,6 +314,8 @@ class PrxPayrollEmployeeTaxImport(models.Model):
         for rec in self:
             if rec.employee_id:
                 rec.identification_number = rec.employee_id.identification_id or None
+            else:
+                rec.identification_number = rec.identification_number
 
     @api.depends('identification_number')
     def _compute_employee(self):
@@ -417,6 +449,8 @@ class PRXPayrollEmployeeDeductionImport(models.Model):
         for rec in self:
             if rec.deduction_id:
                 rec.deduction_name = rec.deduction_id.deduction or None
+            else:
+                rec.deduction_name = rec.deduction_name
 
     @api.depends('identification_number')
     def _compute_employee(self):
@@ -432,6 +466,8 @@ class PRXPayrollEmployeeDeductionImport(models.Model):
         for rec in self:
             if rec.employee_id:
                 rec.identification_number = rec.employee_id.identification_id or None
+            else:
+                rec.identification_number = rec.identification_number
 
     @api.depends('vendor_tax')
     def _compute_vendor(self):
@@ -446,6 +482,8 @@ class PRXPayrollEmployeeDeductionImport(models.Model):
         for rec in self:
             if rec.vendor:
                 rec.vendor_tax = rec.vendor.vat or None
+            else:
+                rec.vendor_tax = rec.vendor_tax
 
     def validate_record(self):
         for record in self:
@@ -515,6 +553,7 @@ class PRXPayrollPositionEarningImport(models.Model):
     _description = 'თანამშრომლის პოზიციების ანაზღაურების იმპორტი'
     _check_company_auto = True
 
+    company_id = fields.Many2one('res.company', string='კომპანია', default=lambda self: self.env.company, required=True)
     employee_id = fields.Many2one('hr.employee', string='თანამშრომელი', compute='_compute_employee', readonly=False,
                                   store=True, compute_sudo=True)
     contract_id = fields.Many2one('hr.contract', string='კონტრაქტი', compute="_compute_contract", readonly=False,
@@ -540,6 +579,8 @@ class PRXPayrollPositionEarningImport(models.Model):
         for rec in self:
             if rec.earning_id:
                 rec.earning_name = rec.earning_id.earning or None
+            else:
+                rec.earning_name = rec.earning_name
 
     @api.depends('earning_name')
     def _compute_earning(self):
@@ -618,6 +659,8 @@ class PRXPayrollPositionEarningImport(models.Model):
         for rec in self:
             if rec.employee_id:
                 rec.identification_number = rec.employee_id.identification_id or None
+            else:
+                rec.identification_number = rec.identification_number
 
     def _compute_display_name(self):
         for rec in self:
@@ -630,7 +673,7 @@ class PRXPayrollPositionEarningImport(models.Model):
             try:
                 rec.validate_record(create=True)
             except UserError as e:
-                rec.error_text = e.name
+                rec.error_text = str(e)
             except Exception as e:
                 rec.error_text = str(e)
         return res
@@ -719,3 +762,150 @@ class PRXPayrollPositionEarningImport(models.Model):
                             text_warning += "მსგავსი ჩანაწერი უკვე არსებობს \n" if import_model != model else 'ჩანაწერი დუბლირდება\n'
 
         return text_warning
+
+
+class PRXPayrollBankAccountImport(models.Model):
+    _name = 'prx.payroll.bank.account.import'
+    _description = 'Payroll employee bank account import'
+    _check_company_auto = True
+
+    company_id = fields.Many2one('res.company', string='კომპანია', default=lambda self: self.env.company, required=True)
+    identification_number = fields.Char(string='პირადი ნომერი', readonly=False, compute='_compute_pn', store=True,
+                                        compute_sudo=True)
+    employee_id = fields.Many2one('hr.employee', string='თანამშრომელი', compute='_compute_employee', readonly=False,
+                                  store=True, compute_sudo=True)
+    bank_code = fields.Char(string='ბანკის კოდი', readonly=False, compute='_compute_bank_code', store=True)
+    bank_id = fields.Many2one('res.bank', string='ბანკი', compute='_compute_bank', readonly=False, store=True)
+    bank_account = fields.Char(string='საბანკო ანგარიში')
+    error_text = fields.Text(string='შეცდომის ტექსტი', readonly=True)
+    is_valid = fields.Boolean(string='ვალიდური', default=False, readonly=True)
+
+    @api.depends('identification_number')
+    def _compute_employee(self):
+        for rec in self:
+            if rec.identification_number:
+                domain = [('identification_id', '=', rec.identification_number)]
+                if rec.company_id:
+                    domain.append(('company_id', 'in', [rec.company_id.id, False]))
+                rec.employee_id = self.env['hr.employee'].search(domain, limit=1).id
+            else:
+                rec.employee_id = None
+
+    @api.depends('employee_id')
+    def _compute_pn(self):
+        for rec in self:
+            if rec.employee_id:
+                rec.identification_number = rec.employee_id.identification_id or None
+            else:
+                rec.identification_number = rec.identification_number
+
+    @api.depends('bank_code')
+    def _compute_bank(self):
+        for rec in self:
+            if rec.bank_code:
+                rec.bank_id = self.env['res.bank'].search([('bic', '=', rec.bank_code)], limit=1).id
+            else:
+                rec.bank_id = None
+
+    @api.depends('bank_id')
+    def _compute_bank_code(self):
+        for rec in self:
+            if rec.bank_id:
+                rec.bank_code = rec.bank_id.bic or None
+            else:
+                rec.bank_code = rec.bank_code
+
+    def import_excel(self):
+        action = self.env['ir.actions.actions']._for_xml_id('prx_payroll.action_prx_payroll_import')
+        return action
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        res = super().create(vals_list)
+        for rec in res:
+            try:
+                rec.validate_record(create=True)
+            except UserError as e:
+                rec.error_text = str(e)
+            except Exception as e:
+                rec.error_text = str(e)
+        return res
+
+    def validate_record(self, create=False):
+        sanitized_counts = {}
+        for row in self.search([('bank_account', '!=', False)]):
+            key = sanitize_account_number(row.bank_account)
+            sanitized_counts[key] = sanitized_counts.get(key, 0) + 1
+        for record in self:
+            text_warning = ""
+            record.error_text = ""
+            if not record.identification_number:
+                text_warning += 'საიდენთიფიკაციო არ არის შევსებული \n'
+            if record.identification_number and not record.employee_id:
+                text_warning += 'მსგავსი საიდენთიფიკაციოთი თანამშრომელი ვერ მოიძებნა \n'
+            if not record.bank_code:
+                text_warning += 'ბანკის კოდი არ არის შევსებული \n'
+            if record.bank_code and not record.bank_id:
+                text_warning += 'მსგავსი კოდით ბანკი ვერ მოიძებნა \n'
+            if not record.bank_account:
+                text_warning += 'საბანკო ანგარიში არ არის შევსებული \n'
+            if record.bank_account:
+                sanitized = sanitize_account_number(record.bank_account)
+                if record.employee_id and record.employee_id.work_contact_id:
+                    existing = self.env['res.partner.bank'].sudo().with_context(active_test=False).search([
+                        ('partner_id', '=', record.employee_id.work_contact_id.id),
+                        ('sanitized_acc_number', '=', sanitized)
+                    ], limit=1)
+                    if existing and existing.id in record._employee_linked_account_ids(record.employee_id):
+                        text_warning += 'მსგავსი საბანკო ანგარიში თანამშრომელს უკვე აქვს \n'
+                if sanitized_counts.get(sanitized, 0) > 1:
+                    text_warning += 'ჩანაწერი დუბლირდება \n'
+            if record.employee_id and not record.employee_id.work_contact_id:
+                text_warning += 'თანამშრომელს არ აქვს საკონტაქტო პარტნიორი \n'
+            record.error_text = text_warning
+            if not create:
+                record.is_valid = not text_warning
+
+    def _employee_linked_account_ids(self, employee):
+        """ids of the bank accounts already attached to the employee;
+        enterprise (bank_account_ids) და community (bank_account_id) ორივესთან მუშაობს"""
+        employee = employee.sudo()
+        if 'bank_account_ids' in employee._fields:
+            return employee.bank_account_ids.ids
+        return employee.bank_account_id.ids
+
+    def _link_account_to_employee(self, employee, bank_acc):
+        employee = employee.sudo()
+        if 'bank_account_ids' in employee._fields:
+            employee.write({'bank_account_ids': [(4, bank_acc.id)]})
+        else:
+            employee.write({'bank_account_id': bank_acc.id})
+
+    def move_record(self):
+        moved = self.env['prx.payroll.bank.account.import']
+        for rec in self:
+            if not rec.is_valid:
+                continue
+            partner = rec.employee_id.work_contact_id
+            if not partner:
+                continue
+            sanitized = sanitize_account_number(rec.bank_account)
+            bank_acc = self.env['res.partner.bank'].sudo().with_context(active_test=False).search([
+                ('partner_id', '=', partner.id),
+                ('sanitized_acc_number', '=', sanitized)
+            ], limit=1)
+            if not bank_acc:
+                bank_acc = self.env['res.partner.bank'].sudo().create({
+                    'partner_id': partner.id,
+                    'acc_number': rec.bank_account,
+                    'bank_id': rec.bank_id.id,
+                    'allow_out_payment': True,
+                })
+            else:
+                if not bank_acc.active:
+                    bank_acc.active = True
+                if not bank_acc.bank_id:
+                    bank_acc.bank_id = rec.bank_id.id
+            self._link_account_to_employee(rec.employee_id, bank_acc)
+            moved |= rec
+        moved.unlink()

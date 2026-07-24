@@ -157,6 +157,19 @@
             </field>
         </record>
 
+        <record id="action_employee_bank_account_import" model="ir.actions.act_window">
+            <field name="name">საბანკო ანგარიშების იმპორტი</field>
+            <field name="res_model">prx.payroll.bank.account.import</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="prx_payroll.prx_payroll_bank_account_import_search"/>
+            <field name="context">{'create': False}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ჩანაწერები ვერ მოიძებნა
+                </p>
+            </field>
+        </record>
+
         <record id="prx_payroll_transaction_action" model="ir.actions.act_window">
             <field name="name">ტრანზაქციები</field>
             <field name="res_model">prx.payroll.transaction</field>

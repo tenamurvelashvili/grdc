@@ -27,6 +27,7 @@
                 <menuitem id="prx_payroll_employee_import_menu" name="თანამშრომლის გადასახადების იმპორტი" sequence="5" action="prx_payroll_employee_tax_import_action"/>
                 <menuitem id="prx_menu_employee_deduction_import" name="თანამშრომლის დაქვითვების იმპორტი" action="action_employee_deduction_import" sequence="10"/>
                 <menuitem id="prx_menu_position_earning_import" name="თანამშრომლის პოზიციის ანაზღაურების იმპორტი" action="action_employee_position_import" sequence="10"/>
+                <menuitem id="prx_menu_bank_account_import" name="საბანკო ანგარიშების იმპორტი" action="action_employee_bank_account_import" sequence="15"/>
         </menuitem>
 
         <menuitem id="prx_payroll_menu_report_root" name="რეპორტები" sequence="25" groups="prx_payroll.prx_payroll_administrator">

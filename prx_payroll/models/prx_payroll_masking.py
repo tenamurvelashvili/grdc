@@ -134,6 +134,10 @@ class PrxPayrollMasking(models.Model):
         for rec in silent_env['prx.payroll.position.earning.import'].search([]):
             rec.identification_number = hash_field_value(rec.identification_number)
 
+        for rec in silent_env['prx.payroll.bank.account.import'].search([]):
+            rec.identification_number = hash_field_value(rec.identification_number)
+            rec.bank_account = hash_field_value(rec.bank_account)
+
         silent_env.cr.commit()
 
         model_employees_fields = [
