@@ -36,6 +36,7 @@
               <menuitem id="prx_payroll_bank_report_menu" action="action_prx_payroll_bank_reports_wizard_act" sequence="15" name="ბანკის ფაილი"/>
               <menuitem id="prx_payroll_transaction_report_menu" action="action_prx_payroll_transaction_reports_wizard_act" sequence="20" name="ტრანზაქციების რეპორტი დეტალური"/>
               <menuitem id="prx_payroll_transaction_report_menu_2" action="action_prx_payroll_transaction_reports_2_wizard_act" sequence="16" name="ტრანზაქციების რეპორტი"/>
+              <menuitem id="prx_payroll_transaction_pivot_report_menu" action="action_prx_payroll_transaction_pivot_report_wizard_act" sequence="17" name="ტრანზაქციების პივოტ რეპორტი"/>
               <menuitem id="prx_payroll_tabel_report_menu" action="action_prx_payroll_tabel_reports_wizard_act" sequence="20" name="ტაბელის რეპორტი"/>
               <menuitem id="prx_payroll_pension_alimony_report_menu" action="action_prx_payroll_pension_alimony_reports_wizard_act" sequence="25" name="საპენსიო/ალიმენტი რეპორტი"/>
               <menuitem id="prx_payroll_creditor_report_menu" action="action_prx_payroll_creditor_reports_wizard_act" sequence="30" name="კრედიტორის რეპორტი"/>

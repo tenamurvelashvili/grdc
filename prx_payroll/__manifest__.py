@@ -10,7 +10,7 @@
     'website': "https://www.proxima.solutions",
 
     'category': 'Proxima',
-    'version': '18.0.0.1.5',
+    'version': '18.0.0.1.6',
 
     'depends': [
         'base',
@@ -59,6 +59,7 @@
         'wizard/prx_payroll_bank_reports.xml',
         'wizard/prx_payroll_transaction_reports.xml',
         'wizard/prx_payroll_transaction_report_2.xml',
+        'wizard/prx_payroll_transaction_pivot_report.xml',
         'wizard/prx_payroll_tabel_report.xml',
         'wizard/prx_payroll_pension_alimony.xml',
         'wizard/prx_payroll_creditor_wizard.xml',
