@@ -544,6 +544,11 @@ class PRXPayrollWorksheetCalculation(models.Model):
         with_rate_base_taxes = all_tax_ids.filtered(lambda t: t.tax.rate_base != 0.0)
         tax_proportion_plans = []
         self._add_not_material_tax_to(worksheet)
+        # _add_not_material_tax_to moves pension proportions between earnings, so the
+        # bases built before it are stale; rebuild them or the moved pension share is
+        # subtracted from neither the normal nor the no-material base.
+        employee_tax_bases = self._build_employee_tax_bases(taxable_transactions)
+        self._log_tax_base_summary(employee_tax_bases, label='after_no_material_pension_move')
         for tax in with_rate_base_taxes:
             emp = tax.employee_id.id
             ws_id = employee_worksheet(emp)
@@ -573,7 +578,6 @@ class PRXPayrollWorksheetCalculation(models.Model):
                     ('end_date', '<=', period_end),
                     ('include_tax_base', '=', True),
                     ('employee_id', '=', emp),
-                    ('transferred', '=', False),
                 ])
                 year_tax_base = self._build_employee_tax_bases(year_tax_transactions)[emp]
                 _logger.info(
